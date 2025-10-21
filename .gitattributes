@@ -1,0 +1,105 @@
+# ============================================================================
+# .gitattributes para Projeto de Automação Leroy Merlin
+# Garante line endings consistentes e tratamento correto de arquivos
+# ============================================================================
+
+# Auto detect text files and normalize line endings to LF
+* text=auto
+
+# ============================================================================
+# PYTHON
+# ============================================================================
+*.py text eol=lf diff=python
+*.pyw text eol=lf
+*.pyx text eol=lf diff=python
+*.pyi text eol=lf diff=python
+
+# ============================================================================
+# DOCUMENTAÇÃO
+# ============================================================================
+*.md text eol=lf diff=markdown
+*.txt text eol=lf
+*.rst text eol=lf
+*.adoc text eol=lf
+LICENSE text eol=lf
+README text eol=lf
+
+# ============================================================================
+# CONFIGURAÇÃO
+# ============================================================================
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.ini text eol=lf
+*.cfg text eol=lf
+*.conf text eol=lf
+.editorconfig text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+
+# ============================================================================
+# SCRIPTS
+# ============================================================================
+*.sh text eol=lf
+*.bash text eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# ============================================================================
+# DADOS (CSVs mantêm formato original por segurança)
+# ============================================================================
+*.csv text eol=auto
+*.tsv text eol=auto
+*.sql text eol=lf
+
+# ============================================================================
+# WEB (se houver arquivos web no futuro)
+# ============================================================================
+*.html text eol=lf diff=html
+*.htm text eol=lf diff=html
+*.css text eol=lf diff=css
+*.scss text eol=lf
+*.sass text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+
+# ============================================================================
+# BINÁRIOS (nunca modificar)
+# ============================================================================
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg binary
+*.webp binary
+
+*.pdf binary
+*.doc binary
+*.docx binary
+*.xls binary
+*.xlsx binary
+*.ppt binary
+*.pptx binary
+
+*.zip binary
+*.tar binary
+*.gz binary
+*.rar binary
+*.7z binary
+
+*.exe binary
+*.dll binary
+*.so binary
+*.dylib binary
+
+# ============================================================================
+# LINGUÍSTICA
+# ============================================================================
+# Arquivos com diff especializado
+*.ipynb diff=jupyternotebook
+*.lock linguist-generated=true
