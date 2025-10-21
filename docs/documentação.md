@@ -1,170 +1,760 @@
-# 📋 Automação de Boletins - Leroy Merlin
+# 📋 Documentação Completa - Sistema RPA Leroy Merlin
 
-Sistema inteligente para processamento automático de relatórios do Genesys e Salesforce.
+> **Sistema Profissional de Automação RPA** para processamento automático de dados Genesys, Salesforce e Produtividade com interface gráfica moderna e pipeline inteligente.
 
-## 🏗️ Estrutura Organizada
+[![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
+[![Status](https://img.shields.io/badge/status-production-success.svg)](https://github.com/Ryanditko/rpa-leroy-merlin)
+[![Version](https://img.shields.io/badge/version-2.4.0-green.svg)](https://github.com/Ryanditko/rpa-leroy-merlin)
+
+---
+
+## 📑 Índice
+
+- [Estrutura do Projeto](#-estrutura-do-projeto)
+- [Funcionalidades](#-funcionalidades)
+- [Como Usar](#-como-usar)
+- [Sistemas Suportados](#-sistemas-suportados)
+- [Arquitetura Técnica](#-arquitetura-técnica)
+- [Configuração](#-configuração)
+- [Interface Gráfica](#-interface-gráfica)
+- [Troubleshooting](#-troubleshooting)
+- [Novidades v2.4](#-novidades-v24)
+
+---
+
+## 🏗️ Estrutura do Projeto
 
 ```
-automacao_boletins/
-├── 📁 main.py                     # 🚀 ENTRADA ÚNICA - Execute este arquivo
-├── 📁 dados/                      # 📂 Coloque seus arquivos CSV aqui
-├── 📁 config/                     # ⚙️ Configurações e credenciais
-│   ├── boletim.json              # 🔑 Credenciais Google Sheets
-│   └── README.md                 # 📋 Info das planilhas
-├── 📁 core/                       # 🧠 Motor principal
-│   ├── __init__.py
-│   └── google_sheets_base.py     # 🔧 Classe base inteligente
-├── 📁 processadores/              # ⚙️ Processadores especializados
-│   ├── __init__.py
-│   ├── 📁 genesys/               # 📊 Processadores Genesys
+Automacao-LM/
+├── 📁 config/                     # ⚙️ Configurações
+│   ├── boletim.json              # 🔑 Credenciais Google Service Account
+│   ├── kpis_historico.json       # � Histórico de KPIs (auto-gerado)
+│   └── config.md                 # � Documentação de configuração
+│
+├── 📁 data/                       # 📂 Arquivos CSV para processamento
+│   ├── BASE_GENESYS_VOZ_HC.csv
+│   ├── BASE_SALESFORCE_CRIADO.csv
+│   └── data.md                   # 📖 Documentação de dados
+│
+├── 📁 docs/                       # 📚 Documentação do projeto
+│   ├── documentação.md           # 📋 Esta documentação
+│   ├── Implementações.md         # 🔧 Histórico de implementações
+│   ├── Renomear.md               # 🔄 Guia de renomeação
+│   └── *.md                      # Outras documentações
+│
+├── 📁 img/                        # �️ Imagens e logos
+│
+├── 📁 scripts/                    # 🛠️ Scripts auxiliares
+│   ├── executar_renomeacao.py    # 🔄 Renomeador de CSVs
+│   ├── listar_abas_genesys.py    # 📋 Listar abas Genesys
+│   └── processar-todos-csvs.py   # 🚀 Processar múltiplos CSVs
+│
+├── 📁 src/                        # � Código fonte principal
+│   ├── main.py                   # 🎯 Ponto de entrada CLI
+│   ├── 📁 core/                  # 🧠 Motor principal
 │   │   ├── __init__.py
-│   │   └── processador_genesys.py
-│   └── 📁 salesforce/            # 💼 Processadores Salesforce
-│       ├── __init__.py
-│       ├── criado.py
-│       ├── resolvido.py
-│       ├── comentario_bko.py
-│       └── processador_salesforce.py
-└── 📁 docs/                       # 📚 Documentação
-    └── README.md                 # 📖 Este arquivo
+│   │   └── google_sheets_base.py # 🔧 Classe base Google Sheets
+│   └── 📁 processadores/         # ⚙️ Processadores especializados
+│       ├── 📁 genesys/           # 📊 Genesys (VOZ, TEXTO, Gestão)
+│       ├── 📁 salesforce/        # 💼 Salesforce (CRIADO, RESOLVIDO, BKO)
+│       └── 📁 produtividade/     # � Produtividade e Tempo
+│
+├── 📁 tests/                      # 🧪 Testes automatizados
+│   ├── teste_sistema_completo.py
+│   ├── teste-genesys.py
+│   ├── teste-salesforce.py
+│   └── tests.md                  # � Documentação de testes
+│
+├── 📁 utils/                      # 🛠️ Utilitários
+│   ├── executar.bat              # ⚡ Executor Windows (CMD)
+│   ├── executar.ps1              # ⚡ Executor PowerShell
+│   ├── interface.bat             # 🎨 Abrir interface (CMD)
+│   ├── interface.ps1             # 🎨 Abrir interface (PowerShell)
+│   └── utils.md                  # 📖 Documentação de utilitários
+│
+├── .editorconfig                  # 📝 Configuração do editor
+├── .gitattributes                 # 🔧 Atributos Git
+├── .gitignore                     # 🚫 Arquivos ignorados
+├── boletim.json                   # 🔑 Credenciais (cópia da config/)
+├── interface_visual.py            # 🎨 Interface Gráfica Principal
+├── main.py                        # 🚀 Script Principal CLI
+├── renomeador_inteligente.py     # 🔄 Renomeador inteligente
+├── README.md                      # � Documentação principal
+├── requirements.txt               # 📦 Dependências Python
+└── setup.py                       # ⚙️ Setup de instalação
 ```
+
+---
+
+## ✨ Funcionalidades
+
+### 🎯 Funcionalidades Principais
+
+#### **Processamento Automatizado**
+- ✅ **Genesys**: VOZ HC, TEXTO HC, Gestão da Entrega
+- ✅ **Salesforce**: Criado, Resolvido, Comentários BKO
+- ✅ **Produtividade**: Base Produtividade, Base Tempo
+
+#### **Interface Dual**
+- 🎨 **Interface Gráfica** (GUI): Dashboard profissional com KPIs dinâmicos
+- ⌨️ **Linha de Comando** (CLI): Execução via terminal com argumentos
+
+#### **Detecção Inteligente**
+- 🔍 **Auto-detecção de encoding**: UTF-8, Latin-1, CP1252, etc.
+- 🔢 **Limpeza automática**: Remove apóstrofos, aspas, .0 desnecessário
+- 📅 **Formatação de datas**: Detecta e limpa colunas de data automaticamente
+- 🎨 **Coloração verde Leroy Merlin**: Primeira linha destacada, demais em verde claro
+
+#### **Sistema Robusto**
+- 🔄 **Modo complementar**: Preserva dados existentes, não sobrescreve
+- 📊 **Fórmulas automáticas**: Aplica fórmulas apenas em linhas novas
+- 🔁 **Renomeação inteligente**: Padroniza nomes de arquivos CSV
+- 📝 **Relatórios detalhados**: Logs completos de cada processamento
+- 💾 **KPIs persistentes**: Histórico de execuções salvo em JSON
+
+---
 
 ## 🚀 Como Usar
 
-### Uso Básico (Recomendado)
+### **Método 1: Interface Gráfica (Recomendado)** 🎨
+
+#### Via Atalho (.bat)
 ```bash
-# Coloque seus CSVs na pasta 'dados/'
-# Execute o arquivo principal
-python main.py
+# Duplo clique em:
+utils/interface.bat
+# ou
+utils/interface.ps1
 ```
 
-### Uso Avançado
+#### Via Python
 ```bash
+python interface_visual.py
+```
+
+**Recursos da Interface:**
+- 🎨 Dashboard profissional com cores Leroy Merlin
+- 📊 4 KPIs dinâmicos (Total Processado, Taxa Sucesso, Tempo Médio, Última Execução)
+- 🔘 Botões para execução seletiva (Salesforce, Genesys, Produtividade)
+- 📝 Log em tempo real da execução
+- 🔗 Links diretos para as planilhas Google Sheets
+- 🔄 Renomeação de arquivos integrada
+
+---
+
+### **Método 2: Linha de Comando (Avançado)** ⌨️
+
+#### Via Atalho (.bat)
+```bash
+# Duplo clique em:
+utils/executar.bat
+# ou
+utils/executar.ps1
+```
+
+#### Via Python Direto
+```bash
+# Processar TODOS os sistemas
+python main.py --all
+
+# Processar apenas Salesforce
+python main.py --salesforce
+
 # Processar apenas Genesys
 python main.py --genesys
 
-# Processar apenas Salesforce  
-python main.py --salesforce
+# Processar apenas Produtividade
+python main.py --produtividade
 
-# Especificar pasta de dados diferente
-python main.py --dados ./meus_csvs
+# Combinar múltiplos sistemas
+python main.py --salesforce --genesys
 
-# Modo verboso
-python main.py --verbose
+# Modo verboso (mais detalhes)
+python main.py --all --verbose
 
 # Ajuda
 python main.py --help
 ```
 
-## 📁 Arquivos Suportados
+---
 
-### 🔵 Genesys (Detecção Automática)
-- `Gestão da entrega N1 HC.csv`
-- `Gestão da entrega N1 HC (1).csv` ✨ **Detecta duplicados**
-- `Texto HC.csv`
-- `Texto HC (1).csv` ✨ **Detecta duplicados**
-- `Voz HC.csv`
-- `Voz HC (1).csv` ✨ **Detecta duplicados**
+### **Método 3: Renomeação de Arquivos** 🔄
 
-### 🟠 Salesforce (Detecção Automática)
-- `BASE-BOLETIM-CRIADO-2025-09-2.csv`
-- `BASE-BOLETIM-CRIADO (1).csv` ✨ **Detecta duplicados**
-- `BASE-BOLETIM-RESOLVIDO-2025-09-2.csv`
-- `BASE-BOLETIM-RESOLVIDO (1).csv` ✨ **Detecta duplicados**
-- `Cópia de BASE-BOLETIM-COMENTARI.csv`
-- `BASE-BOLETIM-COMENTARI (1).csv` ✨ **Detecta duplicados**
-
-## ✨ Funcionalidades Inteligentes
-
-### 🔍 Detecção Automática de Arquivos
-- **Busca flexível:** Encontra arquivos mesmo com variações no nome
-- **Duplicados:** Detecta e usa automaticamente arquivos com `(1)`, `(2)`, etc.
-- **Mais recente:** Sempre usa o arquivo modificado mais recentemente
-- **Tolerante:** Funciona com diferentes formatos de nome
-
-### 🎯 Sistema Organizado
-- **Responsabilidade única:** Cada arquivo tem uma função específica
-- **Imports limpos:** Estrutura de pacotes Python adequada
-- **Manutenção fácil:** Código organizado por domínio (Genesys/Salesforce)
-- **Extensível:** Fácil adicionar novos processadores
-
-### 📊 Relatórios Claros
-- **Feedback em tempo real:** Mostra qual arquivo está sendo processado
-- **Relatório final:** Resume sucessos e falhas
-- **Status detalhado:** Identifica exatamente quais bases foram processadas
-
-## ⚙️ Configuração Inicial
-
-### 1. Credenciais Google Sheets
-Coloque o arquivo `boletim.json` em:
-- `config/boletim.json` (recomendado)
-- Ou na raiz do projeto
-
-### 2. Dependências
 ```bash
-pip install pandas gspread google-auth openpyxl
+# Renomear CSVs para padrão correto
+python renomeador_inteligente.py
+
+# Via script auxiliar
+python scripts/executar_renomeacao.py
 ```
 
-### 3. Estrutura de Pastas
+**Padrão de Nomenclatura:**
+- `BASE_GENESYS_VOZ_HC.csv`
+- `BASE_GENESYS_TEXTO_HC.csv`
+- `BASE_GENESYS_GESTAO_HC.csv`
+- `BASE_SALESFORCE_CRIADO.csv`
+- `BASE_SALESFORCE_RESOLVIDO.csv`
+- `BASE_SALESFORCE_COMENTARIO_BKO.csv`
+- `BASE_PRODUTIVIDADE.csv`
+- `BASE_TEMPO.csv`
+
+---
+
+## 📊 Sistemas Suportados
+
+### **1. Genesys** 📞
+
+#### **Bases Processadas:**
+| Base | Arquivo CSV | Planilha Destino | Aba |
+|------|-------------|------------------|-----|
+| **VOZ HC** | `BASE_GENESYS_VOZ_HC.csv` | Genesys | `BASE VOZ HC` |
+| **TEXTO HC** | `BASE_GENESYS_TEXTO_HC.csv` | Genesys | `BASE TEXTO HC` |
+| **Gestão** | `BASE_GENESYS_GESTAO_HC.csv` | Genesys | `BASE GE COLABORADOR` |
+
+#### **ID da Planilha:**
+```
+1e48VAZd2v5ZEQ4OK7yDu6KhrRi7mft5eVkh3qwZcdZE
+```
+
+#### **Fórmula Aplicada:**
+- Coluna P: `=TEXT(C{row};"DD/M")` (formata data)
+
+---
+
+### **2. Salesforce** 💼
+
+#### **Bases Processadas:**
+| Base | Arquivo CSV | Planilha Destino | Aba |
+|------|-------------|------------------|-----|
+| **CRIADO** | `BASE_SALESFORCE_CRIADO.csv` | Salesforce | `BASE ATUALIZADA CORRETA - CRIADO` |
+| **RESOLVIDO** | `BASE_SALESFORCE_RESOLVIDO.csv` | Salesforce | `BASE ATUALIZADA CORRETA - RESOLVIDA` |
+| **BKO** | `BASE_SALESFORCE_COMENTARIO_BKO.csv` | Salesforce | `BASE ATUALIZADA CORRETA - COMENTARIO BKO` |
+
+#### **ID da Planilha:**
+```
+1luDIE2OSjunty4-l_pHkRKsP3AMCMOes80A4Xc607Qk
+```
+
+#### **Fórmulas Aplicadas (RESOLVIDA):**
+- Coluna U: `=B{row}` (ANALISE_ABERTURA)
+- Coluna V: `=C{row}` (ANALISE_FECHAMENTO)
+- Coluna W: `=SE(V{row}=""; ""; V{row}-U{row})` (TMR)
+- Coluna X: `=SEERRO(ÍNDICE($Z$2:$Z$3;CORRESP(VERDADEIRO;W{row}<=$AA$2:$AA$3;0));"")` (Prazo)
+- Coluna Y: `=SE(C{row}=""; ""; VALOR(C{row}))` (DATA FECHAMENTO)
+- Coluna AB: `=TEXTO(Y{row};"dd/mm/yyyy")` (DATA FECHAMENTO teste)
+
+#### **Fórmulas Aplicadas (COMENTÁRIO BKO):**
+- Coluna R: Fórmula de análise de comentários
+
+---
+
+### **3. Produtividade** �
+
+#### **Bases Processadas:**
+| Base | Arquivo CSV | Planilha Destino | Aba |
+|------|-------------|------------------|-----|
+| **PRODUTIVIDADE** | `BASE_PRODUTIVIDADE.csv` | Genesys | `BASE PRODUTIVIDADE` |
+| **TEMPO** | `BASE_TEMPO.csv` | Genesys | `BASE TEMPO` |
+
+#### **ID da Planilha:**
+```
+1e48VAZd2v5ZEQ4OK7yDu6KhrRi7mft5eVkh3qwZcdZE
+```
+
+---
+
+## 🧠 Arquitetura Técnica
+
+### **Camada Core** (`src/core/`)
+
+#### **`google_sheets_base.py`**
+Classe base com funcionalidades compartilhadas:
+
+```python
+class GoogleSheetsBase:
+    def __init__(self, id_planilha, abas_config)
+    def autenticar()                          # Autenticação Google Sheets
+    def enviar_csv_para_planilha()           # Upload com formatação verde
+    def limpar_numero_formato()              # Remove .0, aspas, vírgulas
+    def limpar_data_formato()                # Limpeza agressiva de datas
+    def aplicar_formulas_linhas_novas()      # Aplica fórmulas em novas linhas
+    def _letra_para_indice()                 # Converte letra coluna → índice
+```
+
+**Recursos:**
+- ✅ Detecção automática de encoding (5 tentativas)
+- ✅ Expansão automática de planilha se necessário
+- ✅ Coloração verde Leroy Merlin automática
+- ✅ Retorno de linha_inicial e linha_final para fórmulas
+- ✅ Modo `value_input_option='USER_ENTERED'` (evita apóstrofos em datas)
+
+---
+
+### **Camada Processadores** (`src/processadores/`)
+
+#### **Genesys** (`processadores/genesys/`)
+```python
+class ProcessadorGenesys(GoogleSheetsBase):
+    def processar_voz_hc()           # VOZ HC
+    def processar_texto_hc()         # TEXTO HC
+    def processar_gestao_entrega()   # Gestão da Entrega
+```
+
+#### **Salesforce** (`processadores/salesforce/`)
+```python
+class ProcessadorSalesforceCriado(GoogleSheetsBase):
+    def processar()                  # BASE CRIADO
+
+class ProcessadorSalesforceResolvido(GoogleSheetsBase):
+    FORMULAS_CONFIG = {...}          # 6 fórmulas
+    def processar()                  # BASE RESOLVIDA + Fórmulas
+
+class ProcessadorSalesforceComentarioBKO(GoogleSheetsBase):
+    FORMULAS_CONFIG = {...}          # 1 fórmula
+    def processar()                  # BASE COMENTÁRIO BKO
+```
+
+#### **Produtividade** (`processadores/produtividade/`)
+```python
+class ProcessadorProdutividade(GoogleSheetsBase):
+    def processar_produtividade()    # BASE PRODUTIVIDADE
+    def processar_tempo()            # BASE TEMPO
+```
+
+---
+
+### **Camada Interface** 
+
+#### **CLI** (`main.py` / `src/main.py`)
+```python
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--salesforce')
+    parser.add_argument('--genesys')
+    parser.add_argument('--produtividade')
+    # ... processa argumentos e executa
+```
+
+#### **GUI** (`interface_visual.py`)
+```python
+class AutomacaoLeroyMerlinGUI:
+    def criar_interface()            # Cria janela 1400x800
+    def criar_kpis_dashboard()       # 4 KPIs dinâmicos
+    def executar_automacao()         # Thread para execução
+    def registrar_execucao()         # Atualiza KPIs após execução
+    def carregar_kpis()              # Carrega de JSON
+    def salvar_kpis()                # Salva em JSON
+```
+
+---
+
+## ⚙️ Configuração
+
+### **1. Credenciais Google Sheets** 🔑
+
+#### **Obter Credenciais:**
+1. Acesse [Google Cloud Console](https://console.cloud.google.com/)
+2. Crie projeto ou use existente
+3. Ative **Google Sheets API**
+4. Crie **Service Account**
+5. Gere chave JSON
+6. Baixe como `boletim.json`
+
+#### **Configurar:**
 ```bash
-# Criar pasta de dados (se não existir)
-mkdir dados
+# Copiar para config/
+cp ~/Downloads/boletim.json config/
 
-# Colocar seus CSVs na pasta dados/
+# Copiar para raiz (o sistema usa daqui)
+cp ~/Downloads/boletim.json ./
 ```
 
-## 🔧 Arquitetura Técnica
+#### **Compartilhar Planilhas:**
+1. Abrir planilha no Google Sheets
+2. Clicar em "Compartilhar"
+3. Adicionar email da Service Account:
+   ```
+   boletim-315@sublime-shift-472919-f0.iam.gserviceaccount.com
+   ```
+4. Definir permissão como **Editor**
+5. Desmarcar "Notificar pessoas"
 
-### Core (`core/`)
-- **`google_sheets_base.py`**: Classe base com funcionalidades comuns
-  - Autenticação Google Sheets
-  - Detecção inteligente de arquivos
-  - Upload para planilhas
-  - Tratamento de erros
+---
 
-### Processadores (`processadores/`)
-- **Genesys**: Especializado em arquivos do sistema Genesys
-- **Salesforce**: Especializado em relatórios do Salesforce
-- **Modular**: Cada processador é independente
+### **2. Dependências Python** 📦
 
-### Entrada Principal (`main.py`)
-- **CLI amigável**: Argumentos de linha de comando
-- **Orquestração**: Coordena todos os processadores
-- **Relatórios**: Feedback completo do processamento
+```bash
+# Instalar via requirements.txt
+pip install -r requirements.txt
 
-## 🚨 Solução de Problemas
-
-### Arquivo não encontrado
+# Ou manualmente
+pip install gspread pandas python-dateutil oauth2client
 ```
-❌ Arquivo não encontrado para padrão: arquivo.csv
-```
-**Solução:** Verifique se o arquivo está na pasta `dados/`
 
-### Erro de credenciais
+**Dependências Principais:**
+- `gspread` - Google Sheets API
+- `pandas` - Manipulação de dados
+- `python-dateutil` - Parsing de datas
+- `oauth2client` - Autenticação Google
+
+---
+
+### **3. Estrutura de Pastas** 📁
+
+```bash
+# Criar pasta data/ se não existir
+mkdir data
+
+# Colocar CSVs na pasta
+mv ~/Downloads/*.csv data/
+
+# Renomear para padrão correto
+python renomeador_inteligente.py
+```
+
+---
+
+## 🎨 Interface Gráfica
+
+### **Dashboard Profissional**
+
+#### **Cores Leroy Merlin:**
+- 🟢 **Verde Principal**: `#00A859`
+- 🟢 **Verde Escuro**: `#00864A`
+- ⚫ **Preto Suave**: `#1A1A1A`
+- ⚫ **Cinza Escuro**: `#2A2A2A`
+- ⚪ **Branco**: `#FFFFFF`
+- ⚪ **Cinza Claro**: `#F5F5F5`
+
+#### **4 KPIs Dinâmicos:**
+1. **Total Processado** - Total de execuções do sistema
+2. **Taxa de Sucesso** - Porcentagem de sucessos (%)
+3. **Tempo Médio** - Tempo médio de execução (segundos)
+4. **Última Execução** - Timestamp da última execução
+
+#### **Recursos:**
+- ✅ Atualização automática após cada execução
+- ✅ Persistência em `config/kpis_historico.json`
+- ✅ Log em tempo real com scroll automático
+- ✅ Botões de execução seletiva
+- ✅ Links diretos para planilhas
+- ✅ Tema escuro profissional
+
+---
+
+## � Troubleshooting
+
+### **Problema 1: Credenciais não encontradas**
 ```
 ❌ Arquivo de credenciais 'boletim.json' não encontrado
 ```
-**Solução:** Coloque `boletim.json` na pasta `config/`
 
-### Erro de importação
+**Soluções:**
+```bash
+# 1. Verificar se arquivo existe
+ls config/boletim.json
+ls boletim.json
+
+# 2. Copiar de config/ para raiz
+cp config/boletim.json ./
+
+# 3. Baixar novamente do Google Cloud
 ```
-❌ Erro ao importar processador
+
+---
+
+### **Problema 2: Arquivo CSV não encontrado**
 ```
-**Solução:** Execute a partir da pasta `automacao_boletins/`
+❌ Arquivo não encontrado: BASE_SALESFORCE_CRIADO.csv
+```
 
-## 🎯 Vantagens da Nova Estrutura
+**Soluções:**
+```bash
+# 1. Verificar arquivos na pasta data/
+ls data/*.csv
 
-✅ **Organização clara:** Cada pasta tem responsabilidade específica
-✅ **Manutenção fácil:** Código modular e bem estruturado  
-✅ **Escalável:** Fácil adicionar novos processadores
-✅ **Robusto:** Tratamento de erros em todos os níveis
-✅ **Inteligente:** Detecção automática de arquivos duplicados
-✅ **Profissional:** Estrutura padrão da indústria
-✅ **Documentado:** Documentação completa e clara
+# 2. Renomear arquivos para padrão correto
+python renomeador_inteligente.py
 
-## 📞 Suporte
+# 3. Mover CSVs para pasta data/
+mv ~/Downloads/*.csv data/
+```
 
-Para dúvidas ou problemas:
-1. Verifique este README
-2. Execute `python main.py --help`
-3. Confira os logs de erro no terminal
+---
+
+### **Problema 3: Datas com apóstrofo `'20/10/2025`**
+```
+Datas aparecem como: '20/10/2025
+```
+
+**Solução:**
+✅ **JÁ CORRIGIDO NA v2.4!**
+- Sistema usa `value_input_option='USER_ENTERED'`
+- Método `limpar_data_formato()` remove apóstrofos
+- Detecção automática de colunas de data
+
+---
+
+### **Problema 4: Erro de encoding**
+```
+❌ 'utf-8' codec can't decode byte 0xfa
+```
+
+**Solução:**
+✅ **Sistema tenta automaticamente:**
+1. UTF-8-SIG
+2. UTF-8
+3. Latin-1
+4. CP1252
+5. ISO-8859-1
+
+Se falhar, abrir CSV no Excel e salvar como UTF-8.
+
+---
+
+### **Problema 5: Fórmulas não aplicadas**
+```
+Fórmulas não aparecem nas células
+```
+
+**Soluções:**
+1. ✅ Verificar se `resultado['linha_inicial']` e `['linha_final']` existem
+2. ✅ Confirmar que base tem `FORMULAS_CONFIG`
+3. ✅ Ver logs: deve exibir "🧮 Aplicando X fórmulas..."
+4. ✅ Testar com `tests/teste_formulas_salesforce.py`
+
+---
+
+### **Problema 6: Erro ao importar módulo**
+```
+ModuleNotFoundError: No module named 'gspread'
+```
+
+**Solução:**
+```bash
+# Reinstalar dependências
+pip install -r requirements.txt
+
+# Ou instalar manualmente
+pip install gspread pandas python-dateutil oauth2client
+```
+
+---
+
+### **Problema 7: Permissão negada na planilha**
+```
+❌ Permission denied: You don't have permission to access this resource
+```
+
+**Solução:**
+1. Abrir planilha no navegador
+2. Clicar em "Compartilhar"
+3. Adicionar email da Service Account (boletim-315@...)
+4. Definir como **Editor**
+5. Salvar
+
+---
+
+### **Problema 8: Interface não abre**
+```
+Duplo clique em interface.bat não faz nada
+```
+
+**Soluções:**
+```bash
+# 1. Verificar Python instalado
+python --version
+
+# 2. Executar direto
+python interface_visual.py
+
+# 3. Ver erros no terminal
+python interface_visual.py 2>&1 | more
+```
+
+---
+
+### **Problema 9: KPIs não atualizam**
+```
+Dashboard mostra sempre os mesmos valores
+```
+
+**Soluções:**
+```bash
+# 1. Verificar arquivo existe
+ls config/kpis_historico.json
+
+# 2. Resetar KPIs
+rm config/kpis_historico.json
+
+# 3. Executar automação novamente
+python main.py --salesforce
+```
+
+---
+
+### **Problema 10: Coloração verde não aplica**
+```
+Linhas não ficam verdes na planilha
+```
+
+**Causa:**
+- Formatação condicional da planilha pode sobrescrever
+- Permissões insuficientes
+
+**Solução:**
+- Verificar permissões (deve ser Editor, não Leitor)
+- Remover formatação condicional conflitante da planilha
+
+---
+
+## � Novidades v2.4
+
+### **✨ Recursos Novos**
+
+#### **1. Interface Gráfica Profissional** 🎨
+- Dashboard moderno com cores Leroy Merlin
+- 4 KPIs dinâmicos e atualizados automaticamente
+- Log em tempo real com scroll automático
+- Tema escuro profissional
+
+#### **2. Sistema de KPIs Dinâmicos** 📊
+- Total processado
+- Taxa de sucesso (%)
+- Tempo médio de execução
+- Última execução
+- Persistência em JSON
+
+#### **3. Correção de Datas** 📅
+- **PROBLEMA:** Datas apareciam com apóstrofo (`'20/10/2025`)
+- **SOLUÇÃO:** Implementado `value_input_option='USER_ENTERED'`
+- **RESULTADO:** Datas limpas e interpretadas corretamente pelo Sheets
+
+#### **4. Aplicação Inteligente de Fórmulas** 🧮
+- Fórmulas aplicadas APENAS em linhas novas (não em todas)
+- Sistema copyPaste para simular Ctrl+C/Ctrl+V
+- Retorno de `linha_inicial` e `linha_final` do upload
+- 6 fórmulas na base RESOLVIDA automatizadas
+
+#### **5. Limpeza Avançada de Dados** 🧹
+- Método `limpar_data_formato()` com loop agressivo
+- Remove: `'`, `"`, `,`, `` ` ``, `´`, Unicode invisíveis
+- Detecção automática de colunas de data por palavras-chave
+- Limpeza diferencial (datas vs números)
+
+#### **6. Documentação Completa** 📚
+- README.md profissional com badges
+- 4 arquivos .md documentando cada pasta (tests, data, config, utils)
+- setup.py para instalação como pacote
+- .editorconfig para padronização
+
+#### **7. Estrutura Profissional** 🏗️
+- Organização enterprise-ready
+- Separação clara de responsabilidades
+- Código modular e escalável
+- Git configurado corretamente
+
+---
+
+## 🎯 Vantagens do Sistema
+
+### **Para Usuários Finais:**
+- ✅ Interface gráfica amigável (não precisa conhecer programação)
+- ✅ Duplo clique nos .bat para executar
+- ✅ Feedback visual de progresso
+- ✅ Relatórios claros e objetivos
+
+### **Para Desenvolvedores:**
+- ✅ Código organizado e documentado
+- ✅ Estrutura modular (fácil adicionar novos processadores)
+- ✅ Testes automatizados
+- ✅ Padrões da indústria (PEP 8, docstrings, type hints)
+
+### **Para Gestão:**
+- ✅ KPIs automáticos de execução
+- ✅ Histórico de processamentos
+- ✅ Taxa de sucesso monitorada
+- ✅ Tempo médio de execução
+
+---
+
+## 📞 Suporte e Documentação
+
+### **Documentação Adicional:**
+- 📖 [`README.md`](../README.md) - Documentação principal
+- 📖 [`tests/tests.md`](../tests/tests.md) - Guia de testes
+- 📖 [`data/data.md`](../data/data.md) - Formatos de dados
+- 📖 [`config/config.md`](../config/config.md) - Configurações
+- 📖 [`utils/utils.md`](../utils/utils.md) - Utilitários
+- 📖 [`docs/Implementações.md`](Implementações.md) - Histórico de implementações
+- 📖 [`docs/Renomear.md`](Renomear.md) - Guia de renomeação
+
+### **Para Dúvidas ou Problemas:**
+1. ✅ Consultar esta documentação
+2. ✅ Executar `python main.py --help`
+3. ✅ Verificar logs de erro no terminal
+4. ✅ Executar testes: `python tests/teste_sistema_completo.py`
+5. ✅ Consultar troubleshooting acima
+
+### **Recursos Técnicos:**
+- 🔗 [Google Sheets API](https://developers.google.com/sheets/api)
+- 🔗 [gspread Documentation](https://docs.gspread.org/)
+- 🔗 [pandas Documentation](https://pandas.pydata.org/docs/)
+- 🔗 [Python argparse](https://docs.python.org/3/library/argparse.html)
+
+---
+
+## 🔄 Histórico de Versões
+
+### **v2.4.0** (21/10/2025) - ATUAL
+- ✅ Interface gráfica profissional
+- ✅ KPIs dinâmicos com persistência
+- ✅ Correção de apóstrofos em datas (USER_ENTERED)
+- ✅ Fórmulas aplicadas em linhas novas
+- ✅ Documentação completa (4 arquivos .md)
+- ✅ setup.py e .editorconfig
+- ✅ README com badges profissionais
+
+### **v2.3.0**
+- ✅ Renomeador inteligente de CSVs
+- ✅ Detecção automática de encoding
+- ✅ Limpeza de .0 em números
+- ✅ Coloração verde Leroy Merlin
+
+### **v2.2.0**
+- ✅ Processador de Produtividade
+- ✅ Modo complementar (preserva dados)
+- ✅ Logs detalhados
+
+### **v2.1.0**
+- ✅ Processadores Genesys e Salesforce
+- ✅ Estrutura modular
+- ✅ CLI com argumentos
+
+### **v2.0.0**
+- ✅ Refatoração completa
+- ✅ Arquitetura orientada a objetos
+- ✅ Classe base GoogleSheetsBase
+
+---
+
+## 📄 Licença e Créditos
+
+**Projeto:** Sistema RPA Leroy Merlin  
+**Versão:** 2.4.0  
+**Data:** 21 de Outubro de 2025  
+**Mantido por:** Equipe RPA Leroy Merlin  
+**Repositório:** [github.com/Ryanditko/rpa-leroy-merlin](https://github.com/Ryanditko/rpa-leroy-merlin)
+
+---
+
+<div align="center">
+
+**Desenvolvido com 💚 para Leroy Merlin**
+
+![Verde Leroy Merlin](https://img.shields.io/badge/Verde_Leroy_Merlin-%2300A859-00A859?style=for-the-badge)
+
+*Sistema RPA • Processamento Automatizado • Interface Profissional v2.4*
+
+**© 2025 Leroy Merlin - Todos os direitos reservados**
+
+</div>

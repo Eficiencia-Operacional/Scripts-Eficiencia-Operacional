@@ -1,8 +1,8 @@
-# 🚀 Automação Leroy Merlin - RPA
+# Automação Leroy Merlin - RPA
 
 <div align="center">
 
-![Leroy Merlin Logo](img/leroy-merlin-logo.png)
+<img src="img/leroy.png" alt="Leroy Merlin Logo" width="200">
 
 **Sistema RPA Profissional para Processamento Automatizado de Dados**
 
@@ -449,5 +449,5 @@ Após configuração:
 
 ---
 
-**Última atualização:** 16 de Outubro de 2025  
+**Última atualização:** 21/10/2025 
 **Status:** ✅ Sistema Operacional
