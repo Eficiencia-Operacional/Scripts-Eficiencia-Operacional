@@ -10,45 +10,49 @@ if src_dir not in sys.path:
 from core.google_sheets_base import GoogleSheetsBase
 
 class Produtividade(GoogleSheetsBase):
-    """Processador especializado para arquivos de produtividade da Genesys"""
+    """Processador especializado para arquivos de produtividade"""
     
     def __init__(self, id_planilha=None):
-        # Usar ID específico se fornecido, senão usar padrão do Genesys
+        # Usar ID específico se fornecido, senão usar padrão
         if id_planilha:
             super().__init__(id_planilha=id_planilha)
         else:
-            # ID da planilha oficial do Genesys
-            super().__init__(id_planilha="1nzSa4cnPOPau1-BF221Vc6VEvUiFe6D1suebCcQmAT4")
+            # ID da planilha oficial de Produtividade ATUALIZADO
+            super().__init__(id_planilha="1XftLATi3eAQXYAk0Em1SY5tMisOBra8kkViFBEjEem0")
         self.NOME_ABAS = {
             "produtividade": "BASE PROD", 
             "tempo": "BASE TEMPO"
         }
 
-        # Padrões de arquivos baseados nos nomes padronizados pelo renomeador
+        # Padrões de arquivos - nomes renomeados dos CSVs
         self.PADROES_ARQUIVOS = {
-            "produtividade": "BASE_PRODUTIVIDADE", 
-            "tempo": "BASE_TEMPO"
+            "produtividade": "BASE_PRODUTIVIDADE.csv",  # Nome renomeado
+            "tempo": "BASE_TEMPO.csv"                    # Nome renomeado
         }
     
     def processar_produtividade(self, caminho_csv=None):
         """Processa base de produtividade (Base - Visão Produtiva)"""
         if caminho_csv is None:
-            caminho_csv = f"{self.PADROES_ARQUIVOS['produtividade']}.csv"
+            caminho_csv = self.PADROES_ARQUIVOS['produtividade']
         
-        return self.enviar_csv_para_planilha(
+        resultado = self.enviar_csv_para_planilha(
             caminho_csv,
             self.NOME_ABAS["produtividade"]
         )
+        
+        return resultado.get('sucesso', False)
     
     def processar_tempo(self, caminho_csv=None):
         """Processa base de tempo (Base tempo - Visão Produtiva)"""
         if caminho_csv is None:
-            caminho_csv = f"{self.PADROES_ARQUIVOS['tempo']}.csv"
+            caminho_csv = self.PADROES_ARQUIVOS['tempo']
         
-        return self.enviar_csv_para_planilha(
+        resultado = self.enviar_csv_para_planilha(
             caminho_csv, 
             self.NOME_ABAS["tempo"]
         )
+        
+        return resultado.get('sucesso', False)
     
     # função para processar todos os csvs 
     def processar_todos(self):
