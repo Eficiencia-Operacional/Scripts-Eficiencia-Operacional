@@ -88,7 +88,7 @@ class AutomacaoLeroyMerlinGUI:
             'vermelho': '#F44336'           # Vermelho erro
         }
         
-        # KPIs para dashboard - DADOS DINÂMICOS
+        # KPIs para dashboard - DADOS DINÂMICOS 
         self.kpis_data = {
             'total_processados': 0,
             'taxa_sucesso': 0.0,
