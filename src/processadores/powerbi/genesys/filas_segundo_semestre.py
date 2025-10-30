@@ -152,10 +152,18 @@ class ProcessadorFilasSegundoSemestre(GoogleSheetsBase):
                 aba.append_rows(dados, value_input_option='USER_ENTERED')
                 print(f"   ✅ {len(dados)} linhas enviadas")
                 
-                # Formatar DADOS com amarelo CLARO
+                # Formatar PRIMEIRA LINHA de dados com amarelo FORTE
                 print("\n🎨 Aplicando formatação AMARELA nos DADOS...")
-                self._aplicar_formatacao_amarela(aba, linha_inicial, len(dados), len(df.columns))
-                print("   ✅ Dados formatados (amarelo claro #FFF299)")
+                if len(dados) > 0:
+                    print(f"   🎨 Primeira linha de dados: amarelo FORTE (#FFA800)")
+                    self._aplicar_formatacao_linha_forte(aba, linha_inicial, len(df.columns))
+                
+                # Formatar DEMAIS LINHAS com amarelo CLARO
+                if len(dados) > 1:
+                    print(f"   🎨 Demais linhas: amarelo claro (#FFF299)")
+                    self._aplicar_formatacao_amarela(aba, linha_inicial + 1, len(dados) - 1, len(df.columns))
+                
+                print("   ✅ Dados formatados com destaque na primeira linha")
             
             resultado = {
                 'sucesso': True,
@@ -303,6 +311,35 @@ class ProcessadorFilasSegundoSemestre(GoogleSheetsBase):
             
         except Exception as e:
             print(f"   ⚠️  Aviso ao aplicar formatação no cabeçalho: {str(e)}")
+    
+    def _aplicar_formatacao_linha_forte(self, aba, linha, num_colunas):
+        """
+        Aplica formatação AMARELA FORTE na primeira linha de dados (destaque)
+        
+        Args:
+            aba: Worksheet do gspread
+            linha: Linha para formatar
+            num_colunas: Número de colunas
+        """
+        try:
+            # Formato AMARELO FORTE para primeira linha de dados
+            formato_forte = {
+                'backgroundColor': self.COR_AMARELA_FORTE,
+                'horizontalAlignment': 'LEFT',
+                'verticalAlignment': 'MIDDLE',
+                'textFormat': {
+                    'fontSize': 10,
+                    'fontFamily': 'Arial',
+                    'bold': True  # Negrito para destaque
+                }
+            }
+            
+            # Aplicar formato
+            range_notacao = f'A{linha}:{self._col_to_letter(num_colunas)}{linha}'
+            aba.format(range_notacao, formato_forte)
+            
+        except Exception as e:
+            print(f"   ⚠️  Aviso ao aplicar formatação forte: {str(e)}")
     
     def _aplicar_formatacao_amarela(self, aba, linha_inicial, num_linhas, num_colunas):
         """
