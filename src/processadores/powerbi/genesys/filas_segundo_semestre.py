@@ -70,11 +70,12 @@ class ProcessadorFilasSegundoSemestre(GoogleSheetsBase):
             'blue': 0.0
         }
         
-        # Dados: Amarelo claro
+        # Dados: Amarelo MÉDIO/VIBRANTE (mais forte que o anterior)
+        # Antes era #FFF299 (muito claro), agora #FFE066 (mais vibrante)
         self.COR_AMARELA_CLARA = {
-            'red': 1.0,
-            'green': 0.95,
-            'blue': 0.6
+            'red': 1.0,      # 255
+            'green': 0.88,   # 224
+            'blue': 0.4      # 102
         }
         
         print("✅ ProcessadorFilasSegundoSemestre inicializado")

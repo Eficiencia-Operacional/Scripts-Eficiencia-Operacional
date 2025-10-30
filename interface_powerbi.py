@@ -603,6 +603,37 @@ class AutomacaoLeroyMerlinGUI:
         except Exception as e:
             print(f"❌ Erro ao registrar execução: {e}")
     
+    def atualizar_kpis_com_resultados(self, resultados, tempo_total):
+        """Atualiza KPIs baseado nos resultados reais dos processadores"""
+        try:
+            total_linhas = sum(r.get('linhas_processadas', 0) for r in resultados)
+            
+            # Atualizar taxa de sucesso
+            sucesso_count = len([r for r in resultados if r.get('sucesso')])
+            total_count = len(resultados)
+            if total_count > 0:
+                taxa = (sucesso_count / total_count) * 100
+                self.kpis_data['taxa_sucesso'] = round(taxa, 1)
+            
+            # Atualizar tempo médio
+            if tempo_total > 0:
+                tempo_atual = self.kpis_data['tempo_medio']
+                total_exec = self.kpis_data['arquivos_processados'] + 1
+                
+                if total_exec > 1:
+                    novo_tempo = ((tempo_atual * (total_exec - 1)) + tempo_total) / total_exec
+                else:
+                    novo_tempo = tempo_total
+                
+                self.kpis_data['tempo_medio'] = int(novo_tempo)
+            
+            # Salvar e atualizar interface
+            self.salvar_kpis()
+            self.atualizar_kpis()
+            
+        except Exception as e:
+            print(f"❌ Erro ao atualizar KPIs: {e}")
+    
     def extrair_total_registros(self, output):
         """Extrai o total de registros processados do output"""
         try:
@@ -1330,8 +1361,8 @@ class AutomacaoLeroyMerlinGUI:
             return
         
         # Verificar se pelo menos uma opção está selecionada
-        if not self.var_genesys.get() and not self.var_salesforce.get() and not self.var_produtividade.get():
-            messagebox.showerror("Erro", "Selecione pelo menos uma opção (Genesys, Salesforce ou Produtividade)!")
+        if not self.var_primeiro_semestre.get() and not self.var_segundo_semestre.get():
+            messagebox.showerror("Erro", "Selecione pelo menos um semestre (PRIMEIRO ou SEGUNDO)!")
             return
         
         # Iniciar execução em thread separada
@@ -1339,141 +1370,117 @@ class AutomacaoLeroyMerlinGUI:
         thread.start()
     
     def _executar_automacao_thread(self):
-        """Thread para execução da automação com encoding robusto"""
+        """Thread para execução da automação Power BI"""
         try:
             self.executando = True
             
             # Atualizar interface
             self.botao_executar.configure(text="⏳ EXECUTANDO...", state='disabled')
-            self.botao_genesys.configure(state='disabled')
-            self.botao_salesforce.configure(state='disabled')
-            self.botao_produtividade.configure(state='disabled')
+            self.botao_primeiro.configure(state='disabled')
+            self.botao_segundo.configure(state='disabled')
             self.botao_renomear.configure(state='disabled')
             self.status_label.configure(text="🔄 Executando automação...", fg=self.CORES['laranja'])
             self.progresso.start()
             
-            self.log_mensagem("🚀 Iniciando automação...", 'sucesso')
+            self.log_mensagem("🚀 Iniciando automação Power BI...", 'sucesso')
             
-            # Construir comando
-            comando = ["python", "main.py"]
+            # Determinar quais semestres processar
+            processar_primeiro = self.var_primeiro_semestre.get()
+            processar_segundo = self.var_segundo_semestre.get()
             
-            # Adicionar opções baseadas nos checkboxes (lógica melhorada para três sistemas)
-            sistemas_selecionados = []
-            if self.var_genesys.get():
-                sistemas_selecionados.append("genesys")
-            if self.var_salesforce.get():
-                sistemas_selecionados.append("salesforce")
-            if self.var_produtividade.get():
-                sistemas_selecionados.append("produtividade")
+            if not processar_primeiro and not processar_segundo:
+                self.log_mensagem("⚠️ Nenhum semestre selecionado!", 'erro')
+                raise Exception("Selecione pelo menos um semestre para processar")
             
-            # Se apenas um sistema está selecionado, usar parâmetro específico
-            if len(sistemas_selecionados) == 1:
-                comando.append(f"--{sistemas_selecionados[0]}")
-                self.log_mensagem(f"🎯 Modo: Apenas {sistemas_selecionados[0].title()}", 'info')
-            else:
-                # Se múltiplos ou todos, não adicionar parâmetro específico (processará todos selecionados)
-                sistemas_texto = " + ".join([s.title() for s in sistemas_selecionados])
-                self.log_mensagem(f"🎯 Modo: {sistemas_texto}", 'info')
+            # Caminho do arquivo CSV
+            arquivo_csv = os.path.join(current_dir, 'data', 'Filas Genesys - Todas as Filas .csv')
             
-            if self.var_verbose.get():
-                comando.append("--verbose")
-                self.log_mensagem("🔍 Modo detalhado ativado", 'info')
+            if not os.path.exists(arquivo_csv):
+                self.log_mensagem(f"❌ Arquivo não encontrado: {arquivo_csv}", 'erro')
+                raise FileNotFoundError(f"Arquivo não encontrado: {arquivo_csv}")
             
-            # Configurar variáveis de ambiente para encoding
-            env = os.environ.copy()
-            env['PYTHONIOENCODING'] = 'utf-8'
-            env['PYTHONLEGACYWINDOWSFSENCODING'] = '0'
+            self.log_mensagem(f"📁 Arquivo: {os.path.basename(arquivo_csv)}", 'info')
             
-            self.log_mensagem(f"📋 Comando: {' '.join(comando)}", 'info')
+            # Caminho do arquivo de credenciais
+            arquivo_credenciais = os.path.join(current_dir, 'config', 'boletim.json')
             
-            # Executar comando com encoding robusto
-            processo = subprocess.Popen(
-                comando,
-                cwd=current_dir,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,  # Capturar stderr separadamente
-                text=True,
-                encoding='utf-8',
-                errors='replace',  # Substituir caracteres inválidos
-                universal_newlines=True,
-                env=env,
-                bufsize=0  # Sem buffer para saída em tempo real
-            )
+            if not os.path.exists(arquivo_credenciais):
+                self.log_mensagem(f"❌ Credenciais não encontradas: {arquivo_credenciais}", 'erro')
+                raise FileNotFoundError(f"Credenciais não encontradas: {arquivo_credenciais}")
             
-            # Ler saída em tempo real (stdout e stderr)
-            import select
-            import time
+            resultados = []
+            inicio_total = datetime.now()
             
-            # Para Windows, ler linha por linha
-            linha_count = 0
-            while processo.poll() is None:
-                # Ler stdout
-                if processo.stdout.readable():
-                    linha = processo.stdout.readline()
-                    if linha:
-                        linha = linha.strip()
-                        if linha:
-                            linha_count += 1
-                            # Detectar tipo de mensagem baseado em emojis/símbolos
-                            if '✅' in linha or 'sucesso' in linha.lower():
-                                self.log_mensagem(f"[{linha_count:03d}] {linha}", 'sucesso')
-                            elif '❌' in linha or 'erro' in linha.lower() or 'falha' in linha.lower():
-                                self.log_mensagem(f"[{linha_count:03d}] {linha}", 'erro')
-                            elif '⚠️' in linha or 'aviso' in linha.lower():
-                                self.log_mensagem(f"[{linha_count:03d}] {linha}", 'aviso')
-                            elif '🔍' in linha or '📊' in linha or '💼' in linha:
-                                self.log_mensagem(f"[{linha_count:03d}] {linha}", 'info')
-                            elif linha.startswith('=') or linha.startswith('-'):
-                                self.log_mensagem(f"[{linha_count:03d}] {linha}", 'destaque')
-                            else:
-                                self.log_mensagem(f"[{linha_count:03d}] {linha}")
+            # Processar PRIMEIRO SEMESTRE
+            if processar_primeiro:
+                self.log_mensagem("\n" + "="*60, 'destaque')
+                self.log_mensagem("📊 PROCESSANDO PRIMEIRO SEMESTRE", 'destaque')
+                self.log_mensagem("="*60, 'destaque')
                 
-                time.sleep(0.01)  # Pequena pausa para não sobrecarregar CPU
+                try:
+                    processador = ProcessadorFilasPrimeiroSemestre(arquivo_credenciais)
+                    self.log_mensagem("✅ Processador PRIMEIRO SEMESTRE inicializado", 'sucesso')
+                    
+                    resultado = processador.processar_e_enviar(arquivo_csv)
+                    
+                    if resultado.get('sucesso'):
+                        self.log_mensagem(f"✅ PRIMEIRO SEMESTRE processado com sucesso!", 'sucesso')
+                        self.log_mensagem(f"   📊 Linhas: {resultado.get('linhas_processadas', 0)}", 'info')
+                        resultados.append(resultado)
+                    else:
+                        self.log_mensagem(f"❌ Erro ao processar PRIMEIRO SEMESTRE", 'erro')
+                        
+                except Exception as e:
+                    self.log_mensagem(f"❌ Erro PRIMEIRO SEMESTRE: {str(e)}", 'erro')
+                    import traceback
+                    self.log_mensagem(f"🔍 Detalhes: {traceback.format_exc()}", 'erro')
             
-            # Ler qualquer saída restante
-            stdout_restante, stderr_output = processo.communicate()
+            # Processar SEGUNDO SEMESTRE
+            if processar_segundo:
+                self.log_mensagem("\n" + "="*60, 'destaque')
+                self.log_mensagem("📅 PROCESSANDO SEGUNDO SEMESTRE", 'destaque')
+                self.log_mensagem("="*60, 'destaque')
+                
+                try:
+                    processador = ProcessadorFilasSegundoSemestre(arquivo_credenciais)
+                    self.log_mensagem("✅ Processador SEGUNDO SEMESTRE inicializado", 'sucesso')
+                    
+                    resultado = processador.processar_e_enviar(arquivo_csv)
+                    
+                    if resultado.get('sucesso'):
+                        self.log_mensagem(f"✅ SEGUNDO SEMESTRE processado com sucesso!", 'sucesso')
+                        self.log_mensagem(f"   📊 Linhas: {resultado.get('linhas_processadas', 0)}", 'info')
+                        resultados.append(resultado)
+                    else:
+                        self.log_mensagem(f"❌ Erro ao processar SEGUNDO SEMESTRE", 'erro')
+                        
+                except Exception as e:
+                    self.log_mensagem(f"❌ Erro SEGUNDO SEMESTRE: {str(e)}", 'erro')
+                    import traceback
+                    self.log_mensagem(f"🔍 Detalhes: {traceback.format_exc()}", 'erro')
             
-            if stdout_restante:
-                for linha in stdout_restante.split('\n'):
-                    linha = linha.strip()
-                    if linha:
-                        linha_count += 1
-                        self.log_mensagem(f"[{linha_count:03d}] {linha}")
+            # Resumo final
+            fim_total = datetime.now()
+            tempo_total = (fim_total - inicio_total).total_seconds()
             
-            # Capturar stderr se houver
-            if stderr_output:
-                self.log_mensagem("🔍 Saída de erro (stderr):", 'aviso')
-                for linha in stderr_output.split('\n'):
-                    linha = linha.strip()
-                    if linha:
-                        linha_count += 1
-                        self.log_mensagem(f"[ERR{linha_count:03d}] {linha}", 'erro')
+            self.log_mensagem("\n" + "="*60, 'destaque')
+            self.log_mensagem("📈 RESUMO FINAL", 'destaque')
+            self.log_mensagem("="*60, 'destaque')
+            self.log_mensagem(f"✅ Semestres processados: {len(resultados)}", 'sucesso')
+            self.log_mensagem(f"⏱️ Tempo total: {tempo_total:.1f}s", 'info')
             
-            # Verificar código de retorno
-            if processo.returncode == 0:
-                self.log_mensagem("🎉 Automação concluída com sucesso!", 'sucesso')
-                self.status_label.configure(text="✅ Automação concluída com sucesso!", fg=self.CORES['amarelo'])
-                
-                # Registrar execução bem-sucedida com dados estimados
-                # (aqui você pode melhorar pegando dados reais do log/output)
-                registros = self.extrair_total_registros(stdout_restante)
-                tempo = self.extrair_tempo_execucao(stdout_restante)
-                self.registrar_execucao(sucesso=True, registros_processados=registros, tempo_segundos=tempo)
-                
-                messagebox.showinfo("Sucesso", "Automação concluída com sucesso! ✅")
-            else:
-                self.log_mensagem(f"❌ Automação falhou (código {processo.returncode})", 'erro')
-                self.status_label.configure(text="❌ Automação falhou", fg=self.CORES['laranja'])
-                
-                # Registrar execução com falha
-                self.registrar_execucao(sucesso=False, registros_processados=0, tempo_segundos=0)
-                
-                # Construir mensagem de erro mais detalhada
-                erro_msg = f"Automação falhou (código {processo.returncode})"
-                if stderr_output:
-                    erro_msg += f"\n\nDetalhes do erro:\n{stderr_output[:500]}"  # Limitar tamanho
-                
-                messagebox.showerror("Erro", erro_msg)
+            # Atualizar KPIs
+            if resultados:
+                self.atualizar_kpis_com_resultados(resultados, tempo_total)
+            
+            self.log_mensagem("🎉 Automação concluída com sucesso!", 'sucesso')
+            self.status_label.configure(text="✅ Automação concluída com sucesso!", fg=self.CORES['amarelo'])
+            
+            # Registrar execução bem-sucedida
+            total_registros = sum(r.get('linhas_processadas', 0) for r in resultados)
+            self.registrar_execucao(sucesso=True, registros_processados=total_registros, tempo_segundos=tempo_total)
+            
+            messagebox.showinfo("Sucesso", "Automação concluída com sucesso! ✅")
                 
         except Exception as e:
             error_msg = str(e)
@@ -1488,19 +1495,21 @@ class AutomacaoLeroyMerlinGUI:
                 if linha.strip():
                     self.log_mensagem(f"    {linha}", 'erro')
             
+            # Registrar execução com falha
+            self.registrar_execucao(sucesso=False, registros_processados=0, tempo_segundos=0)
+            
             messagebox.showerror("Erro", f"Erro na execução:\n{error_msg}\n\nVerifique o log para mais detalhes.")
             
         finally:
             # Restaurar interface
             self.executando = False
             self.botao_executar.configure(text="🚀 EXECUTAR AUTOMAÇÃO COMPLETA", state='normal')
-            self.botao_genesys.configure(state='normal')
-            self.botao_salesforce.configure(state='normal')
-            self.botao_produtividade.configure(state='normal')
+            self.botao_primeiro.configure(state='normal')
+            self.botao_segundo.configure(state='normal')
             self.botao_renomear.configure(state='normal')
             self.progresso.stop()
             if not self.status_label.cget('text').startswith(('❌', '✅')):
-                self.status_label.configure(text="💚 Pronto para nova execução", fg=self.CORES['amarelo_escuro'])
+                self.status_label.configure(text="� Pronto para nova execução", fg=self.CORES['amarelo_escuro'])
     
     def executar(self):
         """Inicia a interface"""
