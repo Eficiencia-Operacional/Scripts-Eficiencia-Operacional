@@ -27,6 +27,13 @@ class RenomeadorInteligente:
     def definir_padroes(self):
         """Define padrões de renomeação para cada tipo de arquivo"""
         return {
+            # POWER BI - Padrão para Filas Genesys (vários formatos possíveis)
+            r'.*filas.*genesys.*todas.*filas.*\.csv$': 'Filas Genesys - Todas as Filas .csv',
+            r'.*filas.*genesys.*\.csv$': 'Filas Genesys - Todas as Filas .csv',
+            r'.*genesys.*filas.*\.csv$': 'Filas Genesys - Todas as Filas .csv',
+            r'^filas\s*genesys\.csv$': 'Filas Genesys - Todas as Filas .csv',  # "Filas genesys.csv"
+            r'^fila\s*genesys\.csv$': 'Filas Genesys - Todas as Filas .csv',   # "Fila genesys.csv"
+            
             # SALESFORCE - Padrões
             r'.*criado.*-\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}\.csv$': 'BASE_SALESFORCE_CRIADO.csv',
             r'.*resolvid[oa].*-\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}\.csv$': 'BASE_SALESFORCE_RESOLVIDO.csv',

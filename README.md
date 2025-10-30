@@ -4,20 +4,21 @@
 
 <img src="img/leroy.png" alt="Leroy Merlin Logo" width="200">
 
-**Sistema RPA Profissional para Processamento Automatizado de Dados**
+**Sistema RPA para Processamento Automatizado de Dados**
 
-[![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Python Version](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-Internal-red.svg)]()
 [![Status](https://img.shields.io/badge/status-production-success.svg)]()
-[![Version](https://img.shields.io/badge/version-2.4.0-green.svg)]()
+[![Version](https://img.shields.io/badge/version-3.1.0-green.svg)]()
 [![Maintenance](https://img.shields.io/badge/maintained-yes-brightgreen.svg)]()
 
 Sistema automatizado para processamento e envio de dados para Google Sheets  
-**(Genesys, Salesforce e Produtividade)**
+**(Pulso Boletim e Power BI Looker Studio)**
 
 [Características](#-recursos) •
 [Instalação](#-instalação) •
 [Uso](#-uso) •
+[Power BI](#-power-bi-looker-studio) •
 [Documentação](#-documentação) •
 [Suporte](#-suporte)
 
@@ -32,6 +33,7 @@ Sistema automatizado para processamento e envio de dados para Google Sheets
 - [Instalação](#-instalação)
 - [Configuração](#-configuração)
 - [Uso](#-uso)
+- [Power BI Looker Studio](#-power-bi-looker-studio)
 - [Estrutura do Projeto](#-estrutura-do-projeto)
 - [Documentação](#-documentação)
 - [Segurança](#-segurança)
@@ -41,19 +43,27 @@ Sistema automatizado para processamento e envio de dados para Google Sheets
 
 ## ✨ Recursos
 
-### Processamento Automatizado
+### 🟢 Processamento Pulso Boletim (Verde)
 - ✅ **Genesys**: VOZ HC, TEXTO HC, Gestão da Entrega
 - ✅ **Salesforce**: Criado, Resolvido, Comentários BKO
 - ✅ **Produtividade**: Base Produtividade, Base Tempo
+- 🎨 **Cor**: Verde Leroy Merlin (#00A859)
 
-### Funcionalidades
+### 🟡 Processamento Power BI Looker Studio (Amarelo)
+- ✅ **Filas Genesys - PRIMEIRO SEMESTRE**: Base unificada Q1/Q2
+- ✅ **Filas Genesys - SEGUNDO SEMESTRE**: Base unificada Q3/Q4
+- 🎨 **Cor**: Amarelo (#FFD700) - Cabeçalho Amarelo Escuro (#FFA800)
+- 📊 **Looker Studio**: Alimentação direta de dashboards BI
+
+### Funcionalidades Avançadas
 - 🔄 Detecção automática de encoding (UTF-8, Latin-1, CP1252, etc.)
 - 🔢 Limpeza inteligente de números (remove apóstrofos, aspas, .0 desnecessário)
-- 🎨 Coloração automática (verde Leroy Merlin)
+- 🎨 Coloração automática diferenciada por projeto
 - 📊 Complementa dados existentes (não sobrescreve)
 - 🔁 Renomeação inteligente de arquivos
-- 🖥️ Interface gráfica e linha de comando
+- 🖥️ **Duas interfaces gráficas**: `interface_pulso_boletim.py` e `interface_powerbi.py`
 - 📝 Relatórios detalhados de processamento
+- 💾 Histórico de KPIs e métricas
 
 ---
 
@@ -70,6 +80,8 @@ Sistema automatizado para processamento e envio de dados para Google Sheets
 pandas>=2.0.0
 gspread>=5.0.0
 google-auth>=2.0.0
+numpy>=1.24.0
+openpyxl>=3.1.0
 ```
 
 ---
@@ -155,23 +167,45 @@ Você deve ver:
 
 ## 🎯 Uso
 
-### Opção 1: Interface Gráfica (Recomendado)
+### Opção 1: Interface Gráfica - Pulso Boletim 🟢 (Recomendado)
 
 ```powershell
-python interface_visual.py
+python interface_pulso_boletim.py
 ```
 
 Ou use os atalhos:
 ```powershell
-.\interface.bat
+.\utils\interface.bat
 # ou
-.\interface.ps1
+.\utils\interface.ps1
 ```
 
 **Na interface:**
-1. Marque as caixas dos sistemas desejados
+1. Marque as caixas dos sistemas desejados (Genesys, Salesforce, Produtividade)
 2. Clique em "EXECUTAR AUTOMAÇÃO"
 3. Acompanhe o progresso em tempo real
+4. Veja KPIs atualizados (Total Processado, Taxa de Sucesso, Tempo Médio)
+
+### Opção 2: Interface Gráfica - Power BI Looker Studio 🟡
+
+```powershell
+python interface_powerbi.py
+```
+
+**Na interface:**
+1. Marque PRIMEIRO e/ou SEGUNDO semestre
+2. Clique em "PROCESSAR PRIMEIRO SEMESTRE" ou "PROCESSAR SEGUNDO SEMESTRE"
+3. Ou use "Renomear Arquivos" para padronizar nomes
+4. Acesso rápido às planilhas pelo botão "Abrir Planilha"
+
+**Arquivo necessário:**
+- `data/Filas Genesys - Todas as Filas .csv`
+
+**Na interface Power BI:**
+1. Selecione o arquivo CSV das Filas do Genesys
+2. Escolha entre Primeiro ou Segundo Semestre
+3. Clique em "PROCESSAR"
+4. Os dados serão enviados com cor AMARELA
 
 ### Opção 2: Linha de Comando
 
@@ -207,11 +241,13 @@ python main.py --help
 ## 📁 Estrutura do Projeto
 
 ```
+```
 rpa-leroy-merlin/
 │
 ├── 📄 main.py                      # Script principal
-├── 🖥️ interface_visual.py          # Interface gráfica
-├── 🔄 renomeador_inteligente.py    # Renomeação automática de CSVs
+├── 🖥️ interface_visual.py          # Interface gráfica Pulso Boletim
+├── �️ interface_powerbi.py         # Interface gráfica Power BI
+├── �🔄 renomeador_inteligente.py    # Renomeação automática de CSVs
 │
 ├── 📂 src/
 │   ├── core/
@@ -223,8 +259,12 @@ rpa-leroy-merlin/
 │       │   ├── criado.py
 │       │   ├── resolvido.py
 │       │   └── comentario_bko.py
-│       └── produtividade/
-│           └── produtividade.py
+│       ├── produtividade/
+│       │   └── produtividade.py
+│       └── powerbi/
+│           └── genesys/
+│               ├── filas_primeiro_semestre.py
+│               └── filas_segundo_semestre.py
 │
 ├── 📂 data/                        # Coloque seus CSVs aqui
 │   └── *.csv
@@ -233,7 +273,12 @@ rpa-leroy-merlin/
 │   └── boletim.json               # Credenciais (não versionado)
 │
 ├── 📂 tests/                      # Scripts de teste
+│   ├── teste_powerbi.py           # Teste Power BI
 │   └── *.py
+│
+├── 📂 utils/                      # Scripts auxiliares
+│   ├── powerbi.bat                # Atalho Power BI
+│   └── powerbi.ps1                # Atalho Power BI PS
 │
 ├── 📂 docs/                       # Documentação adicional
 │
@@ -245,6 +290,101 @@ rpa-leroy-merlin/
 ├── 📄 SEGURANCA_GIT.md            # Guia de segurança
 └── 📄 README.md                   # Este arquivo
 ```
+
+---
+
+## 🎯 Power BI Looker Studio
+
+### 📊 Automação Dedicada para Dashboards BI
+
+A automação Power BI alimenta diretamente os dashboards do Looker Studio com dados das **Filas Genesys**.
+
+#### Características Especiais
+- 🟡 **Cor Amarela (#FFD700)**: Diferencia visualmente dos dados do Pulso Boletim
+- 🎨 **Cabeçalho Destacado**: Amarelo escuro (#FFA800) com texto branco e negrito
+- 📊 **Duas Planilhas**: Primeiro Semestre (Q1/Q2) e Segundo Semestre (Q3/Q4)
+- 🔄 **Complementação Inteligente**: Adiciona dados sem sobrescrever existentes
+- 📈 **Dashboard KPIs**: Total processado, Taxa de sucesso, Tempo médio, Última execução
+- 💾 **Histórico**: Salva métricas em `config/kpis_powerbi_historico.json`
+
+#### Planilhas de Destino
+
+**PRIMEIRO SEMESTRE (Q1/Q2):**
+- 🔗 [BASE FILA UNIFICADA - PRIMEIRO SEMESTRE](https://docs.google.com/spreadsheets/d/1VtNTqp907enX0M3gB05dmPckDRl7nnfgVEl3mNF8ILc)
+- Aba: `BASE`
+- Processador: `ProcessadorFilasPrimeiroSemestre`
+- Cor: Amarelo (#FFD700) com cabeçalho #FFA800
+
+**SEGUNDO SEMESTRE (Q3/Q4):**
+- 🔗 [BASE FILA UNIFICADA - SEGUNDO SEMESTRE](https://docs.google.com/spreadsheets/d/1r5eZWGVuBP4h68KfrA73lSvfEf37P-AuUCNHF40ttv8)
+- Aba: `BASE`
+- Processador: `ProcessadorFilasSegundoSemestre`
+- Cor: Amarelo (#FFD700) com cabeçalho #FFA800
+
+#### Como Usar
+
+**Método 1 - Interface Gráfica (Recomendado):**
+```powershell
+python interface_powerbi.py
+```
+
+**Na interface você pode:**
+- ✅ Processar PRIMEIRO e/ou SEGUNDO semestre individualmente
+- ✅ Renomear arquivos automaticamente
+- ✅ Abrir planilhas diretamente no navegador
+- ✅ Visualizar KPIs em tempo real
+- ✅ Acompanhar logs detalhados
+
+**Método 2 - Linha de Comando:**
+```powershell
+# Processar PRIMEIRO SEMESTRE
+python -c "import sys; sys.path.insert(0, 'src'); from src.processadores.powerbi.genesys.filas_primeiro_semestre import ProcessadorFilasPrimeiroSemestre; p = ProcessadorFilasPrimeiroSemestre('config/boletim.json'); p.processar_e_enviar('data/Filas Genesys - Todas as Filas .csv')"
+
+# Processar SEGUNDO SEMESTRE
+python -c "import sys; sys.path.insert(0, 'src'); from src.processadores.powerbi.genesys.filas_segundo_semestre import ProcessadorFilasSegundoSemestre; p = ProcessadorFilasSegundoSemestre('config/boletim.json'); p.processar_e_enviar('data/Filas Genesys - Todas as Filas .csv')"
+```
+
+#### Arquivo de Entrada
+- **Nome Padrão**: `Filas Genesys - Todas as Filas .csv`
+- **Localização**: pasta `data/`
+- **Formato**: CSV exportado do Genesys
+- **Separador**: Ponto e vírgula (;) detectado automaticamente
+- **Encoding**: UTF-8 (detectado automaticamente)
+
+**Renomeação Automática:**
+O renomeador inteligente detecta e padroniza automaticamente:
+- `Filas genesys.csv` → `Filas Genesys - Todas as Filas .csv`
+- `Fila genesys.csv` → `Filas Genesys - Todas as Filas .csv`
+- `filas genesys.csv` → `Filas Genesys - Todas as Filas .csv`
+
+#### Estrutura dos Processadores
+
+```
+src/processadores/powerbi/genesys/
+├── __init__.py
+├── filas_primeiro_semestre.py    # Processador Q1/Q2
+└── filas_segundo_semestre.py     # Processador Q3/Q4
+```
+
+Ambos herdam de `GoogleSheetsBase` e implementam:
+- ✅ Limpeza de dados (inf, -inf, nan)
+- ✅ Formatação amarela diferenciada
+- ✅ Cabeçalho com destaque especial
+- ✅ Complementação inteligente de dados
+
+#### Diferenças Power BI vs Pulso Boletim
+
+| Aspecto | Pulso Boletim 🟢 | Power BI 🟡 |
+|---------|------------------|-------------|
+| **Cor de destaque** | Verde (#00A859) | Amarelo (#FFD700) |
+| **Cor cabeçalho** | Verde escuro | Amarelo escuro (#FFA800) |
+| **Planilhas** | Boletim Genesys/SF/Prod | Base Fila Unificada |
+| **Sistemas** | 3 (Genesys, SF, Prod) | 1 (Filas Genesys) |
+| **Destinos** | 3 planilhas | 2 planilhas (semestres) |
+| **Finalidade** | Relatórios internos | Dashboards Looker Studio |
+| **Frequência** | Diária | Sob demanda |
+| **Interface** | interface_pulso_boletim.py | interface_powerbi.py |
+| **KPIs** | kpis_historico.json | kpis_powerbi_historico.json |
 
 ---
 
