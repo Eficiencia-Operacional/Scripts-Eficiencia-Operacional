@@ -1,15 +1,17 @@
 # 📊 data - Arquivos de Dados CSV
 
-Esta pasta contém todos os arquivos CSV utilizados pelo sistema RPA para processamento e upload nas planilhas Google Sheets.
+Esta pasta contém todos os arquivos CSV utilizados pelos sistemas RPA para processamento e upload nas planilhas Google Sheets.
 
 ---
 
 ## 📁 Estrutura de Arquivos
 
-### **Arquivos Genesys**
+### **🟢 Pulso Boletim - Arquivos CSV**
+
+#### **Arquivos Genesys**
 Dados extraídos do sistema Genesys para análise de atendimento.
 
-#### Bases de Atendimento
+##### Bases de Atendimento
 - `BASE_GENESYS_VOZ_HC.csv` - Atendimentos de voz (Help Center)
 - `BASE_GENESYS_TEXTO_HC.csv` - Atendimentos de texto/chat (Help Center)
 - `BASE_GENESYS_GESTAO_HC.csv` - Dados de gestão da entrega
@@ -22,10 +24,10 @@ Dados extraídos do sistema Genesys para análise de atendimento.
 - Status
 - Métricas de qualidade
 
-### **Arquivos Salesforce**
+#### **Arquivos Salesforce**
 Dados extraídos do Salesforce para análise de casos e tickets.
 
-#### Bases de Casos
+##### Bases de Casos
 - `BASE_SALESFORCE_CRIADO.csv` - Casos criados (abertura)
 - `BASE_SALESFORCE_RESOLVIDO.csv` - Casos resolvidos (fechamento)
 - `BASE_SALESFORCE_COMENTARIO_BKO.csv` - Comentários de backoffice
@@ -42,7 +44,7 @@ Dados extraídos do Salesforce para análise de casos e tickets.
 - Origem
 - Motivo
 
-### **Arquivos de Produtividade**
+#### **Arquivos de Produtividade**
 Dados de produtividade e tempo da equipe.
 
 - `BASE_PRODUTIVIDADE.csv` - Métricas de produtividade
@@ -55,6 +57,29 @@ Dados de produtividade e tempo da equipe.
 - Tempo
 - Quantidade
 - Produtividade
+
+---
+
+### **🟡 Power BI Looker Studio - Arquivos CSV**
+
+#### **Arquivo de Filas Genesys**
+Dados unificados de todas as filas do Genesys para dashboards BI.
+
+- `Filas Genesys - Todas as Filas .csv` - Dados completos de todas as filas
+
+**Colunas Típicas:**
+- Nome da Fila
+- Data/Hora
+- Métricas de volume
+- Tempo médio de atendimento
+- SLA
+- Taxa de abandono
+- Quantidade de atendimentos
+
+**Variações Reconhecidas pelo Renomeador:**
+- `Filas genesys.csv` → Renomeado automaticamente
+- `Fila genesys.csv` → Renomeado automaticamente
+- `filas genesys.csv` → Renomeado automaticamente
 
 ---
 
@@ -90,6 +115,8 @@ O sistema tenta automaticamente (em ordem):
 ## 🔄 Nomenclatura de Arquivos
 
 ### **Padrão Recomendado**
+
+**🟢 Pulso Boletim:**
 ```
 BASE_[SISTEMA]_[TIPO].csv
 ```
@@ -98,6 +125,14 @@ BASE_[SISTEMA]_[TIPO].csv
 - ✅ `BASE_GENESYS_VOZ_HC.csv`
 - ✅ `BASE_SALESFORCE_CRIADO.csv`
 - ✅ `BASE_PRODUTIVIDADE.csv`
+
+**🟡 Power BI:**
+```
+Filas Genesys - Todas as Filas .csv
+```
+
+**Exemplo Correto:**
+- ✅ `Filas Genesys - Todas as Filas .csv`
 
 **Exemplos Incorretos:**
 - ❌ `genesys_voz.csv` (sem prefixo BASE)

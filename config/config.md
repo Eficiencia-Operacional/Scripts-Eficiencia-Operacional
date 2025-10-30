@@ -43,7 +43,7 @@ Arquivo de credenciais do Google Service Account para acesso às planilhas Googl
 ---
 
 ### **kpis_historico.json** 📊
-Arquivo de histórico de KPIs da interface gráfica.
+Arquivo de histórico de KPIs da interface gráfica do **Pulso Boletim** (verde).
 
 **Gerado automaticamente pelo sistema.**
 
@@ -55,6 +55,25 @@ Arquivo de histórico de KPIs da interface gráfica.
   "ultima_execucao": "Hoje 10:07",
   "arquivos_processados": 7,
   "arquivos_sucesso": 7,
+  "arquivos_erro": 0
+}
+```
+
+---
+
+### **kpis_powerbi_historico.json** 📊
+Arquivo de histórico de KPIs da interface gráfica do **Power BI** (amarelo).
+
+**Gerado automaticamente pelo sistema.**
+
+```json
+{
+  "total_processados": 5,
+  "taxa_sucesso": 100.0,
+  "tempo_medio": 12,
+  "ultima_execucao": "Hoje 14:30",
+  "arquivos_processados": 2,
+  "arquivos_sucesso": 2,
   "arquivos_erro": 0
 }
 ```
@@ -74,7 +93,9 @@ Arquivo de histórico de KPIs da interface gráfica.
 
 ### **IDs das Planilhas Google Sheets**
 
-#### **Salesforce**
+#### **🟢 Pulso Boletim**
+
+##### **Salesforce**
 ```python
 ID_PLANILHA_SALESFORCE = "1luDIE2OSjunty4-l_pHkRKsP3AMCMOes80A4Xc607Qk"
 ```
@@ -84,7 +105,7 @@ ID_PLANILHA_SALESFORCE = "1luDIE2OSjunty4-l_pHkRKsP3AMCMOes80A4Xc607Qk"
 - `BASE ATUALIZADA CORRETA - RESOLVIDA`
 - `BASE ATUALIZADA CORRETA - COMENTARIO BKO`
 
-#### **Genesys**
+##### **Genesys**
 ```python
 ID_PLANILHA_GENESYS = "1e48VAZd2v5ZEQ4OK7yDu6KhrRi7mft5eVkh3qwZcdZE"
 ```
@@ -93,6 +114,26 @@ ID_PLANILHA_GENESYS = "1e48VAZd2v5ZEQ4OK7yDu6KhrRi7mft5eVkh3qwZcdZE"
 - `BASE GE COLABORADOR` (Gestão da Entrega)
 - `BASE TEXTO HC` (Texto Help Center)
 - `BASE VOZ HC` (Voz Help Center)
+
+---
+
+#### **🟡 Power BI Looker Studio**
+
+##### **Primeiro Semestre (Q1/Q2)**
+```python
+ID_PLANILHA_PRIMEIRO_SEMESTRE = "1VtNTqp907enX0M3gB05dmPckDRl7nnfgVEl3mNF8ILc"
+```
+
+**Aba:**
+- `BASE` (Base Fila Unificada - Primeiro Semestre)
+
+##### **Segundo Semestre (Q3/Q4)**
+```python
+ID_PLANILHA_SEGUNDO_SEMESTRE = "1r5eZWGVuBP4h68KfrA73lSvfEf37P-AuUCNHF40ttv8"
+```
+
+**Aba:**
+- `BASE` (Base Fila Unificada - Segundo Semestre)
 
 ---
 

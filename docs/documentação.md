@@ -1,10 +1,12 @@
 # 📋 Documentação Completa - Sistema RPA Leroy Merlin
 
-> **Sistema Profissional de Automação RPA** para processamento automático de dados Genesys, Salesforce e Produtividade com interface gráfica moderna e pipeline inteligente.
+> **Sistema Profissional de Automação RPA** com dois subsistemas independentes:
+> - 🟢 **Pulso Boletim**: Processamento de Genesys, Salesforce e Produtividade
+> - 🟡 **Power BI Looker Studio**: Alimentação de dashboards com dados de Filas Genesys
 
-[![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
+[![Python Version](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/)
 [![Status](https://img.shields.io/badge/status-production-success.svg)](https://github.com/Ryanditko/rpa-leroy-merlin)
-[![Version](https://img.shields.io/badge/version-2.4.0-green.svg)](https://github.com/Ryanditko/rpa-leroy-merlin)
+[![Version](https://img.shields.io/badge/version-3.1.0-green.svg)](https://github.com/Ryanditko/rpa-leroy-merlin)
 
 ---
 
@@ -14,11 +16,13 @@
 - [Funcionalidades](#-funcionalidades)
 - [Como Usar](#-como-usar)
 - [Sistemas Suportados](#-sistemas-suportados)
+  - [🟢 Pulso Boletim](#-pulso-boletim)
+  - [🟡 Power BI Looker Studio](#-power-bi-looker-studio)
 - [Arquitetura Técnica](#-arquitetura-técnica)
 - [Configuração](#-configuração)
 - [Interface Gráfica](#-interface-gráfica)
 - [Troubleshooting](#-troubleshooting)
-- [Novidades v2.4](#-novidades-v24)
+- [Novidades v3.1](#-novidades-v31)
 
 ---
 
@@ -49,15 +53,17 @@ Automacao-LM/
 │   ├── listar_abas_genesys.py    # 📋 Listar abas Genesys
 │   └── processar-todos-csvs.py   # 🚀 Processar múltiplos CSVs
 │
-├── 📁 src/                        # � Código fonte principal
+├── 📁 src/                        # 💻 Código fonte principal
 │   ├── main.py                   # 🎯 Ponto de entrada CLI
 │   ├── 📁 core/                  # 🧠 Motor principal
 │   │   ├── __init__.py
 │   │   └── google_sheets_base.py # 🔧 Classe base Google Sheets
 │   └── 📁 processadores/         # ⚙️ Processadores especializados
-│       ├── 📁 genesys/           # 📊 Genesys (VOZ, TEXTO, Gestão)
-│       ├── 📁 salesforce/        # 💼 Salesforce (CRIADO, RESOLVIDO, BKO)
-│       └── 📁 produtividade/     # � Produtividade e Tempo
+│       ├── 📁 genesys/           # 📊 Genesys (VOZ, TEXTO, Gestão) - Pulso Boletim
+│       ├── 📁 salesforce/        # 💼 Salesforce (CRIADO, RESOLVIDO, BKO) - Pulso Boletim
+│       ├── 📁 produtividade/     # 📈 Produtividade e Tempo - Pulso Boletim
+│       └── 📁 powerbi/           # 🟡 Power BI Looker Studio
+│           └── 📁 genesys/       # 🎯 Filas Genesys (Primeiro e Segundo Semestre)
 │
 ├── 📁 tests/                      # 🧪 Testes automatizados
 │   ├── teste_sistema_completo.py
@@ -76,10 +82,11 @@ Automacao-LM/
 ├── .gitattributes                 # 🔧 Atributos Git
 ├── .gitignore                     # 🚫 Arquivos ignorados
 ├── boletim.json                   # 🔑 Credenciais (cópia da config/)
-├── interface_visual.py            # 🎨 Interface Gráfica Principal
+├── interface_visual.py            # 🎨 Interface Gráfica - Pulso Boletim (Verde)
+├── interface_powerbi.py           # 🟡 Interface Gráfica - Power BI (Amarelo)
 ├── main.py                        # 🚀 Script Principal CLI
 ├── renomeador_inteligente.py     # 🔄 Renomeador inteligente
-├── README.md                      # � Documentação principal
+├── README.md                      # 📖 Documentação principal
 ├── requirements.txt               # 📦 Dependências Python
 └── setup.py                       # ⚙️ Setup de instalação
 ```
@@ -90,10 +97,18 @@ Automacao-LM/
 
 ### 🎯 Funcionalidades Principais
 
-#### **Processamento Automatizado**
+#### **🟢 Pulso Boletim - Processamento Automatizado**
 - ✅ **Genesys**: VOZ HC, TEXTO HC, Gestão da Entrega
 - ✅ **Salesforce**: Criado, Resolvido, Comentários BKO
 - ✅ **Produtividade**: Base Produtividade, Base Tempo
+- 🎨 **Cor**: Verde (#00A859)
+- 🖥️ **Interface**: `interface_visual.py`
+
+#### **🟡 Power BI Looker Studio - Alimentação de Dashboards**
+- ✅ **Filas Genesys**: Primeiro Semestre (Q1/Q2) e Segundo Semestre (Q3/Q4)
+- 🎨 **Cor**: Amarelo (#FFD700) com cabeçalho #FFA800
+- 🖥️ **Interface**: `interface_powerbi.py`
+- 📊 **Destino**: Dashboards Looker Studio para análise BI
 
 #### **Interface Dual**
 - 🎨 **Interface Gráfica** (GUI): Dashboard profissional com KPIs dinâmicos

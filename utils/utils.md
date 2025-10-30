@@ -27,7 +27,9 @@ Estes arquivos são como **atalhos automatizados** que:
 
 ### **Arquivos Disponíveis**
 
-#### **executar.bat**
+#### **🟢 Pulso Boletim**
+
+##### **executar.bat**
 Executor principal para automação via linha de comando.
 
 **Como usar:**
@@ -44,8 +46,8 @@ executar.bat --produtividade
 
 ---
 
-#### **interface.bat**
-Executor para abrir a interface gráfica.
+##### **interface.bat**
+Executor para abrir a interface gráfica do Pulso Boletim (verde).
 
 **Como usar:**
 ```bash
@@ -56,7 +58,7 @@ interface.bat
 
 ---
 
-#### **executar.ps1**
+##### **executar.ps1**
 Versão PowerShell do executor (mais moderna).
 
 **Como usar:**
@@ -68,8 +70,8 @@ Versão PowerShell do executor (mais moderna).
 
 ---
 
-#### **interface.ps1**
-Versão PowerShell para interface gráfica.
+##### **interface.ps1**
+Versão PowerShell para interface gráfica do Pulso Boletim.
 
 **Como usar:**
 ```powershell
@@ -78,24 +80,78 @@ Versão PowerShell para interface gráfica.
 
 ---
 
-## 🚀 Casos de Uso
+#### **🟡 Power BI Looker Studio**
 
-### **Caso 1: Usuário Não-Técnico**
-👤 **Perfil:** Analista que não conhece Python
+##### **powerbi.bat**
+Executor para abrir a interface gráfica do Power BI (amarelo).
 
-**Solução:** Duplo clique em `interface.bat`
-- ✅ Abre interface gráfica automaticamente
-- ✅ Não precisa abrir terminal
-- ✅ Interface amigável com botões
+**Como usar:**
+```bash
+# Duplo clique no arquivo
+# ou
+powerbi.bat
+```
+
+**Executa:**
+```bash
+python interface_powerbi.py
+```
+
+##### **powerbi.ps1**
+Versão PowerShell para interface gráfica do Power BI.
+
+**Como usar:**
+```powershell
+.\powerbi.ps1
+```
+
+**Executa:**
+```powershell
+python interface_powerbi.py
+```
 
 ---
 
-### **Caso 2: Usuário Avançado**
+## 🚀 Casos de Uso
+
+### **Caso 1: Usuário Não-Técnico - Pulso Boletim**
+👤 **Perfil:** Analista que não conhece Python
+
+**Solução:** Duplo clique em `interface.bat`
+- ✅ Abre interface gráfica verde automaticamente
+- ✅ Não precisa abrir terminal
+- ✅ Interface amigável com botões
+- 🟢 Processa Genesys, Salesforce e Produtividade
+
+---
+
+### **Caso 2: Usuário Não-Técnico - Power BI**
+👤 **Perfil:** Analista que trabalha com dashboards BI
+
+**Solução:** Duplo clique em `powerbi.bat`
+- ✅ Abre interface gráfica amarela automaticamente
+- ✅ Não precisa abrir terminal
+- ✅ Interface focada em Filas Genesys
+- 🟡 Alimenta dashboards Looker Studio
+
+---
+
+### **Caso 3: Usuário Avançado - Pulso Boletim**
 👤 **Perfil:** Desenvolvedor/Analista técnico
 
 **Solução:** Executar via PowerShell
 ```powershell
 .\executar.ps1 --salesforce
+```
+
+---
+
+### **Caso 4: Usuário Avançado - Power BI**
+👤 **Perfil:** Desenvolvedor/Analista técnico
+
+**Solução:** Executar via Python
+```powershell
+python interface_powerbi.py
 ```
 
 ---
