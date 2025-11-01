@@ -1,0 +1,44 @@
+# EditorConfig - Padronização de editor para o projeto
+# https://editorconfig.org
+
+root = true
+
+# Aplicar para todos os arquivos
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Arquivos Python
+[*.py]
+indent_style = space
+indent_size = 4
+max_line_length = 120
+
+# Arquivos JSON, YAML
+[*.{json,yml,yaml}]
+indent_style = space
+indent_size = 2
+
+# Arquivos Markdown
+[*.md]
+trim_trailing_whitespace = false
+indent_style = space
+indent_size = 2
+
+# Arquivos de configuração
+[*.{toml,ini,cfg}]
+indent_style = space
+indent_size = 2
+
+# Scripts Batch/PowerShell
+[*.{bat,ps1}]
+indent_style = space
+indent_size = 2
+end_of_line = crlf
+
+# Arquivos CSV
+[*.csv]
+trim_trailing_whitespace = false
+insert_final_newline = false
