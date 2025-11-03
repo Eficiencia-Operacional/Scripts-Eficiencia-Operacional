@@ -21,7 +21,8 @@ class RenomeadorInteligente:
     
     def __init__(self, pasta_dados="data"):
         self.pasta_dados = pasta_dados
-        self.historico_file = os.path.join(pasta_dados, "historico_renomeacao.json")
+        # Histórico agora fica na pasta json/ para melhor organização
+        self.historico_file = os.path.join("json", "historico_renomeacao.json")
         self.padroes_renomeacao = self.definir_padroes()
         
     def definir_padroes(self):

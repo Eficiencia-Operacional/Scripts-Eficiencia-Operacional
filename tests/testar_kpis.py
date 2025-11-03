@@ -19,7 +19,8 @@ kpis_teste = {
 }
 
 # Salvar no arquivo JSON
-arquivo_kpis = os.path.join('config', 'kpis_historico.json')
+# Configuração
+arquivo_kpis = os.path.join('json', 'kpis_historico.json')
 
 # Garantir que o diretório existe
 os.makedirs('config', exist_ok=True)

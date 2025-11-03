@@ -35,9 +35,9 @@ dados/*.xls
 !data/exemplo*.csv
 !data/sample*.csv
 
-# Históricos e logs com dados
-historico_renomeacao.json
-data/historico_renomeacao.json
+# Históricos e logs com dados (agora organizados na pasta json/)
+json/historico_renomeacao.json
+json/kpis_historico.json
 *.log
 
 # ============================================================================

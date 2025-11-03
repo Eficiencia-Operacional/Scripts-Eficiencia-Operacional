@@ -11,23 +11,67 @@ src_dir = os.path.join(current_dir, '..', '..')
 if src_dir not in sys.path:
     sys.path.insert(0, src_dir)
 
+# Adicionar diretório config ao path
+root_dir = os.path.abspath(os.path.join(current_dir, '..', '..', '..'))
+config_dir = os.path.join(root_dir, 'config')
+sys.path.insert(0, config_dir)
+
 from core.google_sheets_base import GoogleSheetsBase
+
+try:
+    from scripts.gerenciador_planilhas import GerenciadorPlanilhas
+except ImportError:
+    # Fallback se não conseguir importar
+    print("⚠️  Gerenciador de planilhas não encontrado, usando configuração padrão")
+    GerenciadorPlanilhas = None
 
 class ProcessadorGenesys(GoogleSheetsBase):
     """Processador especializado para arquivos do Genesys"""
     
     def __init__(self, id_planilha=None):
-        # Usar ID específico se fornecido, senão usar padrão do Genesys
-        if id_planilha:
-            super().__init__(id_planilha=id_planilha)
+        # Usar gerenciador de configurações se disponível
+        if GerenciadorPlanilhas:
+            self.gp = GerenciadorPlanilhas()
+            
+            # Usar ID específico se fornecido, senão usar do gerenciador
+            if id_planilha:
+                planilha_id = id_planilha
+            else:
+                planilha_id = self.gp.obter_id("genesys_boletim")
+                if not planilha_id:
+                    # Fallback para ID hardcoded
+                    planilha_id = "1e48VAZd2v5ZEQ4OK7yDu6KhrRi7mft5eVkh3qwZcdZE"
+                    print("⚠️  Usando ID padrão hardcoded para Genesys")
+            
+            # Obter configurações dinâmicas das abas
+            abas_config = self.gp.obter_abas("genesys_boletim")
+            
+            self.NOME_ABAS = {
+                "gestao_entrega": abas_config.get("gestao_entrega", "BASE GE COLABORADOR"),
+                "texto": abas_config.get("texto_hc", "BASE TEXTO"), 
+                "voz": abas_config.get("voz_hc", "BASE VOZ")
+            }
+            
+            print(f"✅ ProcessadorGenesys configurado com gerenciador:")
+            print(f"   📊 ID Planilha: {planilha_id}")
+            print(f"   📑 Abas: {self.NOME_ABAS}")
         else:
-            # ID da planilha oficial do Genesys ATUALIZADO
-            super().__init__(id_planilha="1e48VAZd2v5ZEQ4OK7yDu6KhrRi7mft5eVkh3qwZcdZE")
-        self.NOME_ABAS = {
-            "gestao_entrega": "BASE GE COLABORADOR",
-            "texto": "BASE TEXTO", 
-            "voz": "BASE VOZ"
-        }
+            # Configuração tradicional hardcoded
+            if id_planilha:
+                planilha_id = id_planilha
+            else:
+                planilha_id = "1e48VAZd2v5ZEQ4OK7yDu6KhrRi7mft5eVkh3qwZcdZE"
+            
+            self.NOME_ABAS = {
+                "gestao_entrega": "BASE GE COLABORADOR",
+                "texto": "BASE TEXTO", 
+                "voz": "BASE VOZ"
+            }
+            
+            print(f"✅ ProcessadorGenesys configurado (modo tradicional):")
+            print(f"   📊 ID Planilha: {planilha_id}")
+        
+        super().__init__(id_planilha=planilha_id)
         
         # Padrões de arquivos Genesys
         self.PADROES_ARQUIVOS = {

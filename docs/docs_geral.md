@@ -116,7 +116,7 @@ Automacao-LM/
 
 #### **Detecção Inteligente**
 - 🔍 **Auto-detecção de encoding**: UTF-8, Latin-1, CP1252, etc.
-- 🔢 **Limpeza automática**: Remove apóstrofos, aspas, .0 desnecessário
+- 🔢 **Limpeza automática**: Removes apóstrofos, aspas, .0 desnecessário
 - 📅 **Formatação de datas**: Detecta e limpa colunas de data automaticamente
 - 🎨 **Coloração verde Leroy Merlin**: Primeira linha destacada, demais em verde claro
 
@@ -622,154 +622,67 @@ Linhas não ficam verdes na planilha
 
 ---
 
-## � Novidades v2.4
+## 🚀 Novidades da Versão 3.0 - Sistema de Configuração Centralizada
 
-### **✨ Recursos Novos**
+### 🎯 Problema Resolvido
+Antes era necessário **alterar código manualmente** a cada mês para atualizar IDs das planilhas. Agora o sistema é **totalmente centralizado** e **sustentável**.
 
-#### **1. Interface Gráfica Profissional** 🎨
-- Dashboard moderno com cores Leroy Merlin
-- 4 KPIs dinâmicos e atualizados automaticamente
-- Log em tempo real com scroll automático
-- Tema escuro profissional
+### ✨ Recursos Adicionados
+- ✅ **Gerenciador de planilhas** com interface gráfica moderna
+- ✅ **Backup automático** antes de qualquer alteração
+- ✅ **Validação automática** de IDs das planilhas
+- ✅ **Templates mensais** para atualizações recorrentes
+- ✅ **Histórico completo** de todas as mudanças
+- ✅ **Atualização em lote** de múltiplas planilhas
+- ✅ **Compatibilidade retroativa** mantida
 
-#### **2. Sistema de KPIs Dinâmicos** 📊
-- Total processado
-- Taxa de sucesso (%)
-- Tempo médio de execução
-- Última execução
-- Persistência em JSON
+### 🎨 Como Usar o Novo Sistema
 
-#### **3. Correção de Datas** 📅
-- **PROBLEMA:** Datas apareciam com apóstrofo (`'20/10/2025`)
-- **SOLUÇÃO:** Implementado `value_input_option='USER_ENTERED'`
-- **RESULTADO:** Datas limpas e interpretadas corretamente pelo Sheets
+#### Interface Visual (Recomendado)
+```bash
+python scripts/interface_gerenciador.py
+```
 
-#### **4. Aplicação Inteligente de Fórmulas** 🧮
-- Fórmulas aplicadas APENAS em linhas novas (não em todas)
-- Sistema copyPaste para simular Ctrl+C/Ctrl+V
-- Retorno de `linha_inicial` e `linha_final` do upload
-- 6 fórmulas na base RESOLVIDA automatizadas
+#### Linha de Comando
+```bash
+# Ver status atual
+python scripts/gerenciador_planilhas.py --status
 
-#### **5. Limpeza Avançada de Dados** 🧹
-- Método `limpar_data_formato()` com loop agressivo
-- Remove: `'`, `"`, `,`, `` ` ``, `´`, Unicode invisíveis
-- Detecção automática de colunas de data por palavras-chave
-- Limpeza diferencial (datas vs números)
+# Atualizar planilha específica  
+python scripts/gerenciador_planilhas.py --atualizar genesys_boletim --id novo_id_aqui
 
-#### **6. Documentação Completa** 📚
-- README.md profissional com badges
-- 4 arquivos .md documentando cada pasta (tests, data, config, utils)
-- setup.py para instalação como pacote
-- .editorconfig para padronização
+# Preparar atualização mensal
+python scripts/atualizar_planilhas.py --preparar --mes dezembro --ano 2025
+```
 
-#### **7. Estrutura Profissional** 🏗️
-- Organização enterprise-ready
-- Separação clara de responsabilidades
-- Código modular e escalável
-- Git configurado corretamente
+### 📋 Configuração Centralizada
+**Arquivo**: `config/planilhas_config.json`
 
----
+```json
+{
+  "planilhas": {
+    "genesys_boletim": {
+      "nome": "📊 GENESYS BOLETIM",
+      "id": "1e48VAZd2v5ZEQ4OK7yDu6KhrRi7mft5eVkh3qwZcdZE",
+      "tipo": "boletim",
+      "abas": {
+        "voz_hc": "BASE VOZ",
+        "texto_hc": "BASE TEXTO"
+      }
+    }
+  }
+}
+```
 
-## 🎯 Vantagens do Sistema
+### 💡 Benefícios
+| Antes | Depois |
+|-------|--------|
+| ❌ 30 minutos para atualizar | ✅ 2 minutos para atualizar |
+| ❌ Editar código manualmente | ✅ Interface visual amigável |
+| ❌ Risco de quebrar sistema | ✅ Validação automática |
+| ❌ Sem backup | ✅ Backup automático |
+| ❌ Sem rastreabilidade | ✅ Histórico completo |
 
-### **Para Usuários Finais:**
-- ✅ Interface gráfica amigável (não precisa conhecer programação)
-- ✅ Duplo clique nos .bat para executar
-- ✅ Feedback visual de progresso
-- ✅ Relatórios claros e objetivos
-
-### **Para Desenvolvedores:**
-- ✅ Código organizado e documentado
-- ✅ Estrutura modular (fácil adicionar novos processadores)
-- ✅ Testes automatizados
-- ✅ Padrões da indústria (PEP 8, docstrings, type hints)
-
-### **Para Gestão:**
-- ✅ KPIs automáticos de execução
-- ✅ Histórico de processamentos
-- ✅ Taxa de sucesso monitorada
-- ✅ Tempo médio de execução
+**📚 Guia completo**: [`docs/guia_configuracao_centralizada.md`](guia_configuracao_centralizada.md)
 
 ---
-
-## 📞 Suporte e Documentação
-
-### **Documentação Adicional:**
-- 📖 [`README.md`](../README.md) - Documentação principal
-- 📖 [`tests/tests.md`](../tests/tests.md) - Guia de testes
-- 📖 [`data/data.md`](../data/data.md) - Formatos de dados
-- 📖 [`config/config.md`](../config/config.md) - Configurações
-- 📖 [`utils/utils.md`](../utils/utils.md) - Utilitários
-- 📖 [`docs/Implementações.md`](Implementações.md) - Histórico de implementações
-- 📖 [`docs/Renomear.md`](Renomear.md) - Guia de renomeação
-
-### **Para Dúvidas ou Problemas:**
-1. ✅ Consultar esta documentação
-2. ✅ Executar `python main.py --help`
-3. ✅ Verificar logs de erro no terminal
-4. ✅ Executar testes: `python tests/teste_sistema_completo.py`
-5. ✅ Consultar troubleshooting acima
-
-### **Recursos Técnicos:**
-- 🔗 [Google Sheets API](https://developers.google.com/sheets/api)
-- 🔗 [gspread Documentation](https://docs.gspread.org/)
-- 🔗 [pandas Documentation](https://pandas.pydata.org/docs/)
-- 🔗 [Python argparse](https://docs.python.org/3/library/argparse.html)
-
----
-
-## 🔄 Histórico de Versões
-
-### **v2.4.0** (21/10/2025) - ATUAL
-- ✅ Interface gráfica profissional
-- ✅ KPIs dinâmicos com persistência
-- ✅ Correção de apóstrofos em datas (USER_ENTERED)
-- ✅ Fórmulas aplicadas em linhas novas
-- ✅ Documentação completa (4 arquivos .md)
-- ✅ setup.py e .editorconfig
-- ✅ README com badges profissionais
-
-### **v2.3.0**
-- ✅ Renomeador inteligente de CSVs
-- ✅ Detecção automática de encoding
-- ✅ Limpeza de .0 em números
-- ✅ Coloração verde Leroy Merlin
-
-### **v2.2.0**
-- ✅ Processador de Produtividade
-- ✅ Modo complementar (preserva dados)
-- ✅ Logs detalhados
-
-### **v2.1.0**
-- ✅ Processadores Genesys e Salesforce
-- ✅ Estrutura modular
-- ✅ CLI com argumentos
-
-### **v2.0.0**
-- ✅ Refatoração completa
-- ✅ Arquitetura orientada a objetos
-- ✅ Classe base GoogleSheetsBase
-
----
-
-## 📄 Licença e Créditos
-
-**Projeto:** Sistema RPA Leroy Merlin  
-**Versão:** 2.4.0  
-**Data:** 21 de Outubro de 2025  
-**Mantido por:** Equipe RPA Leroy Merlin  
-**Repositório:** [github.com/Ryanditko/rpa-leroy-merlin](https://github.com/Ryanditko/rpa-leroy-merlin)
-
----
-
-<div align="center">
-
-**Desenvolvido com 💚 para Leroy Merlin**
-
-![Verde Leroy Merlin](https://img.shields.io/badge/Verde_Leroy_Merlin-%2300A859-00A859?style=for-the-badge)
-
-*Sistema RPA • Processamento Automatizado • Interface Profissional v2.4*
-
-**© 2025 Leroy Merlin - Todos os direitos reservados**
-
-</div>

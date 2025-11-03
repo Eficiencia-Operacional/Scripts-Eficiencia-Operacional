@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 🚀 AUTOMAÇÃO PRINCIPAL LEROY MERLIN
 Executa processamento completo das planilhas Genesys e Salesforce
@@ -17,6 +18,16 @@ Uso:
 
 import sys
 import os
+import io
+
+# Configurar encoding UTF-8 para Windows
+if sys.platform == 'win32':
+    try:
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+    except (AttributeError, io.UnsupportedOperation):
+        pass
+
 import argparse
 from datetime import datetime
 
@@ -26,42 +37,48 @@ core_dir = os.path.join(os.path.dirname(current_dir), 'core')
 sys.path.append(core_dir)
 
 from src.core.google_sheets_base import GoogleSheetsBase
+from scripts.gerenciador_planilhas import GerenciadorPlanilhas
 
-# Configurações das planilhas
-PLANILHAS_CONFIG = {
-    "genesys": {
-        "id": "1e48VAZd2v5ZEQ4OK7yDu6KhrRi7mft5eVkh3qwZcdZE",  # Planilha oficial Genesys ATUALIZADA
-        "nome": "📊 GENESYS",
-        "deteccao": {
-            # Função para detectar tipo do arquivo Genesys
-            "voz_hc": ("BASE VOZ", "GENESYS VOZ HC"),
-            "texto_hc": ("BASE TEXTO", "GENESYS TEXTO HC"), 
-            "gestao_n1": ("BASE GE COLABORADOR", "GENESYS GESTÃO N1"),
-            "gestao": ("BASE GE COLABORADOR", "GENESYS GESTÃO"),  # Corrigido: era "BASE GE FILA"
-            "fila": ("BASE VOZ FILA", "GENESYS FILA")
-        }
-    },
-    "salesforce": {
-        "id": "1luDIE2OSjunty4-l_pHkRKsP3AMCMOes80A4Xc607Qk",  # Planilha oficial Salesforce ATUALIZADA
-        "nome": "💼 SALESFORCE", 
-        "deteccao": {
-            # Função para detectar tipo do arquivo Salesforce
-            "criado": ("BASE ATUALIZADA CORRETA - CRIADO", "SALESFORCE CRIADO"),
-            "resolvido": ("BASE ATUALIZADA CORRETA - RESOLVIDA", "SALESFORCE RESOLVIDO"),
-            "comentario_bko": ("COMENTARIO BKO", "SALESFORCE COMENTÁRIOS"),
-            "seller": ("DADOS SELLER", "SALESFORCE SELLER")
-        }
-    },
-    "produtividade": {
-        "id": "1nzSa4cnPOPau1-BF221Vc6VEvUiFe6D1suebCcQmAT4",  # Planilha oficial Produtividade
-        "nome": "📈 PRODUTIVIDADE",
-        "deteccao": {
-            # Função para detectar tipo do arquivo Produtividade
-            "produtividade": ("BASE PROD", "PRODUTIVIDADE VISÃO"),
-            "tempo": ("BASE TEMPO", "PRODUTIVIDADE TEMPO")
+# Inicializar gerenciador de configurações
+gp = GerenciadorPlanilhas()
+
+# Configurações das planilhas - AGORA DINÂMICAS
+def obter_config_planilhas():
+    """Obtém configurações atualizadas das planilhas"""
+    return {
+        "genesys": {
+            "id": gp.obter_id("genesys_boletim"),
+            "nome": "📊 GENESYS",
+            "deteccao": {
+                "voz_hc": (gp.obter_abas("genesys_boletim").get("voz_hc", "BASE VOZ"), "GENESYS VOZ HC"),
+                "texto_hc": (gp.obter_abas("genesys_boletim").get("texto_hc", "BASE TEXTO"), "GENESYS TEXTO HC"), 
+                "gestao_n1": (gp.obter_abas("genesys_boletim").get("gestao_n1", "BASE GE COLABORADOR"), "GENESYS GESTÃO N1"),
+                "gestao": (gp.obter_abas("genesys_boletim").get("gestao_entrega", "BASE GE COLABORADOR"), "GENESYS GESTÃO"),
+                "fila": (gp.obter_abas("genesys_boletim").get("fila", "BASE VOZ FILA"), "GENESYS FILA")
+            }
+        },
+        "salesforce": {
+            "id": gp.obter_id("salesforce_boletim"),
+            "nome": "💼 SALESFORCE", 
+            "deteccao": {
+                "criado": (gp.obter_abas("salesforce_boletim").get("criado", "BASE ATUALIZADA CORRETA - CRIADO"), "SALESFORCE CRIADO"),
+                "resolvido": (gp.obter_abas("salesforce_boletim").get("resolvido", "BASE ATUALIZADA CORRETA - RESOLVIDA"), "SALESFORCE RESOLVIDO"),
+                "comentario_bko": (gp.obter_abas("salesforce_boletim").get("comentario_bko", "COMENTARIO BKO"), "SALESFORCE COMENTÁRIOS"),
+                "seller": (gp.obter_abas("salesforce_boletim").get("seller", "DADOS SELLER"), "SALESFORCE SELLER")
+            }
+        },
+        "produtividade": {
+            "id": gp.obter_id("produtividade_boletim"),
+            "nome": "📈 PRODUTIVIDADE",
+            "deteccao": {
+                "produtividade": (gp.obter_abas("produtividade_boletim").get("produtividade", "BASE PROD"), "PRODUTIVIDADE VISÃO"),
+                "tempo": (gp.obter_abas("produtividade_boletim").get("tempo", "BASE TEMPO"), "PRODUTIVIDADE TEMPO")
+            }
         }
     }
-}
+
+# Obter configurações dinâmicas
+PLANILHAS_CONFIG = obter_config_planilhas()
 
 def detectar_tipo_arquivo(nome_arquivo, sistema):
     """Detecta o tipo do arquivo baseado no sistema (genesys, salesforce ou produtividade)"""
@@ -77,6 +94,12 @@ def detectar_tipo_arquivo(nome_arquivo, sistema):
                 return PLANILHAS_CONFIG["genesys"]["deteccao"]["gestao_n1"]
             else:
                 return PLANILHAS_CONFIG["genesys"]["deteccao"]["gestao"]
+        elif 'fila' in nome_lower and 'todas' in nome_lower:
+            # Arquivo de filas deve ir para Power BI, não para o boletim
+            print(f"⚠️  ATENÇÃO: Arquivo '{nome_arquivo}' é de FILAS GENESYS")
+            print("🎯 Este arquivo deve ser processado pela interface Power BI, não pelo Pulso Boletim")
+            print("💡 Use a interface Power BI para processar dados de filas")
+            return None, None  # Não processar na interface do boletim
         elif 'fila' in nome_lower:
             return PLANILHAS_CONFIG["genesys"]["deteccao"]["fila"]
     
@@ -138,17 +161,33 @@ def processar_sistema(sistema_nome, executar_sistema=True):
         # Buscar arquivos
         arquivos_csv, data_dir = buscar_arquivos_csv()
         
+        # Verificar se há arquivos de filas que não devem ser processados aqui
+        arquivos_filas = [arq for arq in arquivos_csv if 'fila' in arq.lower() and 'todas' in arq.lower()]
+        if arquivos_filas:
+            print(f"⚠️  AVISO: Encontrados {len(arquivos_filas)} arquivo(s) de FILAS GENESYS:")
+            for arq in arquivos_filas:
+                print(f"   📄 {arq}")
+            print("🎯 Estes arquivos devem ser processados pela interface POWER BI, não pelo Pulso Boletim")
+            print("💡 Execute: python interface_powerbi.py")
+            print("-" * 70)
+        
         # Filtrar arquivos para este sistema
         arquivos_sistema = []
         for arquivo in arquivos_csv:
             aba_destino, tipo_detectado = detectar_tipo_arquivo(arquivo, sistema_nome)
             if aba_destino and aba_destino in abas_disponiveis:
                 arquivos_sistema.append((arquivo, aba_destino, tipo_detectado))
+            elif 'fila' in arquivo.lower() and 'todas' in arquivo.lower():
+                # Arquivo de filas - mostrar aviso específico
+                print(f"⚠️  IGNORADO: {arquivo} (arquivo de filas - use interface Power BI)")
         
-        print(f"📁 Arquivos {sistema_nome.upper()} encontrados: {len(arquivos_sistema)}")
+        print(f"📁 Arquivos {sistema_nome.upper()} válidos: {len(arquivos_sistema)}")
         
         if not arquivos_sistema:
-            print(f"⚠️  Nenhum arquivo {sistema_nome.upper()} encontrado")
+            if arquivos_filas:
+                print(f"💡 Use a interface Power BI para processar os arquivos de filas encontrados")
+            else:
+                print(f"⚠️  Nenhum arquivo {sistema_nome.upper()} encontrado")
             return {"sucessos": 0, "falhas": 0, "processados": 0}
         
         # Processar cada arquivo

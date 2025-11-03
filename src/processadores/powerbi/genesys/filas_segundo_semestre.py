@@ -30,6 +30,19 @@ sys.path.insert(0, root_dir)
 from src.core.google_sheets_base import GoogleSheetsBase
 
 
+import os
+import pandas as pd
+from datetime import datetime
+from src.core.google_sheets_base import GoogleSheetsBase
+
+# Importar gerenciador de planilhas centralizado
+import sys
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.join(current_dir, '..', '..', '..', '..')
+sys.path.insert(0, project_root)
+from scripts.gerenciador_planilhas import GerenciadorPlanilhas
+
+
 class ProcessadorFilasSegundoSemestre(GoogleSheetsBase):
     """
     Processador de Filas Genesys para Power BI - Segundo Semestre
@@ -45,8 +58,16 @@ class ProcessadorFilasSegundoSemestre(GoogleSheetsBase):
         Args:
             caminho_credenciais: Caminho para arquivo de credenciais Google
         """
-        # ID da planilha do segundo semestre
-        planilha_id = '1r5eZWGVuBP4h68KfrA73lSvfEf37P-AuUCNHF40ttv8'
+        # Obter ID da planilha via configuração centralizada
+        gerenciador = GerenciadorPlanilhas()
+        try:
+            planilha_id = gerenciador.obter_id('power_bi_segundo_semestre')
+            print(f"✅ ID obtido via configuração centralizada: {planilha_id}")
+        except Exception as e:
+            # Fallback para ID hardcoded (compatibilidade)
+            planilha_id = '1r5eZWGVuBP4h68KfrA73lSvfEf37P-AuUCNHF40ttv8'
+            print(f"⚠️ Usando ID fallback: {planilha_id}")
+            print(f"   Motivo: {str(e)}")
         
         # Inicializar classe base com ID correto
         super().__init__(caminho_credenciais, planilha_id)
@@ -150,6 +171,7 @@ class ProcessadorFilasSegundoSemestre(GoogleSheetsBase):
             
             # Enviar dados em lote
             if dados:
+                # Usar USER_ENTERED para que o Sheets interprete números como números
                 aba.append_rows(dados, value_input_option='USER_ENTERED')
                 print(f"   ✅ {len(dados)} linhas enviadas")
                 
@@ -194,7 +216,7 @@ class ProcessadorFilasSegundoSemestre(GoogleSheetsBase):
     
     def _ler_csv(self, caminho_csv):
         """
-        Lê o arquivo CSV com tratamento de encoding
+        Lê o arquivo CSV mantendo TODOS os dados como texto (sem conversão)
         
         Args:
             caminho_csv: Caminho do arquivo
@@ -208,33 +230,40 @@ class ProcessadorFilasSegundoSemestre(GoogleSheetsBase):
         for encoding in encodings:
             try:
                 # Tentar com ponto e vírgula primeiro (padrão Genesys)
-                df = pd.read_csv(caminho_csv, encoding=encoding, sep=';')
+                # dtype=str força TUDO como string - sem conversão numérica
+                df = pd.read_csv(caminho_csv, encoding=encoding, sep=';', dtype=str, keep_default_na=False)
                 if len(df.columns) > 1:
                     print(f"   ✅ Arquivo lido com encoding: {encoding}, separador: ';'")
+                    print(f"   ✅ {len(df)} linhas carregadas")
+                    print(f"   ✅ {len(df.columns)} colunas encontradas")
                     return df
             except:
                 pass
             
             try:
                 # Tentar com vírgula
-                df = pd.read_csv(caminho_csv, encoding=encoding, sep=',')
+                df = pd.read_csv(caminho_csv, encoding=encoding, sep=',', dtype=str, keep_default_na=False)
                 if len(df.columns) > 1:
                     print(f"   ✅ Arquivo lido com encoding: {encoding}, separador: ','")
+                    print(f"   ✅ {len(df)} linhas carregadas")
+                    print(f"   ✅ {len(df.columns)} colunas encontradas")
                     return df
             except:
                 pass
         
         # Última tentativa: deixar pandas detectar automaticamente
         try:
-            df = pd.read_csv(caminho_csv)
+            df = pd.read_csv(caminho_csv, dtype=str, keep_default_na=False)
             print(f"   ✅ Arquivo lido com detecção automática")
+            print(f"   ✅ {len(df)} linhas carregadas")
+            print(f"   ✅ {len(df.columns)} colunas encontradas")
             return df
         except Exception as e:
             raise Exception(f"Erro ao ler CSV: {str(e)}")
     
     def _limpar_dados(self, df):
         """
-        Limpa e prepara os dados
+        Limpa e prepara os dados MANTENDO formato original
         
         Args:
             df: DataFrame original
@@ -247,34 +276,16 @@ class ProcessadorFilasSegundoSemestre(GoogleSheetsBase):
         # Remover espaços dos nomes das colunas
         df.columns = df.columns.str.strip()
         
-        # Tratar valores nulos
+        # Substituir NaN por string vazia (manter tudo como texto)
         df = df.fillna('')
         
-        # Limpar números (remover apóstrofos, aspas)
+        # Converter tudo para string para manter formato EXATO do CSV
         for col in df.columns:
-            if df[col].dtype == 'object':
-                # Remover aspas simples no início
-                df[col] = df[col].astype(str).str.replace("^'", "", regex=True)
-                df[col] = df[col].astype(str).str.replace('^"', "", regex=True)
-                
-                # Limpar espaços extras
-                df[col] = df[col].str.strip()
-        
-        # Converter tipos de dados quando apropriado
-        for col in df.columns:
-            # Tentar converter colunas numéricas
-            if 'oferta' in col.lower() or 'resposta' in col.lower() or 'abandono' in col.lower():
-                try:
-                    df[col] = pd.to_numeric(df[col], errors='coerce')
-                    # Substituir inf e -inf por vazio
-                    df[col] = df[col].replace([np.inf, -np.inf], '')
-                    # Substituir NaN por vazio
-                    df[col] = df[col].fillna('')
-                except:
-                    pass
-        
-        # Substituir qualquer inf/-inf/nan remanescente
-        df = df.replace([np.inf, -np.inf, np.nan], '')
+            df[col] = df[col].astype(str)
+            # Limpar apenas valores 'nan' que vieram da conversão
+            df[col] = df[col].replace('nan', '')
+            # Remover espaços extras
+            df[col] = df[col].str.strip()
         
         return df
     

@@ -45,8 +45,25 @@ class ProcessadorFilasPrimeiroSemestre(GoogleSheetsBase):
         Args:
             caminho_credenciais: Caminho para arquivo de credenciais Google
         """
-        # ID da planilha do primeiro semestre
-        planilha_id = '1VtNTqp907enX0M3gB05dmPckDRl7nnfgVEl3mNF8ILc'
+        # Tentar usar gerenciador de configurações
+        try:
+            sys.path.insert(0, os.path.join(root_dir, 'config'))
+            from scripts.gerenciador_planilhas import GerenciadorPlanilhas
+            
+            gp = GerenciadorPlanilhas()
+            planilha_id = gp.obter_id('power_bi_primeiro_semestre')
+            
+            if planilha_id:
+                print("✅ Usando ID da planilha do gerenciador de configurações")
+            else:
+                # Fallback para ID hardcoded
+                planilha_id = '1VtNTqp907enX0M3gB05dmPckDRl7nnfgVEl3mNF8ILc'
+                print("⚠️  ID não encontrado no gerenciador, usando ID padrão")
+                
+        except ImportError:
+            # Fallback para configuração tradicional
+            planilha_id = '1VtNTqp907enX0M3gB05dmPckDRl7nnfgVEl3mNF8ILc'
+            print("⚠️  Gerenciador não disponível, usando configuração hardcoded")
         
         # Inicializar classe base com ID correto
         super().__init__(caminho_credenciais, planilha_id)
@@ -150,6 +167,7 @@ class ProcessadorFilasPrimeiroSemestre(GoogleSheetsBase):
             
             # Enviar dados em lote
             if dados:
+                # Usar USER_ENTERED para que o Sheets interprete números como números
                 aba.append_rows(dados, value_input_option='USER_ENTERED')
                 print(f"   ✅ {len(dados)} linhas enviadas")
                 
@@ -194,7 +212,7 @@ class ProcessadorFilasPrimeiroSemestre(GoogleSheetsBase):
     
     def _ler_csv(self, caminho_csv):
         """
-        Lê o arquivo CSV com tratamento de encoding
+        Lê o arquivo CSV mantendo TODOS os dados como texto (sem conversão)
         
         Args:
             caminho_csv: Caminho do arquivo
@@ -208,33 +226,40 @@ class ProcessadorFilasPrimeiroSemestre(GoogleSheetsBase):
         for encoding in encodings:
             try:
                 # Tentar com ponto e vírgula primeiro (padrão Genesys)
-                df = pd.read_csv(caminho_csv, encoding=encoding, sep=';')
+                # dtype=str força TUDO como string - sem conversão numérica
+                df = pd.read_csv(caminho_csv, encoding=encoding, sep=';', dtype=str, keep_default_na=False)
                 if len(df.columns) > 1:
                     print(f"   ✅ Arquivo lido com encoding: {encoding}, separador: ';'")
+                    print(f"   ✅ {len(df)} linhas carregadas")
+                    print(f"   ✅ {len(df.columns)} colunas encontradas")
                     return df
             except:
                 pass
             
             try:
                 # Tentar com vírgula
-                df = pd.read_csv(caminho_csv, encoding=encoding, sep=',')
+                df = pd.read_csv(caminho_csv, encoding=encoding, sep=',', dtype=str, keep_default_na=False)
                 if len(df.columns) > 1:
                     print(f"   ✅ Arquivo lido com encoding: {encoding}, separador: ','")
+                    print(f"   ✅ {len(df)} linhas carregadas")
+                    print(f"   ✅ {len(df.columns)} colunas encontradas")
                     return df
             except:
                 pass
         
         # Última tentativa: deixar pandas detectar automaticamente
         try:
-            df = pd.read_csv(caminho_csv)
+            df = pd.read_csv(caminho_csv, dtype=str, keep_default_na=False)
             print(f"   ✅ Arquivo lido com detecção automática")
+            print(f"   ✅ {len(df)} linhas carregadas")
+            print(f"   ✅ {len(df.columns)} colunas encontradas")
             return df
         except Exception as e:
             raise Exception(f"Erro ao ler CSV: {str(e)}")
     
     def _limpar_dados(self, df):
         """
-        Limpa e prepara os dados
+        Limpa e prepara os dados MANTENDO formato original
         
         Args:
             df: DataFrame original
@@ -247,34 +272,16 @@ class ProcessadorFilasPrimeiroSemestre(GoogleSheetsBase):
         # Remover espaços dos nomes das colunas
         df.columns = df.columns.str.strip()
         
-        # Tratar valores nulos
+        # Substituir NaN por string vazia (manter tudo como texto)
         df = df.fillna('')
         
-        # Limpar números (remover apóstrofos, aspas)
+        # Converter tudo para string para manter formato EXATO do CSV
         for col in df.columns:
-            if df[col].dtype == 'object':
-                # Remover aspas simples no início
-                df[col] = df[col].astype(str).str.replace("^'", "", regex=True)
-                df[col] = df[col].astype(str).str.replace('^"', "", regex=True)
-                
-                # Limpar espaços extras
-                df[col] = df[col].str.strip()
-        
-        # Converter tipos de dados quando apropriado
-        for col in df.columns:
-            # Tentar converter colunas numéricas
-            if 'oferta' in col.lower() or 'resposta' in col.lower() or 'abandono' in col.lower():
-                try:
-                    df[col] = pd.to_numeric(df[col], errors='coerce')
-                    # Substituir inf e -inf por vazio
-                    df[col] = df[col].replace([np.inf, -np.inf], '')
-                    # Substituir NaN por vazio
-                    df[col] = df[col].fillna('')
-                except:
-                    pass
-        
-        # Substituir qualquer inf/-inf/nan remanescente
-        df = df.replace([np.inf, -np.inf, np.nan], '')
+            df[col] = df[col].astype(str)
+            # Limpar apenas valores 'nan' que vieram da conversão
+            df[col] = df[col].replace('nan', '')
+            # Remover espaços extras
+            df[col] = df[col].str.strip()
         
         return df
     

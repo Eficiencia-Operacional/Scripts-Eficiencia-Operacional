@@ -1,37 +1,45 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
-🎨 INTERFACE VISUAL - POWER BI LOOKER STUDIO
-Interface gráfica moderna para automação Power BI
+🎨 INTERFACE VISUAL - AUTOMAÇÃO LEROY MERLIN
+Interface gráfica moderna para execução das automações
 
-Cores Tema Amarelo:
-- Amarelo Principal: #FFD700
-- Amarelo Escuro: #FFA800
-- Laranja: #FF8C00
+Cores Leroy Merlin:j
+- Verde Principal: #00A859
+- Verde Escuro: #008A47
+- Laranja: #FF6B35
 - Cinza Escuro: #333333
 - Branco: #FFFFFF
 """
 
+import sys
+import os
+import io
+
+# Configurar encoding UTF-8 para Windows
+if sys.platform == 'win32':
+    try:
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+    except (AttributeError, io.UnsupportedOperation):
+        pass
+
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog, scrolledtext
 import threading
-import sys  
-import os
 import json
 from datetime import datetime
-import subprocess
-import webbrowser
+import subprocess 
 from tkinter import messagebox as mb
 from tkinter import ttk
 
-# Adicionar o diretório src ao path
+# Adicionar o diretório raiz ao path
 current_dir = os.path.dirname(os.path.abspath(__file__))
-src_dir = os.path.join(current_dir, 'src')
-sys.path.append(src_dir)
+root_dir = os.path.abspath(os.path.join(current_dir, '..'))
+sys.path.insert(0, root_dir)
 
-# Importar renomeador e processadores Power BI
+# Importar renomeador
 from renomeador_inteligente import RenomeadorInteligente
-from src.processadores.powerbi.genesys.filas_primeiro_semestre import ProcessadorFilasPrimeiroSemestre
-from src.processadores.powerbi.genesys.filas_segundo_semestre import ProcessadorFilasSegundoSemestre
 
 # Simple tooltip helper (lightweight and safe)
 class ToolTip:
@@ -75,9 +83,9 @@ class AutomacaoLeroyMerlinGUI:
     def __init__(self): 
         # Cores da Leroy Merlin - PROFISSIONAL (Verde + Preto + Branco)
         self.CORES = {
-            'amarelo': '#FFD700',       # Verde oficial Leroy Merlin
-            'amarelo_escuro': '#FFA800',      # Verde escuro
-            'amarelo_hover': '#FFE44D',       # Verde hover
+            'verde_leroy': '#00A859',       # Verde oficial Leroy Merlin
+            'verde_escuro': '#00864A',      # Verde escuro
+            'verde_hover': '#00C46A',       # Verde hover
             'preto': '#000000',             # Preto puro
             'preto_suave': '#1A1A1A',       # Preto suave para fundos
             'cinza_escuro': '#2A2A2A',      # Cinza escuro
@@ -105,8 +113,8 @@ class AutomacaoLeroyMerlinGUI:
         # Variáveis para labels KPI (para atualização dinâmica)
         self.kpi_labels = {}
         
-        # Arquivo para persistência dos KPIs
-        self.arquivo_kpis = os.path.join('config', 'kpis_historico.json')
+        # Arquivo para persistência dos KPIs - agora na pasta json/
+        self.arquivo_kpis = os.path.join('json', 'kpis_historico.json')
         
         self.janela_principal = None
         self.texto_log = None
@@ -126,7 +134,7 @@ class AutomacaoLeroyMerlinGUI:
         """Cria a interface principal"""
         # Janela principal - TEMA PROFISSIONAL (Preto + Verde + Branco)
         self.janela_principal = tk.Tk()
-        self.janela_principal.title("POWER BI LOOKER STUDIO - Leroy Merlin v2.4")
+        self.janela_principal.title("Dashboard RPA - Leroy Merlin v2.4")
         self.janela_principal.geometry("1400x800")  # Maior para dashboards
         self.janela_principal.configure(bg=self.CORES['preto_suave'])
         self.janela_principal.minsize(1200, 700)
@@ -175,7 +183,7 @@ class AutomacaoLeroyMerlinGUI:
         # Botão principal verde com hover melhorado (MAIOR)
         style.configure(
             'Verde.TButton',
-            background=self.CORES['amarelo'],
+            background=self.CORES['verde_leroy'],
             foreground=self.CORES['branco'],
             font=('Segoe UI', 12, 'bold'),
             padding=(25, 18),
@@ -184,15 +192,15 @@ class AutomacaoLeroyMerlinGUI:
             focuscolor='none'
         )
         style.map('Verde.TButton',
-                  background=[('active', self.CORES['amarelo_escuro']),
-                             ('pressed', self.CORES['amarelo_escuro']),
+                  background=[('active', self.CORES['verde_escuro']),
+                             ('pressed', self.CORES['verde_escuro']),
                              ('disabled', '#CCCCCC')],
                   foreground=[('disabled', '#666666')])
         
         # Botão renomear verde claro com melhor visual (MAIOR)
         style.configure(
             'VerdeClaro.TButton',
-            background=self.CORES['amarelo'],
+            background=self.CORES['verde_leroy'],
             foreground=self.CORES['branco'],
             font=('Segoe UI', 11, 'bold'),
             padding=(18, 14),
@@ -201,8 +209,8 @@ class AutomacaoLeroyMerlinGUI:
             focuscolor='none'
         )
         style.map('VerdeClaro.TButton',
-                  background=[('active', self.CORES['amarelo_hover']),
-                             ('pressed', self.CORES['amarelo_escuro']),
+                  background=[('active', self.CORES['verde_hover']),
+                             ('pressed', self.CORES['verde_escuro']),
                              ('disabled', '#CCCCCC')],
                   foreground=[('disabled', '#666666')])
         
@@ -261,9 +269,9 @@ class AutomacaoLeroyMerlinGUI:
         style.configure(
             'Verde.Horizontal.TProgressbar',
             troughcolor=self.CORES['cinza_medio'],
-            background=self.CORES['amarelo'],
-            lightcolor=self.CORES['amarelo_hover'],
-            darkcolor=self.CORES['amarelo_escuro'],
+            background=self.CORES['verde_leroy'],
+            lightcolor=self.CORES['verde_hover'],
+            darkcolor=self.CORES['verde_escuro'],
             relief='flat',
             borderwidth=2,
             focuscolor='none'
@@ -305,12 +313,12 @@ class AutomacaoLeroyMerlinGUI:
     def criar_header_profissional(self):
         """Cria header PROFISSIONAL com logo Leroy Merlin"""
         # Header VERDE LEROY MERLIN
-        header_frame = tk.Frame(self.container_principal, bg=self.CORES['amarelo'], height=100)
+        header_frame = tk.Frame(self.container_principal, bg=self.CORES['verde_leroy'], height=100)
         header_frame.pack(fill='x', padx=0, pady=0)
         header_frame.pack_propagate(False)
         
         # Container interno
-        header_content = tk.Frame(header_frame, bg=self.CORES['amarelo'])
+        header_content = tk.Frame(header_frame, bg=self.CORES['verde_leroy'])
         header_content.pack(fill='both', expand=True, padx=30, pady=20)
         
         # LOGO LEROY MERLIN (se existir)
@@ -321,7 +329,7 @@ class AutomacaoLeroyMerlinGUI:
                 logo_img = Image.open(logo_path)
                 logo_img = logo_img.resize((60, 60), Image.Resampling.LANCZOS)
                 logo_photo = ImageTk.PhotoImage(logo_img)
-                logo_label = tk.Label(header_content, image=logo_photo, bg=self.CORES['amarelo'])
+                logo_label = tk.Label(header_content, image=logo_photo, bg=self.CORES['verde_leroy'])
                 logo_label.image = logo_photo  # Manter referência
                 logo_label.pack(side='left', padx=(0, 20))
         except:
@@ -330,21 +338,21 @@ class AutomacaoLeroyMerlinGUI:
                 header_content,
                 text="🚀",
                 font=('Segoe UI Emoji', 40, 'bold'),
-                bg=self.CORES['amarelo'],
+                bg=self.CORES['verde_leroy'],
                 fg=self.CORES['branco']
             )
             logo_label.pack(side='left', padx=(0, 20))
         
         # Textos
-        texto_frame = tk.Frame(header_content, bg=self.CORES['amarelo'])
+        texto_frame = tk.Frame(header_content, bg=self.CORES['verde_leroy'])
         texto_frame.pack(side='left', fill='both', expand=True)
         
         # Título
         titulo = tk.Label(
             texto_frame,
-            text="POWER BI LOOKER STUDIO",
+            text="DASHBOARD RPA",
             font=('Segoe UI', 26, 'bold'),
-            bg=self.CORES['amarelo'],
+            bg=self.CORES['verde_leroy'],
             fg=self.CORES['branco']
         )
         titulo.pack(anchor='w')
@@ -354,13 +362,13 @@ class AutomacaoLeroyMerlinGUI:
             texto_frame,
             text="Sistema RPA • Processamento Automatizado • Leroy Merlin",
             font=('Segoe UI', 12),
-            bg=self.CORES['amarelo'],
+            bg=self.CORES['verde_leroy'],
             fg=self.CORES['branco']
         )
         subtitulo.pack(anchor='w', pady=(6, 0))
         
         # Status lado direito
-        status_frame = tk.Frame(header_content, bg=self.CORES['amarelo'])
+        status_frame = tk.Frame(header_content, bg=self.CORES['verde_leroy'])
         status_frame.pack(side='right')
         
         # Online indicator
@@ -368,7 +376,7 @@ class AutomacaoLeroyMerlinGUI:
             status_frame,
             text="● ONLINE",
             font=('Segoe UI', 10, 'bold'),
-            bg=self.CORES['amarelo'],
+            bg=self.CORES['verde_leroy'],
             fg=self.CORES['branco']
         )
         status_dot.pack(anchor='e')
@@ -380,7 +388,7 @@ class AutomacaoLeroyMerlinGUI:
             status_frame,
             text=f"📅 {agora}",
             font=('Segoe UI', 9),
-            bg=self.CORES['amarelo'],
+            bg=self.CORES['verde_leroy'],
             fg=self.CORES['branco_suave']
         )
         data_label.pack(anchor='e', pady=(4, 0))
@@ -403,7 +411,7 @@ class AutomacaoLeroyMerlinGUI:
                 'valor_inicial': '0',
                 'subtitulo': 'registros',
                 'emoji': '📊',
-                'cor': self.CORES['amarelo']
+                'cor': self.CORES['verde_leroy']
             },
             {
                 'key': 'taxa_sucesso',
@@ -411,7 +419,7 @@ class AutomacaoLeroyMerlinGUI:
                 'valor_inicial': '0%',
                 'subtitulo': 'aproveitamento',
                 'emoji': '✅',
-                'cor': self.CORES['amarelo']
+                'cor': self.CORES['verde_leroy']
             },
             {
                 'key': 'tempo_medio',
@@ -603,37 +611,6 @@ class AutomacaoLeroyMerlinGUI:
         except Exception as e:
             print(f"❌ Erro ao registrar execução: {e}")
     
-    def atualizar_kpis_com_resultados(self, resultados, tempo_total):
-        """Atualiza KPIs baseado nos resultados reais dos processadores"""
-        try:
-            total_linhas = sum(r.get('linhas_processadas', 0) for r in resultados)
-            
-            # Atualizar taxa de sucesso
-            sucesso_count = len([r for r in resultados if r.get('sucesso')])
-            total_count = len(resultados)
-            if total_count > 0:
-                taxa = (sucesso_count / total_count) * 100
-                self.kpis_data['taxa_sucesso'] = round(taxa, 1)
-            
-            # Atualizar tempo médio
-            if tempo_total > 0:
-                tempo_atual = self.kpis_data['tempo_medio']
-                total_exec = self.kpis_data['arquivos_processados'] + 1
-                
-                if total_exec > 1:
-                    novo_tempo = ((tempo_atual * (total_exec - 1)) + tempo_total) / total_exec
-                else:
-                    novo_tempo = tempo_total
-                
-                self.kpis_data['tempo_medio'] = int(novo_tempo)
-            
-            # Salvar e atualizar interface
-            self.salvar_kpis()
-            self.atualizar_kpis()
-            
-        except Exception as e:
-            print(f"❌ Erro ao atualizar KPIs: {e}")
-    
     def extrair_total_registros(self, output):
         """Extrai o total de registros processados do output"""
         try:
@@ -709,7 +686,7 @@ class AutomacaoLeroyMerlinGUI:
         
         opcoes_frame = tk.LabelFrame(
             opcoes_shadow,
-            text="  🎯 Opções Power BI Looker  ",
+            text="  📋 Opções de Execução  ",
             font=('Segoe UI', 12, 'bold'),
             bg=self.CORES['cinza_escuro'],
             fg=self.CORES['branco'],
@@ -721,50 +698,69 @@ class AutomacaoLeroyMerlinGUI:
         )
         opcoes_frame.pack(fill='both', expand=True, padx=2, pady=2)
         
-        # Variáveis para checkboxes - APENAS POWER BI
-        self.var_primeiro_semestre = tk.BooleanVar(value=True)
-        self.var_segundo_semestre = tk.BooleanVar(value=True)
+        # Variáveis para checkboxes
+        self.var_genesys = tk.BooleanVar(value=True)
+        self.var_salesforce = tk.BooleanVar(value=True)
+        self.var_produtividade = tk.BooleanVar(value=True)
         self.var_verbose = tk.BooleanVar(value=False)
         
         # Checkboxes - PROFISSIONAL
         checkbox_frame = tk.Frame(opcoes_frame, bg=self.CORES['cinza_escuro'])
         checkbox_frame.pack(fill='x', padx=8, pady=10)
         
-        # Checkbox PRIMEIRO SEMESTRE
-        cb_primeiro = tk.Checkbutton(
+        # Checkbox Genesys
+        cb_genesys = tk.Checkbutton(
             checkbox_frame,
-            text="📊 Processar PRIMEIRO SEMESTRE (Filas Genesys)",
-            variable=self.var_primeiro_semestre,
+            text="📊 Processar Genesys (VOZ, TEXTO, GESTÃO)",
+            variable=self.var_genesys,
             font=('Segoe UI', 10, 'bold'),
             bg=self.CORES['cinza_escuro'],
             fg=self.CORES['branco'],
-            activebackground=self.CORES['amarelo'],
-            activeforeground=self.CORES['preto'],
-            selectcolor=self.CORES['amarelo'],
+            activebackground=self.CORES['verde_leroy'],
+            activeforeground=self.CORES['branco'],
+            selectcolor=self.CORES['verde_leroy'],
             relief='flat',
             highlightthickness=0,
             bd=0,
             cursor='hand2'
         )
-        cb_primeiro.pack(anchor='w', pady=5)
+        cb_genesys.pack(anchor='w', pady=5)
         
-        # Checkbox SEGUNDO SEMESTRE
-        cb_segundo = tk.Checkbutton(
+        # Checkbox Salesforce
+        cb_salesforce = tk.Checkbutton(
             checkbox_frame,
-            text="� Processar SEGUNDO SEMESTRE (Filas Genesys)",
-            variable=self.var_segundo_semestre,
+            text="💼 Processar Salesforce (CRIADO, RESOLVIDO, COMENTÁRIOS)",
+            variable=self.var_salesforce,
             font=('Segoe UI', 10, 'bold'),
             bg=self.CORES['cinza_escuro'],
             fg=self.CORES['branco'],
-            activebackground=self.CORES['amarelo'],
-            activeforeground=self.CORES['preto'],
-            selectcolor=self.CORES['amarelo'],
+            activebackground=self.CORES['verde_leroy'],
+            activeforeground=self.CORES['branco'],
+            selectcolor=self.CORES['verde_leroy'],
             relief='flat',
             highlightthickness=0,
             bd=0,
             cursor='hand2'
         )
-        cb_segundo.pack(anchor='w', pady=5)
+        cb_salesforce.pack(anchor='w', pady=5)
+        
+        # Checkbox Produtividade
+        cb_produtividade = tk.Checkbutton(
+            checkbox_frame,
+            text="📈 Processar Produtividade (VISÃO PRODUTIVA, TEMPO)",
+            variable=self.var_produtividade,
+            font=('Segoe UI', 10, 'bold'),
+            bg=self.CORES['cinza_escuro'],
+            fg=self.CORES['branco'],
+            activebackground=self.CORES['verde_leroy'],
+            activeforeground=self.CORES['branco'],
+            selectcolor=self.CORES['verde_leroy'],
+            relief='flat',
+            highlightthickness=0,
+            bd=0,
+            cursor='hand2'
+        )
+        cb_produtividade.pack(anchor='w', pady=5)
         
         # Separador
         sep1 = tk.Frame(checkbox_frame, bg=self.CORES['cinza_medio'], height=1)
@@ -858,30 +854,40 @@ class AutomacaoLeroyMerlinGUI:
         )
         label_planilhas.pack(pady=(8, 10))
         
-        # Botão planilha PRIMEIRO SEMESTRE
-        botao_planilha_primeiro = ttk.Button(
+        # Botão planilha Genesys
+        botao_planilha_genesys = ttk.Button(
             gestao_botoes_frame,
-            text="📊 Planilha PRIMEIRO SEMESTRE",
+            text="📊 Planilha Genesys",
             style='VerdeClaro.TButton',
-            command=lambda: self.abrir_planilha('primeiro'),
+            command=lambda: self.abrir_planilha('genesys'),
             cursor='hand2'
         )
-        botao_planilha_primeiro.pack(fill='x', pady=(0, 4))
+        botao_planilha_genesys.pack(fill='x', pady=(0, 4))
         
-        # Botão planilha SEGUNDO SEMESTRE
-        botao_planilha_segundo = ttk.Button(
+        # Botão planilha Salesforce
+        botao_planilha_salesforce = ttk.Button(
             gestao_botoes_frame,
-            text="� Planilha SEGUNDO SEMESTRE",
+            text="💼 Planilha Salesforce",
             style='Info.TButton',
-            command=lambda: self.abrir_planilha('segundo'),
+            command=lambda: self.abrir_planilha('salesforce'),
             cursor='hand2'
         )
-        botao_planilha_segundo.pack(fill='x', pady=(4, 0))
+        botao_planilha_salesforce.pack(fill='x', pady=(4, 4))
         
+        # Botão planilha Produtividade (NOVO)
+        botao_planilha_produtividade = ttk.Button(
+            gestao_botoes_frame,
+            text="📈 Planilha Produtividade",
+            style='VerdeClaro.TButton',
+            command=lambda: self.abrir_planilha('produtividade'),
+            cursor='hand2'
+        )
+        botao_planilha_produtividade.pack(fill='x', pady=(4, 0))
         # Tooltips for quick access buttons
         try:
-            ToolTip(botao_planilha_primeiro, "Abrir planilha PRIMEIRO SEMESTRE no navegador")
-            ToolTip(botao_planilha_segundo, "Abrir planilha SEGUNDO SEMESTRE no navegador")
+            ToolTip(botao_planilha_genesys, "Abrir a planilha oficial do Genesys no navegador")
+            ToolTip(botao_planilha_salesforce, "Abrir a planilha oficial do Salesforce no navegador")
+            ToolTip(botao_planilha_produtividade, "Abrir a planilha oficial de Produtividade")
             ToolTip(self.botao_renomear, "Executa renomeação inteligente dos arquivos na pasta data/")
         except Exception:
             pass
@@ -900,7 +906,7 @@ class AutomacaoLeroyMerlinGUI:
         # Título da seção
         titulo_botoes = tk.Label(
             botoes_inner,
-            text="⚡ Processar Power BI Looker",
+            text="⚡ Execução de Processos",
             font=('Segoe UI', 12, 'bold'),
             bg=self.CORES['cinza_escuro'],
             fg=self.CORES['branco']
@@ -911,25 +917,35 @@ class AutomacaoLeroyMerlinGUI:
         botoes_individuais_frame = tk.Frame(botoes_inner, bg=self.CORES['cinza_escuro'])
         botoes_individuais_frame.pack(fill='x', pady=(0, 15))
         
-        # Botão PRIMEIRO SEMESTRE individual (DESTAQUE AMARELO)
-        self.botao_primeiro = ttk.Button(
+        # Botão Genesys individual (DESTAQUE VERDE)
+        self.botao_genesys = ttk.Button(
             botoes_individuais_frame,
-            text="� PROCESSAR PRIMEIRO SEMESTRE",
+            text="📊 PROCESSAR GENESYS",
             style='Verde.TButton',
-            command=lambda: self.executar_individual('primeiro'),
+            command=lambda: self.executar_individual('genesys'),
             cursor='hand2'
         )
-        self.botao_primeiro.pack(side='left', expand=True, fill='both', padx=(0, 8))
+        self.botao_genesys.pack(side='left', expand=True, fill='both', padx=(0, 8))
         
-        # Botão SEGUNDO SEMESTRE individual (DESTAQUE AMARELO)
-        self.botao_segundo = ttk.Button(
+        # Botão Salesforce individual (DESTAQUE VERDE)
+        self.botao_salesforce = ttk.Button(
             botoes_individuais_frame,
-            text="� PROCESSAR SEGUNDO SEMESTRE", 
+            text="💼 PROCESSAR SALESFORCE", 
             style='Verde.TButton',
-            command=lambda: self.executar_individual('segundo'),
+            command=lambda: self.executar_individual('salesforce'),
             cursor='hand2'
         )
-        self.botao_segundo.pack(side='left', expand=True, fill='both', padx=(8, 0))
+        self.botao_salesforce.pack(side='left', expand=True, fill='both', padx=(8, 8))
+        
+        # Botão Produtividade individual (DESTAQUE VERDE)
+        self.botao_produtividade = ttk.Button(
+            botoes_individuais_frame,
+            text="📈 PROCESSAR PRODUTIVIDADE", 
+            style='Verde.TButton',
+            command=lambda: self.executar_individual('produtividade'),
+            cursor='hand2'
+        )
+        self.botao_produtividade.pack(side='left', expand=True, fill='both', padx=(8, 0))
         
         # Separador visual
         sep_botoes = tk.Frame(botoes_inner, bg=self.CORES['cinza_medio'], height=1)
@@ -982,7 +998,7 @@ class AutomacaoLeroyMerlinGUI:
             text="💚 Sistema pronto para execução",
             font=('Segoe UI', 12, 'bold'),
             bg=self.CORES['cinza_escuro'],
-            fg=self.CORES['amarelo']
+            fg=self.CORES['verde_leroy']
         )
         self.status_label.pack(anchor='w', pady=(10, 12))
         
@@ -1074,12 +1090,12 @@ class AutomacaoLeroyMerlinGUI:
         linha_top = tk.Frame(self.container_principal, bg=self.CORES['laranja'], height=3)
         linha_top.pack(fill='x', pady=(8, 0))
         
-        footer_frame = tk.Frame(self.container_principal, bg=self.CORES['amarelo_escuro'], height=50)
+        footer_frame = tk.Frame(self.container_principal, bg=self.CORES['verde_escuro'], height=50)
         footer_frame.pack(fill='x', pady=0)
         footer_frame.pack_propagate(False)
         
         # Informações do sistema - layout mais limpo
-        info_frame = tk.Frame(footer_frame, bg=self.CORES['amarelo_escuro'])
+        info_frame = tk.Frame(footer_frame, bg=self.CORES['verde_escuro'])
         info_frame.pack(expand=True, fill='both')
         
         # Data/hora (MAIOR)
@@ -1088,7 +1104,7 @@ class AutomacaoLeroyMerlinGUI:
             info_frame,
             text=f"⏰ {agora}",
             font=('Segoe UI', 10, 'bold'),
-            bg=self.CORES['amarelo_escuro'],
+            bg=self.CORES['verde_escuro'],
             fg=self.CORES['branco']
         )
         data_label.pack(side='left', padx=25, pady=15)
@@ -1096,9 +1112,9 @@ class AutomacaoLeroyMerlinGUI:
         # Versão (centralizada) - MAIOR
         versao_label = tk.Label(
             info_frame,
-            text="✨ Power BI Looker Studio v1.0 • Leroy Merlin RPA",
+            text="✨ Automação Boletins Leroy Merlin v2.4 • RPA System",
             font=('Segoe UI', 11, 'bold'),
-            bg=self.CORES['amarelo_escuro'],
+            bg=self.CORES['verde_escuro'],
             fg=self.CORES['branco']
         )
         versao_label.pack(expand=True, pady=15)
@@ -1108,7 +1124,7 @@ class AutomacaoLeroyMerlinGUI:
             info_frame,
             text="✅ Pronto para uso",
             font=('Segoe UI', 10, 'bold'),
-            bg=self.CORES['amarelo_escuro'],
+            bg=self.CORES['verde_escuro'],
             fg='#A5D6A7'
         )
         status_label.pack(side='right', padx=25, pady=15)
@@ -1213,13 +1229,14 @@ class AutomacaoLeroyMerlinGUI:
     def abrir_planilha(self, tipo):
         """Abre planilha oficial no navegador"""
         urls = {
-            'primeiro': 'https://docs.google.com/spreadsheets/d/1VtNTqp907enX0M3gB05dmPckDRl7nnfgVEl3mNF8ILc/edit',      # Planilha PRIMEIRO SEMESTRE
-            'segundo': 'https://docs.google.com/spreadsheets/d/1r5eZWGVuBP4h68KfrA73lSvfEf37P-AuUCNHF40ttv8/edit'   # Planilha SEGUNDO SEMESTRE
+            'genesys': 'https://docs.google.com/spreadsheets/d/1e48VAZd2v5ZEQ4OK7yDu6KhrRi7mft5eVkh3qwZcdZE/edit?gid=282816795#gid=282816795',      # Planilha oficial Genesys
+            'salesforce': 'https://docs.google.com/spreadsheets/d/1luDIE2OSjunty4-l_pHkRKsP3AMCMOes80A4Xc607Qk/edit?gid=1897032278#gid=1897032278',  # Planilha oficial Salesforce
+            'produtividade': 'https://docs.google.com/spreadsheets/d/1nzSa4cnPOPau1-BF221Vc6VEvUiFe6D1suebCcQmAT4'   # Planilha oficial Produtividade
         }
         
         if tipo in urls:
             self.abrir_url(urls[tipo])
-            self.log_mensagem(f"🔗 Planilha {tipo.upper()} SEMESTRE aberta no navegador", 'sucesso')
+            self.log_mensagem(f"🔗 Planilha {tipo.title()} aberta no navegador", 'sucesso')
         else:
             self.log_mensagem(f"❌ Tipo de planilha desconhecido: {tipo}", 'erro')
     
@@ -1301,58 +1318,63 @@ class AutomacaoLeroyMerlinGUI:
             mb.showerror("Erro", f"Erro na renomeação:\n{str(e)}")
     
     def executar_individual(self, sistema):
-        """Executa apenas um sistema específico (primeiro ou segundo semestre)"""
+        """Executa apenas um sistema específico (genesys, salesforce ou produtividade)"""
         if self.executando:
             messagebox.showwarning("Aviso", "Automação já está em execução!")
             return
         
         # Confirmar execução
         sistemas_nomes = {
-            'primeiro': "📊 PRIMEIRO SEMESTRE",
-            'segundo': "� SEGUNDO SEMESTRE"
+            'genesys': "📊 Genesys",
+            'salesforce': "💼 Salesforce", 
+            'produtividade': "📈 Produtividade"
         }
         sistema_nome = sistemas_nomes.get(sistema, sistema)
         
         resposta = messagebox.askyesno(
             f"Confirmar Execução - {sistema_nome}",
-            f"Executar automação para {sistema_nome}?\n\n"
-            f"Isso processará os dados das Filas Genesys para o {sistema.upper()} SEMESTRE."
+            f"Executar automação apenas para {sistema_nome}?\n\n"
+            f"Isso processará somente os dados relacionados ao {sistema.upper()}."
         )
         
         if not resposta:
             return
         
-        # Temporariamente definir checkboxes para executar apenas o semestre escolhido
-        checkbox_original_primeiro = self.var_primeiro_semestre.get()
-        checkbox_original_segundo = self.var_segundo_semestre.get()
+        # Temporariamente definir checkboxes para executar apenas o sistema escolhido
+        checkbox_original_genesys = self.var_genesys.get()
+        checkbox_original_salesforce = self.var_salesforce.get()
+        checkbox_original_produtividade = self.var_produtividade.get()
         
-        # Configurar para executar apenas o semestre selecionado
-        self.var_primeiro_semestre.set(sistema == 'primeiro')
-        self.var_segundo_semestre.set(sistema == 'segundo')
+        # Configurar para executar apenas o sistema selecionado
+        self.var_genesys.set(sistema == 'genesys')
+        self.var_salesforce.set(sistema == 'salesforce')
+        self.var_produtividade.set(sistema == 'produtividade')
         
         try:
             # Iniciar execução em thread separada
             thread = threading.Thread(
                 target=self._executar_automacao_individual_thread, 
-                args=(sistema, checkbox_original_primeiro, checkbox_original_segundo),
+                args=(sistema, checkbox_original_genesys, checkbox_original_salesforce, checkbox_original_produtividade),
                 daemon=True
             )
             thread.start()
         except Exception as e:
             # Restaurar checkboxes originais em caso de erro
-            self.var_primeiro_semestre.set(checkbox_original_primeiro)
-            self.var_segundo_semestre.set(checkbox_original_segundo)
+            self.var_genesys.set(checkbox_original_genesys)
+            self.var_salesforce.set(checkbox_original_salesforce)
+            self.var_produtividade.set(checkbox_original_produtividade)
             messagebox.showerror("Erro", f"Erro ao iniciar execução: {str(e)}")
     
-    def _executar_automacao_individual_thread(self, sistema, original_primeiro, original_segundo):
+    def _executar_automacao_individual_thread(self, sistema, original_genesys, original_salesforce, original_produtividade):
         """Thread específica para execução individual"""
         try:
             # Usar o mesmo método de execução, mas com parâmetros específicos
             self._executar_automacao_thread()
         finally:
             # Sempre restaurar checkboxes originais no final
-            self.var_primeiro_semestre.set(original_primeiro)
-            self.var_segundo_semestre.set(original_segundo)
+            self.var_genesys.set(original_genesys)
+            self.var_salesforce.set(original_salesforce)
+            self.var_produtividade.set(original_produtividade)
     
     def executar_automacao(self):
         """Executa a automação em thread separada"""
@@ -1361,8 +1383,8 @@ class AutomacaoLeroyMerlinGUI:
             return
         
         # Verificar se pelo menos uma opção está selecionada
-        if not self.var_primeiro_semestre.get() and not self.var_segundo_semestre.get():
-            messagebox.showerror("Erro", "Selecione pelo menos um semestre (PRIMEIRO ou SEGUNDO)!")
+        if not self.var_genesys.get() and not self.var_salesforce.get() and not self.var_produtividade.get():
+            messagebox.showerror("Erro", "Selecione pelo menos uma opção (Genesys, Salesforce ou Produtividade)!")
             return
         
         # Iniciar execução em thread separada
@@ -1370,117 +1392,141 @@ class AutomacaoLeroyMerlinGUI:
         thread.start()
     
     def _executar_automacao_thread(self):
-        """Thread para execução da automação Power BI"""
+        """Thread para execução da automação com encoding robusto"""
         try:
             self.executando = True
             
             # Atualizar interface
             self.botao_executar.configure(text="⏳ EXECUTANDO...", state='disabled')
-            self.botao_primeiro.configure(state='disabled')
-            self.botao_segundo.configure(state='disabled')
+            self.botao_genesys.configure(state='disabled')
+            self.botao_salesforce.configure(state='disabled')
+            self.botao_produtividade.configure(state='disabled')
             self.botao_renomear.configure(state='disabled')
             self.status_label.configure(text="🔄 Executando automação...", fg=self.CORES['laranja'])
             self.progresso.start()
             
-            self.log_mensagem("🚀 Iniciando automação Power BI...", 'sucesso')
+            self.log_mensagem("🚀 Iniciando automação...", 'sucesso')
             
-            # Determinar quais semestres processar
-            processar_primeiro = self.var_primeiro_semestre.get()
-            processar_segundo = self.var_segundo_semestre.get()
+            # Construir comando
+            comando = ["python", "main.py"]
             
-            if not processar_primeiro and not processar_segundo:
-                self.log_mensagem("⚠️ Nenhum semestre selecionado!", 'erro')
-                raise Exception("Selecione pelo menos um semestre para processar")
+            # Adicionar opções baseadas nos checkboxes (lógica melhorada para três sistemas)
+            sistemas_selecionados = []
+            if self.var_genesys.get():
+                sistemas_selecionados.append("genesys")
+            if self.var_salesforce.get():
+                sistemas_selecionados.append("salesforce")
+            if self.var_produtividade.get():
+                sistemas_selecionados.append("produtividade")
             
-            # Caminho do arquivo CSV
-            arquivo_csv = os.path.join(current_dir, 'data', 'Filas Genesys - Todas as Filas .csv')
+            # Se apenas um sistema está selecionado, usar parâmetro específico
+            if len(sistemas_selecionados) == 1:
+                comando.append(f"--{sistemas_selecionados[0]}")
+                self.log_mensagem(f"🎯 Modo: Apenas {sistemas_selecionados[0].title()}", 'info')
+            else:
+                # Se múltiplos ou todos, não adicionar parâmetro específico (processará todos selecionados)
+                sistemas_texto = " + ".join([s.title() for s in sistemas_selecionados])
+                self.log_mensagem(f"🎯 Modo: {sistemas_texto}", 'info')
             
-            if not os.path.exists(arquivo_csv):
-                self.log_mensagem(f"❌ Arquivo não encontrado: {arquivo_csv}", 'erro')
-                raise FileNotFoundError(f"Arquivo não encontrado: {arquivo_csv}")
+            if self.var_verbose.get():
+                comando.append("--verbose")
+                self.log_mensagem("🔍 Modo detalhado ativado", 'info')
             
-            self.log_mensagem(f"📁 Arquivo: {os.path.basename(arquivo_csv)}", 'info')
+            # Configurar variáveis de ambiente para encoding
+            env = os.environ.copy()
+            env['PYTHONIOENCODING'] = 'utf-8'
+            env['PYTHONLEGACYWINDOWSFSENCODING'] = '0'
             
-            # Caminho do arquivo de credenciais
-            arquivo_credenciais = os.path.join(current_dir, 'config', 'boletim.json')
+            self.log_mensagem(f"📋 Comando: {' '.join(comando)}", 'info')
             
-            if not os.path.exists(arquivo_credenciais):
-                self.log_mensagem(f"❌ Credenciais não encontradas: {arquivo_credenciais}", 'erro')
-                raise FileNotFoundError(f"Credenciais não encontradas: {arquivo_credenciais}")
+            # Executar comando com encoding robusto
+            processo = subprocess.Popen(
+                comando,
+                cwd=current_dir,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,  # Capturar stderr separadamente
+                text=True,
+                encoding='utf-8',
+                errors='replace',  # Substituir caracteres inválidos
+                universal_newlines=True,
+                env=env,
+                bufsize=0  # Sem buffer para saída em tempo real
+            )
             
-            resultados = []
-            inicio_total = datetime.now()
+            # Ler saída em tempo real (stdout e stderr)
+            import select
+            import time
             
-            # Processar PRIMEIRO SEMESTRE
-            if processar_primeiro:
-                self.log_mensagem("\n" + "="*60, 'destaque')
-                self.log_mensagem("📊 PROCESSANDO PRIMEIRO SEMESTRE", 'destaque')
-                self.log_mensagem("="*60, 'destaque')
+            # Para Windows, ler linha por linha
+            linha_count = 0
+            while processo.poll() is None:
+                # Ler stdout
+                if processo.stdout.readable():
+                    linha = processo.stdout.readline()
+                    if linha:
+                        linha = linha.strip()
+                        if linha:
+                            linha_count += 1
+                            # Detectar tipo de mensagem baseado em emojis/símbolos
+                            if '✅' in linha or 'sucesso' in linha.lower():
+                                self.log_mensagem(f"[{linha_count:03d}] {linha}", 'sucesso')
+                            elif '❌' in linha or 'erro' in linha.lower() or 'falha' in linha.lower():
+                                self.log_mensagem(f"[{linha_count:03d}] {linha}", 'erro')
+                            elif '⚠️' in linha or 'aviso' in linha.lower():
+                                self.log_mensagem(f"[{linha_count:03d}] {linha}", 'aviso')
+                            elif '🔍' in linha or '📊' in linha or '💼' in linha:
+                                self.log_mensagem(f"[{linha_count:03d}] {linha}", 'info')
+                            elif linha.startswith('=') or linha.startswith('-'):
+                                self.log_mensagem(f"[{linha_count:03d}] {linha}", 'destaque')
+                            else:
+                                self.log_mensagem(f"[{linha_count:03d}] {linha}")
                 
-                try:
-                    processador = ProcessadorFilasPrimeiroSemestre(arquivo_credenciais)
-                    self.log_mensagem("✅ Processador PRIMEIRO SEMESTRE inicializado", 'sucesso')
-                    
-                    resultado = processador.processar_e_enviar(arquivo_csv)
-                    
-                    if resultado.get('sucesso'):
-                        self.log_mensagem(f"✅ PRIMEIRO SEMESTRE processado com sucesso!", 'sucesso')
-                        self.log_mensagem(f"   📊 Linhas: {resultado.get('linhas_processadas', 0)}", 'info')
-                        resultados.append(resultado)
-                    else:
-                        self.log_mensagem(f"❌ Erro ao processar PRIMEIRO SEMESTRE", 'erro')
-                        
-                except Exception as e:
-                    self.log_mensagem(f"❌ Erro PRIMEIRO SEMESTRE: {str(e)}", 'erro')
-                    import traceback
-                    self.log_mensagem(f"🔍 Detalhes: {traceback.format_exc()}", 'erro')
+                time.sleep(0.01)  # Pequena pausa para não sobrecarregar CPU
             
-            # Processar SEGUNDO SEMESTRE
-            if processar_segundo:
-                self.log_mensagem("\n" + "="*60, 'destaque')
-                self.log_mensagem("📅 PROCESSANDO SEGUNDO SEMESTRE", 'destaque')
-                self.log_mensagem("="*60, 'destaque')
+            # Ler qualquer saída restante
+            stdout_restante, stderr_output = processo.communicate()
+            
+            if stdout_restante:
+                for linha in stdout_restante.split('\n'):
+                    linha = linha.strip()
+                    if linha:
+                        linha_count += 1
+                        self.log_mensagem(f"[{linha_count:03d}] {linha}")
+            
+            # Capturar stderr se houver
+            if stderr_output:
+                self.log_mensagem("🔍 Saída de erro (stderr):", 'aviso')
+                for linha in stderr_output.split('\n'):
+                    linha = linha.strip()
+                    if linha:
+                        linha_count += 1
+                        self.log_mensagem(f"[ERR{linha_count:03d}] {linha}", 'erro')
+            
+            # Verificar código de retorno
+            if processo.returncode == 0:
+                self.log_mensagem("🎉 Automação concluída com sucesso!", 'sucesso')
+                self.status_label.configure(text="✅ Automação concluída com sucesso!", fg=self.CORES['verde_leroy'])
                 
-                try:
-                    processador = ProcessadorFilasSegundoSemestre(arquivo_credenciais)
-                    self.log_mensagem("✅ Processador SEGUNDO SEMESTRE inicializado", 'sucesso')
-                    
-                    resultado = processador.processar_e_enviar(arquivo_csv)
-                    
-                    if resultado.get('sucesso'):
-                        self.log_mensagem(f"✅ SEGUNDO SEMESTRE processado com sucesso!", 'sucesso')
-                        self.log_mensagem(f"   📊 Linhas: {resultado.get('linhas_processadas', 0)}", 'info')
-                        resultados.append(resultado)
-                    else:
-                        self.log_mensagem(f"❌ Erro ao processar SEGUNDO SEMESTRE", 'erro')
-                        
-                except Exception as e:
-                    self.log_mensagem(f"❌ Erro SEGUNDO SEMESTRE: {str(e)}", 'erro')
-                    import traceback
-                    self.log_mensagem(f"🔍 Detalhes: {traceback.format_exc()}", 'erro')
-            
-            # Resumo final
-            fim_total = datetime.now()
-            tempo_total = (fim_total - inicio_total).total_seconds()
-            
-            self.log_mensagem("\n" + "="*60, 'destaque')
-            self.log_mensagem("📈 RESUMO FINAL", 'destaque')
-            self.log_mensagem("="*60, 'destaque')
-            self.log_mensagem(f"✅ Semestres processados: {len(resultados)}", 'sucesso')
-            self.log_mensagem(f"⏱️ Tempo total: {tempo_total:.1f}s", 'info')
-            
-            # Atualizar KPIs
-            if resultados:
-                self.atualizar_kpis_com_resultados(resultados, tempo_total)
-            
-            self.log_mensagem("🎉 Automação concluída com sucesso!", 'sucesso')
-            self.status_label.configure(text="✅ Automação concluída com sucesso!", fg=self.CORES['amarelo'])
-            
-            # Registrar execução bem-sucedida
-            total_registros = sum(r.get('linhas_processadas', 0) for r in resultados)
-            self.registrar_execucao(sucesso=True, registros_processados=total_registros, tempo_segundos=tempo_total)
-            
-            messagebox.showinfo("Sucesso", "Automação concluída com sucesso! ✅")
+                # Registrar execução bem-sucedida com dados estimados
+                # (aqui você pode melhorar pegando dados reais do log/output)
+                registros = self.extrair_total_registros(stdout_restante)
+                tempo = self.extrair_tempo_execucao(stdout_restante)
+                self.registrar_execucao(sucesso=True, registros_processados=registros, tempo_segundos=tempo)
+                
+                messagebox.showinfo("Sucesso", "Automação concluída com sucesso! ✅")
+            else:
+                self.log_mensagem(f"❌ Automação falhou (código {processo.returncode})", 'erro')
+                self.status_label.configure(text="❌ Automação falhou", fg=self.CORES['laranja'])
+                
+                # Registrar execução com falha
+                self.registrar_execucao(sucesso=False, registros_processados=0, tempo_segundos=0)
+                
+                # Construir mensagem de erro mais detalhada
+                erro_msg = f"Automação falhou (código {processo.returncode})"
+                if stderr_output:
+                    erro_msg += f"\n\nDetalhes do erro:\n{stderr_output[:500]}"  # Limitar tamanho
+                
+                messagebox.showerror("Erro", erro_msg)
                 
         except Exception as e:
             error_msg = str(e)
@@ -1495,21 +1541,19 @@ class AutomacaoLeroyMerlinGUI:
                 if linha.strip():
                     self.log_mensagem(f"    {linha}", 'erro')
             
-            # Registrar execução com falha
-            self.registrar_execucao(sucesso=False, registros_processados=0, tempo_segundos=0)
-            
             messagebox.showerror("Erro", f"Erro na execução:\n{error_msg}\n\nVerifique o log para mais detalhes.")
             
         finally:
             # Restaurar interface
             self.executando = False
             self.botao_executar.configure(text="🚀 EXECUTAR AUTOMAÇÃO COMPLETA", state='normal')
-            self.botao_primeiro.configure(state='normal')
-            self.botao_segundo.configure(state='normal')
+            self.botao_genesys.configure(state='normal')
+            self.botao_salesforce.configure(state='normal')
+            self.botao_produtividade.configure(state='normal')
             self.botao_renomear.configure(state='normal')
             self.progresso.stop()
             if not self.status_label.cget('text').startswith(('❌', '✅')):
-                self.status_label.configure(text="� Pronto para nova execução", fg=self.CORES['amarelo_escuro'])
+                self.status_label.configure(text="💚 Pronto para nova execução", fg=self.CORES['verde_escuro'])
     
     def executar(self):
         """Inicia a interface"""
