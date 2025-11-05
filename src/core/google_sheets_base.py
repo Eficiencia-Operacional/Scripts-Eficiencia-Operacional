@@ -178,12 +178,23 @@ class GoogleSheetsBase:
                 
                 # Tentar ler o arquivo para verificar se está OK
                 try:
-                    with open(credenciais_path, 'r', encoding='utf-8') as f:
+                    # Tentar abrir em modo compartilhado (read-only)
+                    with open(credenciais_path, 'r', encoding='utf-8', errors='ignore') as f:
                         content = f.read()
                         if len(content) < 100:  # Arquivo muito pequeno
                             raise ValueError(f"Arquivo de credenciais parece estar vazio ou corrompido")
+                        # Validar que é JSON válido
+                        import json
+                        json.loads(content)
+                except json.JSONDecodeError as json_error:
+                    raise ValueError(f"Arquivo de credenciais não é um JSON válido: {json_error}")
+                except PermissionError:
+                    # Se der erro de permissão, tentar continuar mesmo assim
+                    print(f"⚠️ Arquivo pode estar em uso, mas tentaremos continuar...")
                 except Exception as read_error:
-                    raise PermissionError(f"Erro ao ler arquivo de credenciais: {read_error}")
+                    print(f"⚠️ Aviso ao ler arquivo: {read_error}")
+                    # Não vamos mais lançar PermissionError aqui
+                    # Deixar o gspread tentar mesmo assim
                 
                 # Recriar credenciais a cada tentativa
                 creds = Credentials.from_service_account_file(credenciais_path, scopes=scopes)
@@ -625,19 +636,43 @@ class GoogleSheetsBase:
             if colunas_data:
                 print(f"📅 Colunas de data identificadas: {[df.columns[i] for i in colunas_data]}")
             
-            # Converter valores usando função de limpeza inteligente
+            # Converter valores usando função de limpeza inteligente E processamento robusto
             print(f"🔧 Aplicando limpeza automática de formatação (números, datas e aspas)...")
             dados_formatados = []
             for linha in dados_csv:
                 linha_formatada = []
                 for idx, valor in enumerate(linha):
-                    # Se é coluna de data, usar limpeza específica para data
-                    if idx in colunas_data:
-                        valor_limpo = self.limpar_data_formato(valor)
+                    # Processar valor para garantir compatibilidade com Google Sheets
+                    if valor is None or valor == '' or str(valor).lower() == 'nan':
+                        linha_formatada.append('')
                     else:
-                        # Senão, usar limpeza normal de número
-                        valor_limpo = self.limpar_numero_formato(valor)
-                    linha_formatada.append(valor_limpo)
+                        valor_str = str(valor).strip()
+                        
+                        # Se é coluna de data, usar limpeza específica para data
+                        if idx in colunas_data:
+                            valor_limpo = self.limpar_data_formato(valor)
+                            linha_formatada.append(valor_limpo)
+                        else:
+                            # Tentar converter para número se possível
+                            try:
+                                # Se contém apenas dígitos, ponto ou vírgula, pode ser número
+                                if valor_str.replace('.', '').replace(',', '').replace('-', '').replace('+', '').replace(' ', '').isdigit():
+                                    # Tentar converter para float
+                                    valor_num = float(valor_str.replace(',', '.').replace(' ', ''))
+                                    # Se for inteiro, converter para int
+                                    if valor_num.is_integer():
+                                        linha_formatada.append(int(valor_num))
+                                    else:
+                                        linha_formatada.append(valor_num)
+                                else:
+                                    # Não é número, aplicar limpeza normal
+                                    valor_limpo = self.limpar_numero_formato(valor)
+                                    linha_formatada.append(valor_limpo)
+                            except:
+                                # Se falhar, usar limpeza normal
+                                valor_limpo = self.limpar_numero_formato(valor)
+                                linha_formatada.append(valor_limpo)
+                
                 dados_formatados.append(linha_formatada)
             
             print(f"✅ Formatação limpa aplicada a {len(dados_formatados)} linhas ({len(colunas_data)} colunas de data tratadas)")

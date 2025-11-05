@@ -47,19 +47,28 @@ class InterfaceGerenciadorVisual:
     """Interface visual para o gerenciador de planilhas"""
     
     def __init__(self):
-        # Cores do tema
+        # Cores do tema moderno - Gradiente escuro profissional
         self.CORES = {
-            'primary': '#2E86AB',       # Azul principal
-            'secondary': '#A23B72',     # Rosa secundário
-            'accent': '#F18F01',        # Laranja destaque
-            'success': '#C73E1D',       # Verde sucesso
-            'warning': '#FFE66D',       # Amarelo aviso
-            'error': '#FF6B6B',         # Vermelho erro
-            'dark': '#2C3E50',          # Azul escuro
-            'light': '#ECF0F1',         # Cinza claro
+            'primary': '#6366F1',       # Indigo vibrante
+            'primary_dark': '#4F46E5',  # Indigo escuro
+            'secondary': '#EC4899',     # Pink vibrante
+            'accent': '#F59E0B',        # Amber destaque
+            'success': '#10B981',       # Esmeralda sucesso
+            'warning': '#F59E0B',       # Amber aviso
+            'error': '#EF4444',         # Vermelho erro
+            'dark': '#1F2937',          # Cinza escuro
+            'darker': '#111827',        # Quase preto
+            'light': '#F9FAFB',         # Cinza bem claro
+            'medium': '#6B7280',        # Cinza médio
             'white': '#FFFFFF',         # Branco
-            'text': '#2C3E50',          # Texto escuro
-            'text_light': '#7F8C8D'     # Texto claro
+            'border': '#E5E7EB',        # Borda sutil
+            'hover': '#EEF2FF',         # Hover suave
+            'card': '#FFFFFF',          # Card branco
+            'shadow': '#00000015',      # Sombra sutil
+            'text': '#111827',          # Texto escuro
+            'text_light': '#6B7280',    # Texto claro
+            'gradient_start': '#6366F1', # Início gradiente
+            'gradient_end': '#8B5CF6'    # Fim gradiente (roxo)
         }
         
         # Inicializar gerenciador
@@ -81,12 +90,12 @@ class InterfaceGerenciadorVisual:
         self.carregar_dados()
         
     def criar_janela_principal(self):
-        """Cria a janela principal"""
+        """Cria a janela principal com design moderno"""
         self.root = tk.Tk()
-        self.root.title("🎨 Gerenciador de Planilhas - Leroy Merlin")
-        self.root.geometry("1200x800")
+        self.root.title("🎨 Gerenciador de Planilhas - Leroy Merlin | Eficiência Operacional")
+        self.root.geometry("1400x850")
         self.root.configure(bg=self.CORES['light'])
-        self.root.minsize(1000, 600)
+        self.root.minsize(1200, 700)
         
         # Ícone da janela
         try:
@@ -103,89 +112,115 @@ class InterfaceGerenciadorVisual:
         self.criar_header()
         
     def configurar_estilos(self):
-        """Configura estilos personalizados"""
-        # Notebook
+        """Configura estilos modernos e elegantes"""
+        # Notebook com transições suaves
         self.style.configure('Custom.TNotebook', 
                            background=self.CORES['light'],
-                           tabmargins=[2, 5, 2, 0])
+                           borderwidth=0,
+                           tabmargins=[0, 0, 0, 0])
         
         self.style.configure('Custom.TNotebook.Tab',
-                           background=self.CORES['white'],
-                           foreground=self.CORES['text'],
-                           padding=[20, 8],
-                           focuscolor='none')
+                           background=self.CORES['card'],
+                           foreground=self.CORES['text_light'],
+                           padding=[24, 12],
+                           font=('Segoe UI', 10, 'bold'),
+                           borderwidth=0,
+                           focuscolor='')
         
         self.style.map('Custom.TNotebook.Tab',
                       background=[('selected', self.CORES['primary']),
-                                 ('active', self.CORES['secondary'])],
+                                 ('active', self.CORES['hover'])],
                       foreground=[('selected', self.CORES['white']),
-                                 ('active', self.CORES['white'])])
+                                 ('active', self.CORES['primary'])])
         
-        # Botões
+        # Botões com elevação e hover
         self.style.configure('Primary.TButton',
                            background=self.CORES['primary'],
                            foreground=self.CORES['white'],
                            font=('Segoe UI', 10, 'bold'),
-                           padding=(15, 8),
+                           padding=(20, 10),
                            relief='flat',
                            borderwidth=0)
         
         self.style.map('Primary.TButton',
-                      background=[('active', self.CORES['secondary']),
-                                 ('pressed', self.CORES['dark'])])
+                      background=[('active', self.CORES['primary_dark']),
+                                 ('pressed', self.CORES['primary_dark'])],
+                      relief=[('pressed', 'flat')])
         
         self.style.configure('Success.TButton',
                            background=self.CORES['success'],
                            foreground=self.CORES['white'],
                            font=('Segoe UI', 10, 'bold'),
-                           padding=(12, 6))
+                           padding=(16, 8),
+                           relief='flat',
+                           borderwidth=0)
+        
+        self.style.map('Success.TButton',
+                      background=[('active', '#059669')])
         
         self.style.configure('Warning.TButton',
                            background=self.CORES['warning'],
-                           foreground=self.CORES['dark'],
+                           foreground=self.CORES['white'],
                            font=('Segoe UI', 10, 'bold'),
-                           padding=(12, 6))
+                           padding=(16, 8),
+                           relief='flat',
+                           borderwidth=0)
         
-        # Frames
+        self.style.map('Warning.TButton',
+                      background=[('active', '#D97706')])
+        
+        self.style.configure('Danger.TButton',
+                           background=self.CORES['error'],
+                           foreground=self.CORES['white'],
+                           font=('Segoe UI', 10, 'bold'),
+                           padding=(16, 8),
+                           relief='flat',
+                           borderwidth=0)
+        
+        # Cards com sombra
         self.style.configure('Card.TFrame',
-                           background=self.CORES['white'],
-                           relief='raised',
-                           borderwidth=1)
+                           background=self.CORES['card'],
+                           relief='flat',
+                           borderwidth=0)
         
     def criar_header(self):
-        """Cria o cabeçalho"""
-        header_frame = tk.Frame(self.root, bg=self.CORES['primary'], height=80)
+        """Cria o cabeçalho com gradiente"""
+        # Frame principal com gradiente simulado
+        header_frame = tk.Frame(self.root, bg=self.CORES['primary'], height=100)
         header_frame.pack(fill='x', padx=0, pady=0)
         header_frame.pack_propagate(False)
         
         # Container do header
         header_content = tk.Frame(header_frame, bg=self.CORES['primary'])
-        header_content.pack(fill='both', expand=True, padx=30, pady=15)
+        header_content.pack(fill='both', expand=True, padx=40, pady=20)
         
-        # Título principal
+        # Título principal com emoji grande
         titulo = tk.Label(
             header_content,
             text="🎨 Gerenciador de Planilhas",
-            font=('Segoe UI', 20, 'bold'),
+            font=('Segoe UI', 24, 'bold'),
             bg=self.CORES['primary'],
             fg=self.CORES['white']
         )
         titulo.pack(side='left')
         
-        # Subtítulo
+        # Subtítulo elegante
         subtitulo = tk.Label(
             header_content,
-            text="Sistema Centralizado de Configurações • Leroy Merlin RPA",
-            font=('Segoe UI', 10),
+            text="Sistema Centralizado de Configurações • Eficiência Operacional",
+            font=('Segoe UI', 11),
             bg=self.CORES['primary'],
-            fg=self.CORES['light']
+            fg='#E0E7FF'
         )
-        subtitulo.pack(side='left', padx=(10, 0))
+        subtitulo.pack(side='left', padx=(15, 0), pady=(5, 0))
         
-        # Status no canto direito
+        # Badge de status no canto direito
+        status_frame = tk.Frame(header_content, bg=self.CORES['primary'])
+        status_frame.pack(side='right')
+        
         self.status_label = tk.Label(
-            header_content,
-            text="● Sistema Carregado",
+            status_frame,
+            text="🟢 Sistema Ativo",
             font=('Segoe UI', 10, 'bold'),
             bg=self.CORES['primary'],
             fg=self.CORES['success']
@@ -203,23 +238,78 @@ class InterfaceGerenciadorVisual:
         self.notebook.pack(fill='both', expand=True)
         
     def criar_aba_dashboard(self):
-        """Cria aba do dashboard"""
-        # Frame da aba
+        """Cria aba do dashboard com design moderno"""
+        # Frame da aba com fundo elegante
         self.aba_dashboard = ttk.Frame(self.notebook)
         self.notebook.add(self.aba_dashboard, text='📊 Dashboard')
         
-        # Configurar grid
-        self.aba_dashboard.grid_columnconfigure(0, weight=1)
-        self.aba_dashboard.grid_columnconfigure(1, weight=1)
+        # Container principal com padding
+        main_container = tk.Frame(self.aba_dashboard, bg=self.CORES['light'])
+        main_container.pack(fill='both', expand=True, padx=20, pady=20)
         
-        # Card de estatísticas
-        self.criar_card_estatisticas()
+        # Grid responsivo
+        main_container.grid_columnconfigure(0, weight=1)
+        main_container.grid_columnconfigure(1, weight=1)
+        main_container.grid_columnconfigure(2, weight=1)
         
-        # Card de planilhas
-        self.criar_card_planilhas()
+        # Cards modernos de estatísticas (3 colunas)
+        self.criar_card_estatisticas_moderno(main_container)
         
-        # Card de ações rápidas
-        self.criar_card_acoes_rapidas()
+        # Card de planilhas (largo, 2 colunas)
+        self.criar_card_planilhas(main_container)
+        
+        # Card de ações rápidas (1 coluna)
+        self.criar_card_acoes_rapidas(main_container)
+        
+    def criar_card_estatisticas_moderno(self, parent):
+        """Cria cards de estatísticas com design moderno e colorido"""
+        # Card 1: Total de Planilhas (Roxo)
+        card1 = self.criar_stat_card(parent, "📊", "Total de Planilhas", "0", 
+                                     self.CORES['primary'], 0)
+        
+        # Card 2: Atualizações (Verde)
+        card2 = self.criar_stat_card(parent, "🔄", "Últimas Atualizações", "0", 
+                                     self.CORES['success'], 1)
+        
+        # Card 3: Backups (Amber)
+        card3 = self.criar_stat_card(parent, "💾", "Backups Disponíveis", "0", 
+                                     self.CORES['warning'], 2)
+    
+    def criar_stat_card(self, parent, emoji, titulo, valor, cor, coluna):
+        """Cria um card de estatística individual com sombra e hover"""
+        # Frame com sombra simulada
+        shadow_frame = tk.Frame(parent, bg='#E5E7EB', bd=0)
+        shadow_frame.grid(row=0, column=coluna, sticky='ew', padx=10, pady=(0, 20))
+        
+        # Card principal
+        card = tk.Frame(shadow_frame, bg=self.CORES['card'], bd=0)
+        card.pack(fill='both', expand=True, padx=2, pady=2)
+        
+        # Container interno
+        inner = tk.Frame(card, bg=self.CORES['card'])
+        inner.pack(fill='both', expand=True, padx=20, pady=20)
+        
+        # Emoji grande no topo
+        emoji_label = tk.Label(inner, text=emoji, font=('Segoe UI', 40),
+                              bg=self.CORES['card'], fg=cor)
+        emoji_label.pack(pady=(0, 10))
+        
+        # Valor grande
+        valor_label = tk.Label(inner, text=valor, font=('Segoe UI', 32, 'bold'),
+                              bg=self.CORES['card'], fg=self.CORES['text'])
+        valor_label.pack()
+        
+        # Título pequeno
+        titulo_label = tk.Label(inner, text=titulo, font=('Segoe UI', 11),
+                               bg=self.CORES['card'], fg=self.CORES['text_light'])
+        titulo_label.pack(pady=(5, 0))
+        
+        # Salvar referência para atualizar depois
+        if not hasattr(self, 'stat_labels'):
+            self.stat_labels = {}
+        self.stat_labels[titulo] = valor_label
+        
+        return card
         
     def criar_card_estatisticas(self):
         """Cria card com estatísticas"""
@@ -266,7 +356,143 @@ class InterfaceGerenciadorVisual:
         # Salvar referência do label de valor para atualização
         setattr(self, f'stat_{coluna}_label', valor_label)
         
-    def criar_card_planilhas(self):
+    def criar_card_planilhas(self, parent):
+        """Cria card moderno com lista de planilhas"""
+        # Shadow frame
+        shadow_frame = tk.Frame(parent, bg='#E5E7EB', bd=0)
+        shadow_frame.grid(row=1, column=0, columnspan=2, sticky='nsew', padx=10, pady=(0, 20))
+        parent.grid_rowconfigure(1, weight=1)
+        
+        # Card principal
+        card_frame = tk.Frame(shadow_frame, bg=self.CORES['card'], bd=0)
+        card_frame.pack(fill='both', expand=True, padx=2, pady=2)
+        
+        # Header do card
+        header = tk.Frame(card_frame, bg=self.CORES['card'])
+        header.pack(fill='x', padx=25, pady=(20, 15))
+        
+        # Título do card
+        titulo = tk.Label(header, text="📋 Planilhas Configuradas", 
+                         font=('Segoe UI', 16, 'bold'),
+                         bg=self.CORES['card'], fg=self.CORES['text'])
+        titulo.pack(side='left')
+        
+        # Botão de recarregar
+        btn_reload = ttk.Button(header, text="🔄 Recarregar", 
+                               style='Primary.TButton',
+                               command=self.carregar_dados)
+        btn_reload.pack(side='right')
+        
+        # Container da lista com scroll
+        list_container = tk.Frame(card_frame, bg=self.CORES['card'])
+        list_container.pack(fill='both', expand=True, padx=25, pady=(0, 20))
+        
+        # Canvas e scrollbar
+        canvas = tk.Canvas(list_container, bg=self.CORES['card'], 
+                          highlightthickness=0)
+        scrollbar = ttk.Scrollbar(list_container, orient='vertical', 
+                                  command=canvas.yview)
+        scrollable_frame = tk.Frame(canvas, bg=self.CORES['card'])
+        
+        scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        )
+        
+        canvas.create_window((0, 0), window=scrollable_frame, anchor='nw')
+        canvas.configure(yscrollcommand=scrollbar.set)
+        
+        canvas.pack(side='left', fill='both', expand=True)
+        scrollbar.pack(side='right', fill='y')
+        
+        self.planilhas_frame = scrollable_frame
+        
+    def criar_item_planilha_moderno(self, parent, chave, info):
+        """Cria um item de planilha com design moderno e hover"""
+        # Frame do item com hover
+        item_frame = tk.Frame(parent, bg=self.CORES['card'], cursor='hand2',
+                             relief='solid', bd=1, highlightthickness=0)
+        item_frame.pack(fill='x', pady=5)
+        
+        # Padding interno
+        inner = tk.Frame(item_frame, bg=self.CORES['card'])
+        inner.pack(fill='both', expand=True, padx=20, pady=15)
+        
+        # Emoji e nome
+        top_frame = tk.Frame(inner, bg=self.CORES['card'])
+        top_frame.pack(fill='x')
+        
+        # Emoji grande
+        emoji_map = {
+            'genesys': '📞',
+            'salesforce': '💼',
+            'produtividade': '📈',
+            'power_bi': '📊',
+            'autoservico': '🤖'
+        }
+        emoji = emoji_map.get(chave.split('_')[0], '📄')
+        
+        emoji_label = tk.Label(top_frame, text=emoji, font=('Segoe UI', 24),
+                              bg=self.CORES['card'])
+        emoji_label.pack(side='left', padx=(0, 15))
+        
+        # Nome e descrição
+        text_frame = tk.Frame(top_frame, bg=self.CORES['card'])
+        text_frame.pack(side='left', fill='x', expand=True)
+        
+        nome_label = tk.Label(text_frame, text=info.get('nome', chave),
+                             font=('Segoe UI', 13, 'bold'),
+                             bg=self.CORES['card'], fg=self.CORES['text'],
+                             anchor='w')
+        nome_label.pack(fill='x')
+        
+        desc_label = tk.Label(text_frame, text=info.get('descricao', ''),
+                             font=('Segoe UI', 10),
+                             bg=self.CORES['card'], fg=self.CORES['text_light'],
+                             anchor='w')
+        desc_label.pack(fill='x', pady=(2, 0))
+        
+        # Botões de ação
+        actions_frame = tk.Frame(top_frame, bg=self.CORES['card'])
+        actions_frame.pack(side='right')
+        
+        btn_abrir = ttk.Button(actions_frame, text="🔗 Abrir",
+                              style='Success.TButton',
+                              command=lambda: self.abrir_planilha(chave))
+        btn_abrir.pack(side='left', padx=2)
+        
+        btn_editar = ttk.Button(actions_frame, text="✏️ Editar",
+                               style='Primary.TButton',
+                               command=lambda: self.selecionar_planilha(chave))
+        btn_editar.pack(side='left', padx=2)
+        
+        # Efeito hover
+        def on_enter(e):
+            item_frame.config(bg=self.CORES['hover'], relief='solid')
+            inner.config(bg=self.CORES['hover'])
+            top_frame.config(bg=self.CORES['hover'])
+            emoji_label.config(bg=self.CORES['hover'])
+            text_frame.config(bg=self.CORES['hover'])
+            nome_label.config(bg=self.CORES['hover'])
+            desc_label.config(bg=self.CORES['hover'])
+            actions_frame.config(bg=self.CORES['hover'])
+        
+        def on_leave(e):
+            item_frame.config(bg=self.CORES['card'], relief='solid')
+            inner.config(bg=self.CORES['card'])
+            top_frame.config(bg=self.CORES['card'])
+            emoji_label.config(bg=self.CORES['card'])
+            text_frame.config(bg=self.CORES['card'])
+            nome_label.config(bg=self.CORES['card'])
+            desc_label.config(bg=self.CORES['card'])
+            actions_frame.config(bg=self.CORES['card'])
+        
+        item_frame.bind('<Enter>', on_enter)
+        item_frame.bind('<Leave>', on_leave)
+        inner.bind('<Enter>', on_enter)
+        inner.bind('<Leave>', on_leave)
+        
+    def criar_card_planilhas_OLD(self):
         """Cria card com lista de planilhas"""
         card_frame = ttk.Frame(self.aba_dashboard, style='Card.TFrame')
         card_frame.grid(row=1, column=0, sticky='nsew', padx=(10, 5), pady=10)
@@ -306,45 +532,111 @@ class InterfaceGerenciadorVisual:
         # Bind duplo clique
         self.tree_planilhas.bind('<Double-1>', self.on_planilha_duplo_clique)
         
-    def criar_card_acoes_rapidas(self):
-        """Cria card com ações rápidas"""
-        card_frame = ttk.Frame(self.aba_dashboard, style='Card.TFrame')
-        card_frame.grid(row=1, column=1, sticky='nsew', padx=(5, 10), pady=10)
+    def criar_card_acoes_rapidas(self, parent):
+        """Cria card moderno com ações rápidas"""
+        # Shadow frame
+        shadow_frame = tk.Frame(parent, bg='#E5E7EB', bd=0)
+        shadow_frame.grid(row=1, column=2, sticky='nsew', padx=10, pady=(0, 20))
         
-        # Título
-        titulo = tk.Label(card_frame, text="⚡ Ações Rápidas", 
-                         font=('Segoe UI', 14, 'bold'),
-                         bg=self.CORES['white'], fg=self.CORES['text'])
-        titulo.pack(anchor='w', padx=20, pady=(15, 10))
+        # Card principal
+        card_frame = tk.Frame(shadow_frame, bg=self.CORES['card'], bd=0)
+        card_frame.pack(fill='both', expand=True, padx=2, pady=2)
+        
+        # Header
+        header = tk.Frame(card_frame, bg=self.CORES['card'])
+        header.pack(fill='x', padx=25, pady=(20, 15))
+        
+        titulo = tk.Label(header, text="⚡ Ações Rápidas", 
+                         font=('Segoe UI', 16, 'bold'),
+                         bg=self.CORES['card'], fg=self.CORES['text'])
+        titulo.pack(anchor='w')
         
         # Container dos botões
-        botoes_frame = tk.Frame(card_frame, bg=self.CORES['white'])
-        botoes_frame.pack(fill='both', expand=True, padx=20, pady=(0, 15))
+        botoes_frame = tk.Frame(card_frame, bg=self.CORES['card'])
+        botoes_frame.pack(fill='both', expand=True, padx=25, pady=(0, 20))
         
-        # Botões de ação
-        ttk.Button(botoes_frame, text="🔄 Recarregar Dados", 
-                  style='Primary.TButton',
-                  command=self.carregar_dados).pack(fill='x', pady=5)
+        # Botões de ação estilizados
+        self.criar_botao_acao(botoes_frame, "🔄", "Recarregar Dados", 
+                             self.carregar_dados, self.CORES['primary'])
         
-        ttk.Button(botoes_frame, text="📊 Abrir Planilha Genesys", 
-                  style='Success.TButton',
-                  command=lambda: self.abrir_planilha('genesys_boletim')).pack(fill='x', pady=5)
+        self.criar_botao_acao(botoes_frame, "📊", "Abrir Power BI 1º Sem", 
+                             lambda: self.abrir_planilha('power_bi_primeiro_semestre'), 
+                             self.CORES['success'])
         
-        ttk.Button(botoes_frame, text="💼 Abrir Planilha Salesforce", 
-                  style='Success.TButton',
-                  command=lambda: self.abrir_planilha('salesforce_boletim')).pack(fill='x', pady=5)
+        self.criar_botao_acao(botoes_frame, "📊", "Abrir Power BI 2º Sem", 
+                             lambda: self.abrir_planilha('power_bi_segundo_semestre'), 
+                             self.CORES['success'])
         
-        ttk.Button(botoes_frame, text="📈 Abrir Planilha Produtividade", 
-                  style='Success.TButton',
-                  command=lambda: self.abrir_planilha('produtividade_boletim')).pack(fill='x', pady=5)
+        self.criar_botao_acao(botoes_frame, "🤖", "Abrir Autoserviço 1º Sem", 
+                             lambda: self.abrir_planilha('autoservico_primeiro_semestre'), 
+                             self.CORES['warning'])
         
-        ttk.Button(botoes_frame, text="💾 Criar Backup Manual", 
-                  style='Warning.TButton',
-                  command=self.criar_backup_manual).pack(fill='x', pady=5)
+        self.criar_botao_acao(botoes_frame, "🤖", "Abrir Autoserviço 2º Sem", 
+                             lambda: self.abrir_planilha('autoservico_segundo_semestre'), 
+                             self.CORES['warning'])
         
-        ttk.Button(botoes_frame, text="📖 Abrir Documentação", 
-                  style='Primary.TButton',
-                  command=self.abrir_documentacao).pack(fill='x', pady=5)
+        self.criar_botao_acao(botoes_frame, "�", "Criar Backup Manual", 
+                             self.criar_backup_manual, self.CORES['secondary'])
+        
+        self.criar_botao_acao(botoes_frame, "📖", "Abrir Documentação", 
+                             self.abrir_documentacao, self.CORES['primary'])
+    
+    def criar_botao_acao(self, parent, emoji, texto, comando, cor):
+        """Cria um botão de ação moderno com hover"""
+        btn_frame = tk.Frame(parent, bg=self.CORES['card'], cursor='hand2')
+        btn_frame.pack(fill='x', pady=6)
+        
+        # Frame interno com cor
+        inner = tk.Frame(btn_frame, bg=cor, bd=0)
+        inner.pack(fill='x', padx=2, pady=2)
+        
+        # Container do conteúdo
+        content = tk.Frame(inner, bg=cor)
+        content.pack(fill='x', padx=15, pady=12)
+        
+        # Emoji
+        emoji_label = tk.Label(content, text=emoji, font=('Segoe UI', 18),
+                              bg=cor, fg='white')
+        emoji_label.pack(side='left', padx=(0, 10))
+        
+        # Texto
+        text_label = tk.Label(content, text=texto, font=('Segoe UI', 11, 'bold'),
+                             bg=cor, fg='white', anchor='w')
+        text_label.pack(side='left', fill='x', expand=True)
+        
+        # Bind de clique
+        def on_click(e):
+            comando()
+        
+        def on_enter(e):
+            inner.config(bg=self._darken_color(cor))
+            content.config(bg=self._darken_color(cor))
+            emoji_label.config(bg=self._darken_color(cor))
+            text_label.config(bg=self._darken_color(cor))
+        
+        def on_leave(e):
+            inner.config(bg=cor)
+            content.config(bg=cor)
+            emoji_label.config(bg=cor)
+            text_label.config(bg=cor)
+        
+        btn_frame.bind('<Button-1>', on_click)
+        inner.bind('<Button-1>', on_click)
+        content.bind('<Button-1>', on_click)
+        emoji_label.bind('<Button-1>', on_click)
+        text_label.bind('<Button-1>', on_click)
+        
+        btn_frame.bind('<Enter>', on_enter)
+        btn_frame.bind('<Leave>', on_leave)
+    
+    def _darken_color(self, hex_color):
+        """Escurece uma cor hexadecimal"""
+        hex_color = hex_color.lstrip('#')
+        r, g, b = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+        r = max(0, int(r * 0.8))
+        g = max(0, int(g * 0.8))
+        b = max(0, int(b * 0.8))
+        return f'#{r:02x}{g:02x}{b:02x}'
         
     def criar_aba_atualizar(self):
         """Cria aba para atualizar planilhas"""
@@ -630,11 +922,11 @@ class InterfaceGerenciadorVisual:
             self.carregar_historico()
             self.carregar_backups()
             
-            self.status_label.config(text="● Dados Atualizados", fg=self.CORES['success'])
+            self.status_label.config(text="🟢 Sistema Ativo")
             
         except Exception as e:
-            messagebox.showerror("Erro", f"Erro ao carregar dados:\\n{str(e)}")
-            self.status_label.config(text="● Erro ao Carregar", fg=self.CORES['error'])
+            messagebox.showerror("Erro", f"Erro ao carregar dados:\n{str(e)}")
+            self.status_label.config(text="🔴 Erro no Sistema")
     
     def atualizar_dashboard(self):
         """Atualiza o dashboard com dados atuais"""
@@ -650,30 +942,28 @@ class InterfaceGerenciadorVisual:
             if os.path.exists(backup_dir):
                 total_backups = len([f for f in os.listdir(backup_dir) if f.endswith('.json')])
             
-            # Atualizar labels
-            self.stat_0_label.config(text=str(total_planilhas))
-            self.stat_1_label.config(text=str(total_updates))
-            self.stat_2_label.config(text=str(total_backups))
-            self.stat_3_label.config(text="OK" if total_planilhas > 0 else "ERRO")
+            # Atualizar labels dos cards modernos
+            if hasattr(self, 'stat_labels'):
+                if 'Total de Planilhas' in self.stat_labels:
+                    self.stat_labels['Total de Planilhas'].config(text=str(total_planilhas))
+                if 'Últimas Atualizações' in self.stat_labels:
+                    self.stat_labels['Últimas Atualizações'].config(text=str(total_updates))
+                if 'Backups Disponíveis' in self.stat_labels:
+                    self.stat_labels['Backups Disponíveis'].config(text=str(total_backups))
             
-            # Atualizar tree de planilhas
-            for item in self.tree_planilhas.get_children():
-                self.tree_planilhas.delete(item)
-            
-            for chave, dados in self.dados_planilhas.items():
-                nome = dados.get('nome', chave)
-                tipo = dados.get('tipo', 'N/A')
-                id_planilha = dados.get('id', 'N/A')
+            # Limpar frame de planilhas
+            if hasattr(self, 'planilhas_frame'):
+                for widget in self.planilhas_frame.winfo_children():
+                    widget.destroy()
                 
-                # Verificar status (simplificado)
-                status = "✅ OK" if len(id_planilha) > 20 else "❌ Erro"
-                
-                self.tree_planilhas.insert('', 'end', 
-                                         values=(nome, tipo.upper(), status),
-                                         tags=(chave,))
+                # Adicionar cada planilha como card moderno
+                for chave, info in self.dados_planilhas.items():
+                    self.criar_item_planilha_moderno(self.planilhas_frame, chave, info)
                 
         except Exception as e:
             print(f"Erro ao atualizar dashboard: {e}")
+            import traceback
+            traceback.print_exc()
     
     def atualizar_combo_planilhas(self):
         """Atualiza combo de planilhas"""
@@ -1105,7 +1395,25 @@ class InterfaceGerenciadorVisual:
                 messagebox.showerror("Erro", f"ID da planilha '{chave}' não encontrado")
                 
         except Exception as e:
-            messagebox.showerror("Erro", f"Erro ao abrir planilha:\\n{str(e)}")
+            messagebox.showerror("Erro", f"Erro ao abrir planilha:\n{str(e)}")
+    
+    def selecionar_planilha(self, chave):
+        """Seleciona uma planilha para edição"""
+        try:
+            self.planilha_selecionada = chave
+            # Mudar para aba de atualizar
+            self.notebook.select(1)  # Índice da aba Atualizar
+            # Popular os campos com dados da planilha
+            info = self.dados_planilhas.get(chave, {})
+            if hasattr(self, 'combo_planilha'):
+                # Selecionar no combo
+                for i, (k, v) in enumerate(self.dados_planilhas.items()):
+                    if k == chave:
+                        self.combo_planilha.current(i)
+                        break
+            messagebox.showinfo("Sucesso", f"Planilha '{info.get('nome', chave)}' selecionada para edição!")
+        except Exception as e:
+            messagebox.showerror("Erro", f"Erro ao selecionar planilha:\n{str(e)}")
     
     def abrir_documentacao(self):
         """Abre documentação"""

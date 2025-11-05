@@ -5,8 +5,8 @@
 > - 🟡 **Power BI Looker Studio**: Alimentação de dashboards com dados de Filas Genesys
 
 [![Python Version](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/)
-[![Status](https://img.shields.io/badge/status-production-success.svg)](https://github.com/Ryanditko/rpa-leroy-merlin)
-[![Version](https://img.shields.io/badge/version-3.1.0-green.svg)](https://github.com/Ryanditko/rpa-leroy-merlin)
+[![Status](https://img.shields.io/badge/status-production-success.svg)](https://github.com/Eficiencia-Operacional/Scripts-Eficiencia-Operacional)
+[![Version](https://img.shields.io/badge/version-3.1.0-green.svg)](https://github.com/Eficiencia-Operacional/Scripts-Eficiencia-Operacional)
 
 ---
 

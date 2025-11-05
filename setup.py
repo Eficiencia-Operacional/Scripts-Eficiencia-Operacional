@@ -30,7 +30,7 @@ setup(
     long_description_content_type="text/markdown",
     author="Leroy Merlin",
     author_email="automacao@leroymerlin.com.br",
-    url="https://github.com/Ryanditko/rpa-leroy-merlin",
+    url="https://github.com/Eficiencia-Operacional/Scripts-Eficiencia-Operacional",
     
     packages=find_packages(where='src'),
     package_dir={'': 'src'},
@@ -65,9 +65,9 @@ setup(
     keywords='rpa automacao leroy-merlin google-sheets salesforce genesys',
     
     project_urls={
-        'Repositório': 'https://github.com/Ryanditko/rpa-leroy-merlin',
-        'Documentação': 'https://github.com/Ryanditko/rpa-leroy-merlin/tree/master/docs',
-        'Issues': 'https://github.com/Ryanditko/rpa-leroy-merlin/issues',
+        'Repositório': 'https://github.com/Eficiencia-Operacional/Scripts-Eficiencia-Operacional',
+        'Documentação': 'https://github.com/Eficiencia-Operacional/Scripts-Eficiencia-Operacional/tree/main/docs',
+        'Issues': 'https://github.com/Eficiencia-Operacional/Scripts-Eficiencia-Operacional/issues',
     },
     
     include_package_data=True,

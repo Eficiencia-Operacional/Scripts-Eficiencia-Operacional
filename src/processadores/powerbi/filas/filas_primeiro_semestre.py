@@ -167,13 +167,42 @@ class ProcessadorFilasPrimeiroSemestre(GoogleSheetsBase):
             
             # Enviar dados em lote
             if dados:
+                # Processar dados para garantir compatibilidade com Google Sheets
+                dados_processados = []
+                for linha in dados:
+                    linha_processada = []
+                    for valor in linha:
+                        # Converter valores para tipos apropriados
+                        if valor is None or valor == '' or str(valor).lower() == 'nan':
+                            linha_processada.append('')
+                        else:
+                            valor_str = str(valor).strip()
+                            # Tentar converter para número se possível
+                            try:
+                                # Se contém apenas dígitos, ponto ou vírgula, pode ser número
+                                if valor_str.replace('.', '').replace(',', '').replace('-', '').replace('+', '').isdigit():
+                                    # Tentar converter para float
+                                    valor_num = float(valor_str.replace(',', '.'))
+                                    # Se for inteiro, converter para int
+                                    if valor_num.is_integer():
+                                        linha_processada.append(int(valor_num))
+                                    else:
+                                        linha_processada.append(valor_num)
+                                else:
+                                    # Manter como string
+                                    linha_processada.append(valor_str)
+                            except:
+                                # Se falhar, manter como string
+                                linha_processada.append(valor_str)
+                    dados_processados.append(linha_processada)
+                
                 # Usar USER_ENTERED para que o Sheets interprete números como números
-                aba.append_rows(dados, value_input_option='USER_ENTERED')
-                print(f"   ✅ {len(dados)} linhas enviadas")
+                aba.append_rows(dados_processados, value_input_option='USER_ENTERED')
+                print(f"   ✅ {len(dados_processados)} linhas enviadas")
                 
                 # Formatar PRIMEIRA LINHA de dados com amarelo FORTE
                 print("\n🎨 Aplicando formatação AMARELA nos DADOS...")
-                if len(dados) > 0:
+                if len(dados_processados) > 0:
                     print(f"   🎨 Primeira linha de dados: amarelo FORTE (#FFA800)")
                     self._aplicar_formatacao_linha_forte(aba, linha_inicial, len(df.columns))
                 

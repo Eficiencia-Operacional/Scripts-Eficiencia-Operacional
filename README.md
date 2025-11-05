@@ -90,8 +90,8 @@ openpyxl>=3.1.0
 
 ### 1. Clone o Repositório
 ```powershell
-git clone https://github.com/Ryanditko/rpa-leroy-merlin.git
-cd rpa-leroy-merlin
+git clone https://github.com/Eficiencia-Operacional/Scripts-Eficiencia-Operacional.git
+cd Scripts-Eficiencia-Operacional
 ```
 
 ### 2. Instale as Dependências
@@ -241,13 +241,12 @@ python main.py --help
 ## 📁 Estrutura do Projeto
 
 ```
-```
-rpa-leroy-merlin/
+Scripts-Eficiencia-Operacional/
 │
 ├── 📄 main.py                      # Script principal
 ├── 🖥️ interface_visual.py          # Interface gráfica Pulso Boletim
-├── �️ interface_powerbi.py         # Interface gráfica Power BI
-├── �🔄 renomeador_inteligente.py    # Renomeação automática de CSVs
+├── 🖥️ interface_powerbi.py         # Interface gráfica Power BI
+├── 🔄 renomeador_inteligente.py    # Renomeação automática de CSVs
 │
 ├── 📂 src/
 │   ├── core/
@@ -541,9 +540,8 @@ Abra uma issue com:
 
 ## 👥 Equipe
 
-- **Desenvolvedor Principal:** Ryanditko
-- **Organização:** Leroy Merlin
-- **Repositório:** https://github.com/Ryanditko/automacao-LM
+- **Organização:** Leroy Merlin - Eficiência Operacional
+- **Repositório:** https://github.com/Eficiencia-Operacional/Scripts-Eficiencia-Operacional
 
 ---
 

@@ -1,0 +1,136 @@
+{
+  "planilhas": {
+    "genesys_boletim": {
+      "id": "1bOFmGtjWtTPMf1xse1p_KsTpoqgo6wxlgRFp56gvGzM",
+      "nome": "PULSO BOLETIM - GENESYS",
+      "descricao": "Planilha principal do Genesys (VOZ, TEXTO, GESTÃO)",
+      "abas": {
+        "voz_hc": "BASE VOZ",
+        "texto_hc": "BASE TEXTO",
+        "gestao_n1": "BASE GE COLABORADOR",
+        "gestao_entrega": "BASE GE COLABORADOR",
+        "fila": "BASE VOZ FILA"
+      },
+      "url": "https://docs.google.com/spreadsheets/d/1e48VAZd2v5ZEQ4OK7yDu6KhrRi7mft5eVkh3qwZcdZE",
+      "ultima_atualizacao": "2025-11-03"
+    },
+    "salesforce_boletim": {
+      "id": "1MsTxuPEwUXYVjOTXYIVqay1MTT1lWiUZaA4aGO2Ekv0",
+      "nome": "PULSO BOLETIM - SALESFORCE",
+      "descricao": "Planilha principal do Salesforce (CRIADO, RESOLVIDO, COMENTÁRIOS)",
+      "abas": {
+        "criado": "BASE ATUALIZADA CORRETA - CRIADO",
+        "resolvido": "BASE ATUALIZADA CORRETA - RESOLVIDA",
+        "comentario_bko": "COMENTARIO BKO",
+        "seller": "DADOS SELLER"
+      },
+      "url": "https://docs.google.com/spreadsheets/d/1luDIE2OSjunty4-l_pHkRKsP3AMCMOes80A4Xc607Qk",
+      "ultima_atualizacao": "2025-11-03"
+    },
+    "produtividade_boletim": {
+      "id": "1XftLATi3eAQXYAk0Em1SY5tMisOBra8kkViFBEjEem0",
+      "nome": "PULSO BOLETIM - PRODUTIVIDADE",
+      "descricao": "Planilha de Produtividade",
+      "abas": {
+        "produtividade": "BASE PROD",
+        "tempo": "BASE TEMPO"
+      },
+      "url": "https://docs.google.com/spreadsheets/d/1XftLATi3eAQXYAk0Em1SY5tMisOBra8kkViFBEjEem0",
+      "ultima_atualizacao": "2025-11-03"
+    },
+    "power_bi_primeiro_semestre": {
+      "id": "1VtNTqp907enX0M3gB05dmPckDRl7nnfgVEl3mNF8ILc",
+      "nome": "POWER BI - PRIMEIRO SEMESTRE",
+      "descricao": "Planilha Power BI para dados do primeiro semestre (Jan-Jun)",
+      "abas": {
+        "BASE": "Dados principais"
+      },
+      "url": "https://docs.google.com/spreadsheets/d/1VtNTqp907enX0M3gB05dmPckDRl7nnfgVEl3mNF8ILc",
+      "ultima_atualizacao": "2025-11-03"
+    },
+    "power_bi_segundo_semestre": {
+      "id": "1r5eZWGVuBP4h68KfrA73lSvfEf37P-AuUCNHF40ttv8",
+      "nome": "POWER BI - SEGUNDO SEMESTRE",
+      "descricao": "Planilha Power BI para dados do segundo semestre (Jul-Dez)",
+      "abas": {
+        "BASE": "Dados principais"
+      },
+      "url": "https://docs.google.com/spreadsheets/d/1r5eZWGVuBP4h68KfrA73lSvfEf37P-AuUCNHF40ttv8",
+      "ultima_atualizacao": "2025-11-03"
+    },
+    "autoservico_primeiro_semestre": {
+      "id": "1kGExLBYIWf3bjSl3MWBea6PohOLFaAZoF16ojT0ktlw",
+      "nome": "AUTOSERVIÇO - PRIMEIRO SEMESTRE",
+      "tipo": "power_bi",
+      "descricao": "Planilha Autoserviço Power BI para dados do primeiro semestre (Jan-Jun)",
+      "abas": {
+        "URA + LIA": "Dados URA e LIA"
+      },
+      "url": "https://docs.google.com/spreadsheets/d/1kGExLBYIWf3bjSl3MWBea6PohOLFaAZoF16ojT0ktlw/edit",
+      "ultima_atualizacao": "2025-11-05"
+    },
+    "autoservico_segundo_semestre": {
+      "id": "1Py1W4sSnIbsgMCrr0h0PSTL0DpN-eLj0NoYGbcHLmUI",
+      "nome": "AUTOSERVIÇO - SEGUNDO SEMESTRE",
+      "tipo": "power_bi",
+      "descricao": "Planilha Autoserviço Power BI para dados do segundo semestre (Jul-Dez)",
+      "abas": {
+        "URA + LIA": "Dados URA e LIA"
+      },
+      "url": "https://docs.google.com/spreadsheets/d/1Py1W4sSnIbsgMCrr0h0PSTL0DpN-eLj0NoYGbcHLmUI/edit",
+      "ultima_atualizacao": "2025-11-05"
+    }
+  },
+  "historico_mudancas": [
+    {
+      "data": "2025-11-03 14:20:31",
+      "titulo": "Atualização da planilha 'salesforce_boletim'",
+      "mudancas": [
+        "ID: 1luDIE2O... → 1MsTxuPE..."
+      ],
+      "autor": "Sistema"
+    },
+    {
+      "data": "2025-11-03 14:17:37",
+      "titulo": "Atualização da planilha 'genesys_boletim'",
+      "mudancas": [
+        "ID: 1e48VAZd... → 1bOFmGtj..."
+      ],
+      "autor": "Sistema"
+    },
+    {
+      "data": "2025-11-03T13:30:00",
+      "planilha": "genesys_boletim",
+      "acao": "adicao",
+      "usuario": "sistema",
+      "detalhes": "Adicionadas planilhas do Pulso Boletim ao gerenciador"
+    },
+    {
+      "data": "2025-11-03T13:30:00",
+      "planilha": "salesforce_boletim",
+      "acao": "adicao",
+      "usuario": "sistema",
+      "detalhes": "Adicionadas planilhas do Pulso Boletim ao gerenciador"
+    },
+    {
+      "data": "2025-11-03T13:30:00",
+      "planilha": "produtividade_boletim",
+      "acao": "adicao",
+      "usuario": "sistema",
+      "detalhes": "Adicionadas planilhas do Pulso Boletim ao gerenciador"
+    },
+    {
+      "data": "2025-11-03T12:00:00",
+      "planilha": "power_bi_primeiro_semestre",
+      "acao": "criacao_inicial",
+      "usuario": "sistema",
+      "detalhes": "Configuração inicial do arquivo planilhas_config.json"
+    }
+  ],
+  "metadados": {
+    "versao": "1.0",
+    "criado_em": "2025-11-03",
+    "ultima_modificacao": "2025-11-03",
+    "service_account": "boletim@sublime-shift-472919-f0.iam.gserviceaccount.com"
+  }
+}

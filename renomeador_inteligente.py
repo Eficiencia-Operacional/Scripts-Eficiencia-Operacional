@@ -35,6 +35,13 @@ class RenomeadorInteligente:
             r'^filas\s*genesys\.csv$': 'Filas Genesys - Todas as Filas .csv',  # "Filas genesys.csv"
             r'^fila\s*genesys\.csv$': 'Filas Genesys - Todas as Filas .csv',   # "Fila genesys.csv"
             
+            # POWER BI - Padrão para Autoserviço (vários formatos possíveis)
+            r'.*autoservi[cç]o.*power\s*bi.*\.csv$': 'Autoserviço Power BI.csv',
+            r'.*autoservi[cç]o.*powerbi.*\.csv$': 'Autoserviço Power BI.csv',
+            r'.*auto.*servi[cç]o.*\.csv$': 'Autoserviço Power BI.csv',
+            r'^autoservi[cç]o\s*-.*\.csv$': 'Autoserviço Power BI.csv',
+            r'^autoservi[cç]o.*\.csv$': 'Autoserviço Power BI.csv',
+            
             # SALESFORCE - Padrões
             r'.*criado.*-\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}\.csv$': 'BASE_SALESFORCE_CRIADO.csv',
             r'.*resolvid[oa].*-\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}\.csv$': 'BASE_SALESFORCE_RESOLVIDO.csv',

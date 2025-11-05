@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 """
-🎯 PROCESSADOR FILAS GENESYS - SEGUNDO SEMESTRE
+🎯 PROCESSADOR AUTOSERVIÇO - PRIMEIRO SEMESTRE
 Processador para alimentar Power BI no Looker Studio
 
 Características:
-- Processa dados do arquivo "Filas Genesys - Todas as Filas.csv"
-- Envia para planilha do segundo semestre
-- Pinta células de AMARELO (#FFD700) ao invés de verde
+- Processa dados do arquivo "Autoserviço Power BI.csv"
+- Envia para planilha do primeiro semestre
+- Pinta células de AMARELO (#FFD700)
 - Complementa dados existentes sem sobrescrever
 
-Planilha: BASE FILA UNIFICADA - SEGUNDO SEMESTRE
-Link: https://docs.google.com/spreadsheets/d/1r5eZWGVuBP4h68KfrA73lSvfEf37P-AuUCNHF40ttv8
-Aba: BASE
+Planilha: AUTOSERVIÇO - PRIMEIRO SEMESTRE
+Link: https://docs.google.com/spreadsheets/d/1kGExLBYIWf3bjSl3MWBea6PohOLFaAZoF16ojT0ktlw
+Aba: URA + LIA
 """
 
 import pandas as pd
@@ -30,22 +30,9 @@ sys.path.insert(0, root_dir)
 from src.core.google_sheets_base import GoogleSheetsBase
 
 
-import os
-import pandas as pd
-from datetime import datetime
-from src.core.google_sheets_base import GoogleSheetsBase
-
-# Importar gerenciador de planilhas centralizado
-import sys
-current_dir = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.join(current_dir, '..', '..', '..', '..')
-sys.path.insert(0, project_root)
-from scripts.gerenciador_planilhas import GerenciadorPlanilhas
-
-
-class ProcessadorFilasSegundoSemestre(GoogleSheetsBase):
+class ProcessadorAutoservicoPrimeiroSemestre(GoogleSheetsBase):
     """
-    Processador de Filas Genesys para Power BI - Segundo Semestre
+    Processador de Autoserviço para Power BI - Primeiro Semestre
     
     Envia dados do CSV para a planilha do Looker Studio
     Cor de destaque: AMARELO (#FFD700)
@@ -58,48 +45,43 @@ class ProcessadorFilasSegundoSemestre(GoogleSheetsBase):
         Args:
             caminho_credenciais: Caminho para arquivo de credenciais Google
         """
-        # Obter ID da planilha via configuração centralizada
-        gerenciador = GerenciadorPlanilhas()
+        # Tentar usar gerenciador de configurações
         try:
-            planilha_id = gerenciador.obter_id('power_bi_segundo_semestre')
+            sys.path.insert(0, os.path.join(root_dir, 'config'))
+            from scripts.gerenciador_planilhas import GerenciadorPlanilhas
+            
+            gp = GerenciadorPlanilhas()
+            planilha_id = gp.obter_id('autoservico_primeiro_semestre')
+            
+            if not planilha_id:
+                raise ValueError("ID da planilha não encontrado no gerenciador")
+            
+            print("✅ Configuração carregada via gerenciador centralizado")
             print(f"✅ ID obtido via configuração centralizada: {planilha_id}")
+            
         except Exception as e:
-            # Fallback para ID hardcoded (compatibilidade)
-            planilha_id = '1r5eZWGVuBP4h68KfrA73lSvfEf37P-AuUCNHF40ttv8'
-            print(f"⚠️ Usando ID fallback: {planilha_id}")
-            print(f"   Motivo: {str(e)}")
+            print(f"⚠️ Erro ao usar gerenciador: {e}")
+            print("⚠️ Usando ID hardcoded...")
+            planilha_id = "1kGExLBYIWf3bjSl3MWBea6PohOLFaAZoF16ojT0ktlw"
         
-        # Inicializar classe base com ID correto
-        super().__init__(caminho_credenciais, planilha_id)
+        # Inicializar classe base
+        if caminho_credenciais is None:
+            caminho_credenciais = os.path.join(root_dir, 'config', 'boletim.json')
         
+        super().__init__(
+            caminho_credenciais=caminho_credenciais,
+            id_planilha=planilha_id
+        )
+        
+        # Configurações específicas
         self.PLANILHA_ID = planilha_id
-        self.ABA_NOME = 'BASE'
+        self.ABA_NOME = "URA + LIA"
         
-        print("\n" + "="*60)
-        print("⚠️  ATENÇÃO - COMPARTILHAMENTO NECESSÁRIO")
-        print("="*60)
-        print("📧 Compartilhe a planilha com:")
-        print("   boletim-315@sublime-shift-472919-f0.iam.gserviceaccount.com")
-        print("   Permissão: Editor")
-        print("="*60)
+        # Validar compatibilidade
+        self._validar_service_account()
         
-        # Cores AMARELAS para Power BI
-        # Cabeçalho: Amarelo FORTE (equivalente ao verde #00A859 do boletim)
-        self.COR_AMARELA_FORTE = {
-            'red': 1.0,
-            'green': 0.66,
-            'blue': 0.0
-        }
-        
-        # Dados: Amarelo MÉDIO/VIBRANTE (mais forte que o anterior)
-        # Antes era #FFF299 (muito claro), agora #FFE066 (mais vibrante)
-        self.COR_AMARELA_CLARA = {
-            'red': 1.0,      # 255
-            'green': 0.88,   # 224
-            'blue': 0.4      # 102
-        }
-        
-        print("✅ ProcessadorFilasSegundoSemestre inicializado")
+        print(f"\n{'='*60}")
+        print(f"✅ ProcessadorAutoservicoPrimeiroSemestre inicializado")
         print(f"📊 Planilha ID: {self.PLANILHA_ID}")
         print(f"📄 Aba: {self.ABA_NOME}")
         print(f"🎨 Cor de destaque: AMARELO")
@@ -109,17 +91,17 @@ class ProcessadorFilasSegundoSemestre(GoogleSheetsBase):
         Processa o CSV e envia para o Google Sheets
         
         Args:
-            caminho_csv: Caminho para o arquivo CSV das filas
+            caminho_csv: Caminho para o arquivo CSV do Autoserviço
             
         Returns:
             dict: Resultado do processamento
         """
         try:
             print(f"\n{'='*60}")
-            print(f"🚀 INICIANDO PROCESSAMENTO - FILAS SEGUNDO SEMESTRE")
+            print(f"🚀 INICIANDO PROCESSAMENTO - AUTOSERVIÇO PRIMEIRO SEMESTRE")
             print(f"{'='*60}")
             print(f"📁 Arquivo: {os.path.basename(caminho_csv)}")
-            print(f"📊 Destino: BASE FILA UNIFICADA - SEGUNDO SEMESTRE")
+            print(f"📊 Destino: AUTOSERVIÇO - PRIMEIRO SEMESTRE")
             print(f"📄 Aba: {self.ABA_NOME}")
             
             # Validar arquivo
@@ -171,20 +153,49 @@ class ProcessadorFilasSegundoSemestre(GoogleSheetsBase):
             
             # Enviar dados em lote
             if dados:
+                # Processar dados para garantir compatibilidade com Google Sheets
+                dados_processados = []
+                for linha in dados:
+                    linha_processada = []
+                    for valor in linha:
+                        # Converter valores para tipos apropriados
+                        if valor is None or valor == '' or str(valor).lower() == 'nan':
+                            linha_processada.append('')
+                        else:
+                            valor_str = str(valor).strip()
+                            # Tentar converter para número se possível
+                            try:
+                                # Se contém apenas dígitos, ponto ou vírgula, pode ser número
+                                if valor_str.replace('.', '').replace(',', '').replace('-', '').replace('+', '').isdigit():
+                                    # Tentar converter para float
+                                    valor_num = float(valor_str.replace(',', '.'))
+                                    # Se for inteiro, converter para int
+                                    if valor_num.is_integer():
+                                        linha_processada.append(int(valor_num))
+                                    else:
+                                        linha_processada.append(valor_num)
+                                else:
+                                    # Manter como string
+                                    linha_processada.append(valor_str)
+                            except:
+                                # Se falhar, manter como string
+                                linha_processada.append(valor_str)
+                    dados_processados.append(linha_processada)
+                
                 # Usar USER_ENTERED para que o Sheets interprete números como números
-                aba.append_rows(dados, value_input_option='USER_ENTERED')
-                print(f"   ✅ {len(dados)} linhas enviadas")
+                aba.append_rows(dados_processados, value_input_option='USER_ENTERED')
+                print(f"   ✅ {len(dados_processados)} linhas enviadas")
                 
                 # Formatar PRIMEIRA LINHA de dados com amarelo FORTE
                 print("\n🎨 Aplicando formatação AMARELA nos DADOS...")
-                if len(dados) > 0:
+                if len(dados_processados) > 0:
                     print(f"   🎨 Primeira linha de dados: amarelo FORTE (#FFA800)")
                     self._aplicar_formatacao_linha_forte(aba, linha_inicial, len(df.columns))
                 
                 # Formatar DEMAIS LINHAS com amarelo CLARO
-                if len(dados) > 1:
+                if len(dados_processados) > 1:
                     print(f"   🎨 Demais linhas: amarelo claro (#FFF299)")
-                    self._aplicar_formatacao_amarela(aba, linha_inicial + 1, len(dados) - 1, len(df.columns))
+                    self._aplicar_formatacao_amarela(aba, linha_inicial + 1, len(dados_processados) - 1, len(df.columns))
                 
                 print("   ✅ Dados formatados com destaque na primeira linha")
             
@@ -192,7 +203,7 @@ class ProcessadorFilasSegundoSemestre(GoogleSheetsBase):
                 'sucesso': True,
                 'arquivo': os.path.basename(caminho_csv),
                 'linhas_processadas': len(dados),
-                'planilha': 'BASE FILA UNIFICADA - SEGUNDO SEMESTRE',
+                'planilha': 'AUTOSERVIÇO - PRIMEIRO SEMESTRE',
                 'aba': self.ABA_NOME,
                 'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             }
@@ -263,178 +274,119 @@ class ProcessadorFilasSegundoSemestre(GoogleSheetsBase):
     
     def _limpar_dados(self, df):
         """
-        Limpa e prepara os dados MANTENDO formato original
+        Limpa dados mantendo formato original
         
         Args:
-            df: DataFrame original
+            df: DataFrame para limpar
             
         Returns:
-            pd.DataFrame: DataFrame limpo
+            pd.DataFrame: Dados limpos
         """
-        import numpy as np
-        
-        # Remover espaços dos nomes das colunas
-        df.columns = df.columns.str.strip()
-        
-        # Substituir NaN por string vazia (manter tudo como texto)
-        df = df.fillna('')
-        
-        # Converter tudo para string para manter formato EXATO do CSV
+        # Converter tudo para string e remover 'nan'
         for col in df.columns:
-            df[col] = df[col].astype(str)
-            # Limpar apenas valores 'nan' que vieram da conversão
-            df[col] = df[col].replace('nan', '')
-            # Remover espaços extras
-            df[col] = df[col].str.strip()
+            df[col] = df[col].apply(lambda x: '' if str(x).lower() == 'nan' else str(x))
         
         return df
     
     def _aplicar_formatacao_cabecalho(self, aba, linha, num_colunas):
         """
-        Aplica formatação AMARELA FORTE no cabeçalho (primeira linha)
-        Mesmo padrão do boletim: cor forte + negrito + texto branco
+        Aplica formatação AMARELA ESCURA (#FFA800) no cabeçalho
         
         Args:
             aba: Worksheet do gspread
-            linha: Linha do cabeçalho (normalmente 1)
+            linha: Número da linha do cabeçalho (geralmente 1)
             num_colunas: Número de colunas
         """
-        try:
-            # Formato AMARELO FORTE para cabeçalho (igual ao verde #00A859 do boletim)
-            formato_cabecalho = {
-                'backgroundColor': self.COR_AMARELA_FORTE,
-                'horizontalAlignment': 'LEFT',
-                'verticalAlignment': 'MIDDLE',
-                'textFormat': {
-                    'fontSize': 10,
-                    'fontFamily': 'Arial',
-                    'bold': True,  # Negrito no cabeçalho
-                    'foregroundColor': {  # Texto branco para contraste
-                        'red': 1.0,
-                        'green': 1.0,
-                        'blue': 1.0
-                    }
-                }
-            }
-            
-            # Aplicar formato
-            range_notacao = f'A{linha}:{self._col_to_letter(num_colunas)}{linha}'
-            aba.format(range_notacao, formato_cabecalho)
-            
-        except Exception as e:
-            print(f"   ⚠️  Aviso ao aplicar formatação no cabeçalho: {str(e)}")
+        # Range do cabeçalho
+        range_cabecalho = f"A{linha}:{chr(65 + num_colunas - 1)}{linha}"
+        
+        formato_cabecalho = {
+            "backgroundColor": {
+                "red": 1.0,      # #FFA800 = RGB(255, 168, 0)
+                "green": 0.66,
+                "blue": 0.0
+            },
+            "textFormat": {
+                "foregroundColor": {
+                    "red": 1.0,
+                    "green": 1.0,
+                    "blue": 1.0
+                },
+                "bold": True,
+                "fontSize": 11
+            },
+            "horizontalAlignment": "CENTER"
+        }
+        
+        aba.format(range_cabecalho, formato_cabecalho)
     
     def _aplicar_formatacao_linha_forte(self, aba, linha, num_colunas):
         """
-        Aplica formatação AMARELA FORTE na primeira linha de dados (destaque)
+        Aplica formatação AMARELA FORTE (#FFA800) em uma linha
         
         Args:
             aba: Worksheet do gspread
-            linha: Linha para formatar
+            linha: Número da linha
             num_colunas: Número de colunas
         """
-        try:
-            # Formato AMARELO FORTE para primeira linha de dados
-            formato_forte = {
-                'backgroundColor': self.COR_AMARELA_FORTE,
-                'horizontalAlignment': 'LEFT',
-                'verticalAlignment': 'MIDDLE',
-                'textFormat': {
-                    'fontSize': 10,
-                    'fontFamily': 'Arial',
-                    'bold': True  # Negrito para destaque
-                }
+        range_linha = f"A{linha}:{chr(65 + num_colunas - 1)}{linha}"
+        
+        formato_forte = {
+            "backgroundColor": {
+                "red": 1.0,      # #FFA800
+                "green": 0.66,
+                "blue": 0.0
+            },
+            "textFormat": {
+                "foregroundColor": {
+                    "red": 0.0,
+                    "green": 0.0,
+                    "blue": 0.0
+                },
+                "bold": True
             }
-            
-            # Aplicar formato
-            range_notacao = f'A{linha}:{self._col_to_letter(num_colunas)}{linha}'
-            aba.format(range_notacao, formato_forte)
-            
-        except Exception as e:
-            print(f"   ⚠️  Aviso ao aplicar formatação forte: {str(e)}")
+        }
+        
+        aba.format(range_linha, formato_forte)
     
     def _aplicar_formatacao_amarela(self, aba, linha_inicial, num_linhas, num_colunas):
         """
-        Aplica formatação AMARELA CLARA nas células de dados
+        Aplica formatação AMARELA CLARA (#FFF299) em múltiplas linhas
         
         Args:
             aba: Worksheet do gspread
-            linha_inicial: Primeira linha para formatar
-            num_linhas: Número de linhas
+            linha_inicial: Primeira linha
+            num_linhas: Quantidade de linhas
             num_colunas: Número de colunas
         """
-        try:
-            # Definir range
-            linha_final = linha_inicial + num_linhas - 1
-            
-            # Formato AMARELO CLARO para dados
-            formato_amarelo = {
-                'backgroundColor': self.COR_AMARELA_CLARA,
-                'horizontalAlignment': 'LEFT',
-                'verticalAlignment': 'MIDDLE',
-                'textFormat': {
-                    'fontSize': 10,
-                    'fontFamily': 'Arial'
+        linha_final = linha_inicial + num_linhas - 1
+        range_linhas = f"A{linha_inicial}:{chr(65 + num_colunas - 1)}{linha_final}"
+        
+        formato_claro = {
+            "backgroundColor": {
+                "red": 1.0,      # #FFF299
+                "green": 0.95,
+                "blue": 0.6
+            },
+            "textFormat": {
+                "foregroundColor": {
+                    "red": 0.0,
+                    "green": 0.0,
+                    "blue": 0.0
                 }
             }
-            
-            # Aplicar formato
-            range_notacao = f'A{linha_inicial}:{self._col_to_letter(num_colunas)}{linha_final}'
-            aba.format(range_notacao, formato_amarelo)
-            
-        except Exception as e:
-            print(f"   ⚠️  Aviso ao aplicar formatação: {str(e)}")
-    
-    def _col_to_letter(self, col_num):
-        """
-        Converte número de coluna para letra (1=A, 2=B, etc)
+        }
         
-        Args:
-            col_num: Número da coluna
-            
-        Returns:
-            str: Letra da coluna
+        aba.format(range_linhas, formato_claro)
+    
+    def _validar_service_account(self):
         """
-        result = ""
-        while col_num > 0:
-            col_num -= 1
-            result = chr(col_num % 26 + ord('A')) + result
-            col_num //= 26
-        return result
-
-
-def main():
-    """Função principal para testes"""
-    print("🧪 Testando ProcessadorFilasSegundoSemestre...")
-    
-    # Caminho do CSV
-    caminho_csv = os.path.join(
-        os.path.dirname(__file__),
-        '..', '..', '..', '..',
-        'data',
-        'Filas Genesys - Todas as Filas .csv'
-    )
-    
-    # Caminho das credenciais
-    caminho_credenciais = os.path.join(
-        os.path.dirname(__file__),
-        '..', '..', '..', '..',
-        'config',
-        'boletim.json'
-    )
-    
-    # Criar processador
-    processador = ProcessadorFilasSegundoSemestre(caminho_credenciais)
-    
-    # Processar
-    resultado = processador.processar_e_enviar(caminho_csv)
-    
-    print("\n" + "="*60)
-    print("📊 RESULTADO:")
-    print("="*60)
-    for key, value in resultado.items():
-        print(f"   {key}: {value}")
-
-
-if __name__ == "__main__":
-    main()
+        Valida se a service account tem acesso à planilha
+        """
+        print(f"\n{'='*60}")
+        print(f"⚠️  ATENÇÃO - COMPARTILHAMENTO NECESSÁRIO")
+        print(f"{'='*60}")
+        print(f"📧 Compartilhe a planilha com:")
+        print(f"   {self.client.auth.service_account_email}")
+        print(f"   Permissão: Editor")
+        print(f"{'='*60}\n")

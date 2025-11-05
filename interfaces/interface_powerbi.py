@@ -40,8 +40,10 @@ sys.path.insert(0, root_dir)
 
 # Importar renomeador e processadores Power BI
 from renomeador_inteligente import RenomeadorInteligente
-from src.processadores.powerbi.genesys.filas_primeiro_semestre import ProcessadorFilasPrimeiroSemestre
-from src.processadores.powerbi.genesys.filas_segundo_semestre import ProcessadorFilasSegundoSemestre
+from src.processadores.powerbi.filas.filas_primeiro_semestre import ProcessadorFilasPrimeiroSemestre
+from src.processadores.powerbi.filas.filas_segundo_semestre import ProcessadorFilasSegundoSemestre
+from src.processadores.powerbi.autoservico.autoservico_primeiro_semestre import ProcessadorAutoservicoPrimeiroSemestre
+from src.processadores.powerbi.autoservico.autoservico_segundo_semestre import ProcessadorAutoservicoSegundoSemestre
 
 # Importar gerenciador de planilhas centralizado
 from scripts.gerenciador_planilhas import GerenciadorPlanilhas
@@ -734,9 +736,11 @@ class AutomacaoLeroyMerlinGUI:
         )
         opcoes_frame.pack(fill='both', expand=True, padx=2, pady=2)
         
-        # Variáveis para checkboxes - APENAS POWER BI
+        # Variáveis para checkboxes - POWER BI
         self.var_primeiro_semestre = tk.BooleanVar(value=True)
         self.var_segundo_semestre = tk.BooleanVar(value=True)
+        self.var_autoservico_primeiro = tk.BooleanVar(value=True)
+        self.var_autoservico_segundo = tk.BooleanVar(value=True)
         self.var_verbose = tk.BooleanVar(value=False)
         
         # Checkboxes - PROFISSIONAL
@@ -778,6 +782,42 @@ class AutomacaoLeroyMerlinGUI:
             cursor='hand2'
         )
         cb_segundo.pack(anchor='w', pady=5)
+        
+        # Checkbox AUTOSERVIÇO PRIMEIRO SEMESTRE
+        cb_auto_primeiro = tk.Checkbutton(
+            checkbox_frame,
+            text="🤖 Processar AUTOSERVIÇO - PRIMEIRO SEMESTRE",
+            variable=self.var_autoservico_primeiro,
+            font=('Segoe UI', 10, 'bold'),
+            bg=self.CORES['cinza_escuro'],
+            fg=self.CORES['branco'],
+            activebackground=self.CORES['laranja'],
+            activeforeground=self.CORES['branco'],
+            selectcolor=self.CORES['laranja'],
+            relief='flat',
+            highlightthickness=0,
+            bd=0,
+            cursor='hand2'
+        )
+        cb_auto_primeiro.pack(anchor='w', pady=5)
+        
+        # Checkbox AUTOSERVIÇO SEGUNDO SEMESTRE
+        cb_auto_segundo = tk.Checkbutton(
+            checkbox_frame,
+            text="🤖 Processar AUTOSERVIÇO - SEGUNDO SEMESTRE",
+            variable=self.var_autoservico_segundo,
+            font=('Segoe UI', 10, 'bold'),
+            bg=self.CORES['cinza_escuro'],
+            fg=self.CORES['branco'],
+            activebackground=self.CORES['laranja'],
+            activeforeground=self.CORES['branco'],
+            selectcolor=self.CORES['laranja'],
+            relief='flat',
+            highlightthickness=0,
+            bd=0,
+            cursor='hand2'
+        )
+        cb_auto_segundo.pack(anchor='w', pady=5)
         
         # Separador
         sep1 = tk.Frame(checkbox_frame, bg=self.CORES['cinza_medio'], height=1)
@@ -874,7 +914,7 @@ class AutomacaoLeroyMerlinGUI:
         # Botão planilha PRIMEIRO SEMESTRE
         botao_planilha_primeiro = ttk.Button(
             gestao_botoes_frame,
-            text="📊 Planilha PRIMEIRO SEMESTRE",
+            text="📊 Planilha FILAS 1º SEM",
             style='VerdeClaro.TButton',
             command=lambda: self.abrir_planilha('primeiro'),
             cursor='hand2'
@@ -884,17 +924,51 @@ class AutomacaoLeroyMerlinGUI:
         # Botão planilha SEGUNDO SEMESTRE
         botao_planilha_segundo = ttk.Button(
             gestao_botoes_frame,
-            text="� Planilha SEGUNDO SEMESTRE",
+            text="� Planilha FILAS 2º SEM",
             style='Info.TButton',
             command=lambda: self.abrir_planilha('segundo'),
             cursor='hand2'
         )
-        botao_planilha_segundo.pack(fill='x', pady=(4, 0))
+        botao_planilha_segundo.pack(fill='x', pady=(4, 8))
+        
+        # Separador Autoserviço
+        sep_auto = tk.Frame(gestao_botoes_frame, height=1, bg=self.CORES['cinza_medio'])
+        sep_auto.pack(fill='x', pady=8)
+        
+        # Label Autoserviço
+        label_autoservico = tk.Label(
+            gestao_botoes_frame,
+            text="🤖 Autoserviço",
+            font=('Segoe UI', 10, 'bold'),
+            bg=self.CORES['cinza_escuro'],
+            fg=self.CORES['laranja']
+        )
+        label_autoservico.pack(pady=(4, 8))
+        
+        # Botão planilha AUTOSERVIÇO PRIMEIRO SEMESTRE
+        botao_auto_primeiro = ttk.Button(
+            gestao_botoes_frame,
+            text="🤖 Planilha AUTOSERVIÇO 1º SEM",
+            style='Laranja.TButton',
+            command=lambda: self.abrir_planilha('autoservico_primeiro'),
+            cursor='hand2'
+        )
+        botao_auto_primeiro.pack(fill='x', pady=(0, 4))
+        
+        # Botão planilha AUTOSERVIÇO SEGUNDO SEMESTRE
+        botao_auto_segundo = ttk.Button(
+            gestao_botoes_frame,
+            text="🤖 Planilha AUTOSERVIÇO 2º SEM",
+            style='Laranja.TButton',
+            command=lambda: self.abrir_planilha('autoservico_segundo'),
+            cursor='hand2'
+        )
+        botao_auto_segundo.pack(fill='x', pady=(4, 0))
         
         # Tooltips for quick access buttons
         try:
-            ToolTip(botao_planilha_primeiro, "Abrir planilha PRIMEIRO SEMESTRE no navegador")
-            ToolTip(botao_planilha_segundo, "Abrir planilha SEGUNDO SEMESTRE no navegador")
+            ToolTip(botao_planilha_primeiro, "Abrir planilha POWER BI 1º SEMESTRE no navegador")
+            ToolTip(botao_planilha_segundo, "Abrir planilha POWER BI 2º SEMESTRE no navegador")
             ToolTip(self.botao_renomear, "Executa renomeação inteligente dos arquivos na pasta data/")
         except Exception:
             pass
@@ -927,7 +1001,7 @@ class AutomacaoLeroyMerlinGUI:
         # Botão PRIMEIRO SEMESTRE individual (DESTAQUE AMARELO)
         self.botao_primeiro = ttk.Button(
             botoes_individuais_frame,
-            text="� PROCESSAR PRIMEIRO SEMESTRE",
+            text="📊 PROCESSAR POWER BI 1º SEM",
             style='Verde.TButton',
             command=lambda: self.executar_individual('primeiro'),
             cursor='hand2'
@@ -937,12 +1011,36 @@ class AutomacaoLeroyMerlinGUI:
         # Botão SEGUNDO SEMESTRE individual (DESTAQUE AMARELO)
         self.botao_segundo = ttk.Button(
             botoes_individuais_frame,
-            text="� PROCESSAR SEGUNDO SEMESTRE", 
+            text="📊 PROCESSAR POWER BI 2º SEM", 
             style='Verde.TButton',
             command=lambda: self.executar_individual('segundo'),
             cursor='hand2'
         )
         self.botao_segundo.pack(side='left', expand=True, fill='both', padx=(8, 0))
+        
+        # Frame para botões AUTOSERVIÇO (nova linha)
+        botoes_autoservico_frame = tk.Frame(botoes_inner, bg=self.CORES['cinza_escuro'])
+        botoes_autoservico_frame.pack(expand=True, fill='x', pady=(12, 0))
+        
+        # Botão AUTOSERVIÇO PRIMEIRO SEMESTRE individual
+        self.botao_auto_primeiro = ttk.Button(
+            botoes_autoservico_frame,
+            text="🤖 PROCESSAR AUTOSERVIÇO 1º SEM",
+            style='Laranja.TButton',
+            command=lambda: self.executar_individual('autoservico_primeiro'),
+            cursor='hand2'
+        )
+        self.botao_auto_primeiro.pack(side='left', expand=True, fill='both', padx=(0, 8))
+        
+        # Botão AUTOSERVIÇO SEGUNDO SEMESTRE individual
+        self.botao_auto_segundo = ttk.Button(
+            botoes_autoservico_frame,
+            text="🤖 PROCESSAR AUTOSERVIÇO 2º SEM",
+            style='Laranja.TButton',
+            command=lambda: self.executar_individual('autoservico_segundo'),
+            cursor='hand2'
+        )
+        self.botao_auto_segundo.pack(side='left', expand=True, fill='both', padx=(8, 0))
         
         # Separador visual
         sep_botoes = tk.Frame(botoes_inner, bg=self.CORES['cinza_medio'], height=1)
@@ -1237,12 +1335,21 @@ class AutomacaoLeroyMerlinGUI:
                 planilha_id = gerenciador.obter_id('power_bi_segundo_semestre')
                 url = f'https://docs.google.com/spreadsheets/d/{planilha_id}/edit'
                 self.log_mensagem(f"✅ URL obtida via configuração centralizada", 'info')
+            elif tipo == 'autoservico_primeiro':
+                planilha_id = gerenciador.obter_id('autoservico_primeiro_semestre')
+                url = f'https://docs.google.com/spreadsheets/d/{planilha_id}/edit'
+                self.log_mensagem(f"✅ URL obtida via configuração centralizada", 'info')
+            elif tipo == 'autoservico_segundo':
+                planilha_id = gerenciador.obter_id('autoservico_segundo_semestre')
+                url = f'https://docs.google.com/spreadsheets/d/{planilha_id}/edit'
+                self.log_mensagem(f"✅ URL obtida via configuração centralizada", 'info')
             else:
                 self.log_mensagem(f"❌ Tipo de planilha desconhecido: {tipo}", 'erro')
                 return
             
             self.abrir_url(url)
-            self.log_mensagem(f"🔗 Planilha {tipo.upper()} SEMESTRE aberta no navegador", 'sucesso')
+            nome_planilha = tipo.replace('_', ' ').upper()
+            self.log_mensagem(f"🔗 Planilha {nome_planilha} aberta no navegador", 'sucesso')
             
         except Exception as e:
             # Fallback para URLs hardcoded
@@ -1251,12 +1358,15 @@ class AutomacaoLeroyMerlinGUI:
             
             urls_fallback = {
                 'primeiro': 'https://docs.google.com/spreadsheets/d/1VtNTqp907enX0M3gB05dmPckDRl7nnfgVEl3mNF8ILc/edit',      # Planilha PRIMEIRO SEMESTRE
-                'segundo': 'https://docs.google.com/spreadsheets/d/1r5eZWGVuBP4h68KfrA73lSvfEf37P-AuUCNHF40ttv8/edit'   # Planilha SEGUNDO SEMESTRE
+                'segundo': 'https://docs.google.com/spreadsheets/d/1r5eZWGVuBP4h68KfrA73lSvfEf37P-AuUCNHF40ttv8/edit',   # Planilha SEGUNDO SEMESTRE
+                'autoservico_primeiro': 'https://docs.google.com/spreadsheets/d/1kGExLBYIWf3bjSl3MWBea6PohOLFaAZoF16ojT0ktlw/edit',  # Autoserviço 1º Sem
+                'autoservico_segundo': 'https://docs.google.com/spreadsheets/d/1Py1W4sSnIbsgMCrr0h0PSTL0DpN-eLj0NoYGbcHLmUI/edit'   # Autoserviço 2º Sem
             }
             
             if tipo in urls_fallback:
                 self.abrir_url(urls_fallback[tipo])
-                self.log_mensagem(f"🔗 Planilha {tipo.upper()} SEMESTRE aberta no navegador (fallback)", 'sucesso')
+                nome_planilha = tipo.replace('_', ' ').upper()
+                self.log_mensagem(f"🔗 Planilha {nome_planilha} aberta no navegador (fallback)", 'sucesso')
             else:
                 self.log_mensagem(f"❌ Tipo de planilha desconhecido: {tipo}", 'erro')
     
@@ -1346,14 +1456,16 @@ class AutomacaoLeroyMerlinGUI:
         # Confirmar execução
         sistemas_nomes = {
             'primeiro': "📊 PRIMEIRO SEMESTRE",
-            'segundo': "� SEGUNDO SEMESTRE"
+            'segundo': "📊 SEGUNDO SEMESTRE",
+            'autoservico_primeiro': "🤖 AUTOSERVIÇO 1º SEMESTRE",
+            'autoservico_segundo': "🤖 AUTOSERVIÇO 2º SEMESTRE"
         }
         sistema_nome = sistemas_nomes.get(sistema, sistema)
         
         resposta = messagebox.askyesno(
             f"Confirmar Execução - {sistema_nome}",
             f"Executar automação para {sistema_nome}?\n\n"
-            f"Isso processará os dados das Filas Genesys para o {sistema.upper()} SEMESTRE."
+            f"Isso processará os dados de {'Filas Genesys' if sistema in ['primeiro', 'segundo'] else 'Autoserviço'}."
         )
         
         if not resposta:
@@ -1362,16 +1474,21 @@ class AutomacaoLeroyMerlinGUI:
         # Temporariamente definir checkboxes para executar apenas o semestre escolhido
         checkbox_original_primeiro = self.var_primeiro_semestre.get()
         checkbox_original_segundo = self.var_segundo_semestre.get()
+        checkbox_original_auto_primeiro = self.var_autoservico_primeiro.get()
+        checkbox_original_auto_segundo = self.var_autoservico_segundo.get()
         
         # Configurar para executar apenas o semestre selecionado
         self.var_primeiro_semestre.set(sistema == 'primeiro')
         self.var_segundo_semestre.set(sistema == 'segundo')
+        self.var_autoservico_primeiro.set(sistema == 'autoservico_primeiro')
+        self.var_autoservico_segundo.set(sistema == 'autoservico_segundo')
         
         try:
             # Iniciar execução em thread separada
             thread = threading.Thread(
                 target=self._executar_automacao_individual_thread, 
-                args=(sistema, checkbox_original_primeiro, checkbox_original_segundo),
+                args=(sistema, checkbox_original_primeiro, checkbox_original_segundo,
+                      checkbox_original_auto_primeiro, checkbox_original_auto_segundo),
                 daemon=True
             )
             thread.start()
@@ -1379,9 +1496,12 @@ class AutomacaoLeroyMerlinGUI:
             # Restaurar checkboxes originais em caso de erro
             self.var_primeiro_semestre.set(checkbox_original_primeiro)
             self.var_segundo_semestre.set(checkbox_original_segundo)
+            self.var_autoservico_primeiro.set(checkbox_original_auto_primeiro)
+            self.var_autoservico_segundo.set(checkbox_original_auto_segundo)
             messagebox.showerror("Erro", f"Erro ao iniciar execução: {str(e)}")
     
-    def _executar_automacao_individual_thread(self, sistema, original_primeiro, original_segundo):
+    def _executar_automacao_individual_thread(self, sistema, original_primeiro, original_segundo,
+                                             original_auto_primeiro, original_auto_segundo):
         """Thread específica para execução individual"""
         try:
             # Usar o mesmo método de execução, mas com parâmetros específicos
@@ -1390,6 +1510,8 @@ class AutomacaoLeroyMerlinGUI:
             # Sempre restaurar checkboxes originais no final
             self.var_primeiro_semestre.set(original_primeiro)
             self.var_segundo_semestre.set(original_segundo)
+            self.var_autoservico_primeiro.set(original_auto_primeiro)
+            self.var_autoservico_segundo.set(original_auto_segundo)
     
     def executar_automacao(self):
         """Executa a automação em thread separada"""
@@ -1415,6 +1537,8 @@ class AutomacaoLeroyMerlinGUI:
             self.botao_executar.configure(text="⏳ EXECUTANDO...", state='disabled')
             self.botao_primeiro.configure(state='disabled')
             self.botao_segundo.configure(state='disabled')
+            self.botao_auto_primeiro.configure(state='disabled')
+            self.botao_auto_segundo.configure(state='disabled')
             self.botao_renomear.configure(state='disabled')
             self.status_label.configure(text="🔄 Executando automação...", fg=self.CORES['laranja'])
             self.progresso.start()
@@ -1424,10 +1548,12 @@ class AutomacaoLeroyMerlinGUI:
             # Determinar quais semestres processar
             processar_primeiro = self.var_primeiro_semestre.get()
             processar_segundo = self.var_segundo_semestre.get()
+            processar_auto_primeiro = self.var_autoservico_primeiro.get()
+            processar_auto_segundo = self.var_autoservico_segundo.get()
             
-            if not processar_primeiro and not processar_segundo:
-                self.log_mensagem("⚠️ Nenhum semestre selecionado!", 'erro')
-                raise Exception("Selecione pelo menos um semestre para processar")
+            if not any([processar_primeiro, processar_segundo, processar_auto_primeiro, processar_auto_segundo]):
+                self.log_mensagem("⚠️ Nenhum semestre/tipo selecionado!", 'erro')
+                raise Exception("Selecione pelo menos um semestre/tipo para processar")
             
             # Caminho do arquivo CSV - procurar primeiro na raiz do projeto (root_dir),
             # depois na pasta interfaces/data e por variantes de nome sem espaços extras.
@@ -1523,6 +1649,82 @@ class AutomacaoLeroyMerlinGUI:
                     import traceback
                     self.log_mensagem(f"🔍 Detalhes: {traceback.format_exc()}", 'erro')
             
+            # Processar AUTOSERVIÇO PRIMEIRO SEMESTRE
+            if processar_auto_primeiro:
+                self.log_mensagem("\n" + "="*60, 'destaque')
+                self.log_mensagem("🤖 PROCESSANDO AUTOSERVIÇO - PRIMEIRO SEMESTRE", 'destaque')
+                self.log_mensagem("="*60, 'destaque')
+                
+                # Procurar arquivo Autoserviço
+                candidatos_auto = [
+                    os.path.join(root_dir, 'data', 'Autoserviço Power BI.csv'),
+                    os.path.join(current_dir, 'data', 'Autoserviço Power BI.csv'),
+                ]
+                arquivo_auto = None
+                for c in candidatos_auto:
+                    if os.path.exists(c):
+                        arquivo_auto = c
+                        break
+                
+                if not arquivo_auto:
+                    self.log_mensagem(f"❌ Arquivo Autoserviço não encontrado", 'erro')
+                else:
+                    try:
+                        processador = ProcessadorAutoservicoPrimeiroSemestre(arquivo_credenciais)
+                        self.log_mensagem("✅ Processador AUTOSERVIÇO 1º SEM inicializado", 'sucesso')
+                        
+                        resultado = processador.processar_e_enviar(arquivo_auto)
+                        
+                        if resultado.get('sucesso'):
+                            self.log_mensagem(f"✅ AUTOSERVIÇO 1º SEM processado com sucesso!", 'sucesso')
+                            self.log_mensagem(f"   📊 Linhas: {resultado.get('linhas_processadas', 0)}", 'info')
+                            resultados.append(resultado)
+                        else:
+                            self.log_mensagem(f"❌ Erro ao processar AUTOSERVIÇO 1º SEM", 'erro')
+                            
+                    except Exception as e:
+                        self.log_mensagem(f"❌ Erro AUTOSERVIÇO 1º SEM: {str(e)}", 'erro')
+                        import traceback
+                        self.log_mensagem(f"🔍 Detalhes: {traceback.format_exc()}", 'erro')
+            
+            # Processar AUTOSERVIÇO SEGUNDO SEMESTRE
+            if processar_auto_segundo:
+                self.log_mensagem("\n" + "="*60, 'destaque')
+                self.log_mensagem("🤖 PROCESSANDO AUTOSERVIÇO - SEGUNDO SEMESTRE", 'destaque')
+                self.log_mensagem("="*60, 'destaque')
+                
+                # Procurar arquivo Autoserviço
+                candidatos_auto = [
+                    os.path.join(root_dir, 'data', 'Autoserviço Power BI.csv'),
+                    os.path.join(current_dir, 'data', 'Autoserviço Power BI.csv'),
+                ]
+                arquivo_auto = None
+                for c in candidatos_auto:
+                    if os.path.exists(c):
+                        arquivo_auto = c
+                        break
+                
+                if not arquivo_auto:
+                    self.log_mensagem(f"❌ Arquivo Autoserviço não encontrado", 'erro')
+                else:
+                    try:
+                        processador = ProcessadorAutoservicoSegundoSemestre(arquivo_credenciais)
+                        self.log_mensagem("✅ Processador AUTOSERVIÇO 2º SEM inicializado", 'sucesso')
+                        
+                        resultado = processador.processar_e_enviar(arquivo_auto)
+                        
+                        if resultado.get('sucesso'):
+                            self.log_mensagem(f"✅ AUTOSERVIÇO 2º SEM processado com sucesso!", 'sucesso')
+                            self.log_mensagem(f"   📊 Linhas: {resultado.get('linhas_processadas', 0)}", 'info')
+                            resultados.append(resultado)
+                        else:
+                            self.log_mensagem(f"❌ Erro ao processar AUTOSERVIÇO 2º SEM", 'erro')
+                            
+                    except Exception as e:
+                        self.log_mensagem(f"❌ Erro AUTOSERVIÇO 2º SEM: {str(e)}", 'erro')
+                        import traceback
+                        self.log_mensagem(f"🔍 Detalhes: {traceback.format_exc()}", 'erro')
+            
             # Resumo final
             fim_total = datetime.now()
             tempo_total = (fim_total - inicio_total).total_seconds()
@@ -1570,10 +1772,12 @@ class AutomacaoLeroyMerlinGUI:
             self.botao_executar.configure(text="🚀 EXECUTAR AUTOMAÇÃO COMPLETA", state='normal')
             self.botao_primeiro.configure(state='normal')
             self.botao_segundo.configure(state='normal')
+            self.botao_auto_primeiro.configure(state='normal')
+            self.botao_auto_segundo.configure(state='normal')
             self.botao_renomear.configure(state='normal')
             self.progresso.stop()
             if not self.status_label.cget('text').startswith(('❌', '✅')):
-                self.status_label.configure(text="� Pronto para nova execução", fg=self.CORES['amarelo_escuro'])
+                self.status_label.configure(text="📊 Pronto para nova execução", fg=self.CORES['amarelo_escuro'])
     
     def executar(self):
         """Inicia a interface"""

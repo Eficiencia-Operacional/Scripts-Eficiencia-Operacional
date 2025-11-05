@@ -21,6 +21,12 @@ service_account.json
 .env.local
 .env.*.local
 
+# Exceções: permitir arquivos de exemplo e configuração
+!boletim.json.example
+!json/planilhas_config.json
+!config/README.md
+!json/README.md
+
 # ============================================================================
 # ARQUIVOS DE DADOS (CSVs podem conter dados sensíveis)
 # ============================================================================
