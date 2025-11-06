@@ -383,10 +383,29 @@ class ProcessadorAutoservicoSegundoSemestre(GoogleSheetsBase):
         """
         Valida se a service account tem acesso à planilha
         """
-        print(f"\n{'='*60}")
-        print(f"⚠️  ATENÇÃO - COMPARTILHAMENTO NECESSÁRIO")
-        print(f"{'='*60}")
-        print(f"📧 Compartilhe a planilha com:")
-        print(f"   {self.client.auth.service_account_email}")
-        print(f"   Permissão: Editor")
-        print(f"{'='*60}\n")
+        try:
+            # Tentar obter o email da service account de diferentes formas
+            email = None
+            
+            # Tentar via auth (versões antigas do gspread)
+            if hasattr(self.client, 'auth') and hasattr(self.client.auth, 'service_account_email'):
+                email = self.client.auth.service_account_email
+            # Tentar via credentials (versões novas)
+            elif hasattr(self, '_client') and hasattr(self._client, 'auth'):
+                if hasattr(self._client.auth, 'service_account_email'):
+                    email = self._client.auth.service_account_email
+                elif hasattr(self._client.auth, '_service_account_email'):
+                    email = self._client.auth._service_account_email
+            
+            # Se conseguiu obter o email, mostrar mensagem
+            if email:
+                print(f"\n{'='*60}")
+                print(f"⚠️  ATENÇÃO - COMPARTILHAMENTO NECESSÁRIO")
+                print(f"{'='*60}")
+                print(f"📧 Compartilhe a planilha com:")
+                print(f"   {email}")
+                print(f"   Permissão: Editor")
+                print(f"{'='*60}\n")
+        except Exception as e:
+            # Se falhar, apenas continuar sem mostrar o aviso
+            pass
