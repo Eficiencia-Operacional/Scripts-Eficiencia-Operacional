@@ -1157,7 +1157,7 @@ class AutomacaoLeroyMerlinGUI:
         self.janela_principal.geometry(f'{largura}x{altura}+{x}+{y}')
     
     def log_mensagem(self, mensagem, tag=None):
-        """Adiciona mensagem ao log com timestamp e cores"""
+        """Adiciona mensagem ao log com timestamp e cores (thread-safe)"""
         try:
             timestamp = datetime.now().strftime("%H:%M:%S")
             mensagem_completa = f"[{timestamp}] {mensagem}\n"
@@ -1167,12 +1167,19 @@ class AutomacaoLeroyMerlinGUI:
             
             # Garantir que o widget existe
             if hasattr(self, 'texto_log') and self.texto_log:
-                # Sempre manter habilitado para inserção
-                self.texto_log.configure(state='normal')
-                self.texto_log.insert('end', mensagem_completa, tag)
-                self.texto_log.see('end')  # Auto-scroll para o final
-                # Não desabilitar mais - deixar sempre editável
-                self.janela_principal.update()  # Atualização imediata
+                # Função interna para inserir o log de forma thread-safe
+                def _inserir_log():
+                    self.texto_log.configure(state='normal')
+                    self.texto_log.insert('end', mensagem_completa, tag)
+                    self.texto_log.see('end')  # Auto-scroll para o final
+                
+                # Usar after(0) para garantir que a inserção aconteça na thread principal do Tkinter
+                # Isso evita race conditions e crashes quando chamado de threads secundárias
+                try:
+                    self.janela_principal.after(0, _inserir_log)
+                except:
+                    # Fallback se não estiver em uma thread secundária
+                    _inserir_log()
             else:
                 print("Widget texto_log não encontrado!")
         except Exception as e:

@@ -29,7 +29,7 @@ setup(
     long_description=read_readme(),
     long_description_content_type="text/markdown",
     author="Leroy Merlin",
-    author_email="automacao@leroymerlin.com.br",
+    author_email="rycordeiro@leroymerlin.com.br",
     url="https://github.com/Eficiencia-Operacional/Scripts-Eficiencia-Operacional",
     
     packages=find_packages(where='src'),

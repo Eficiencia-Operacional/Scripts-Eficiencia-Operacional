@@ -44,6 +44,8 @@ from src.processadores.powerbi.filas.filas_primeiro_semestre import ProcessadorF
 from src.processadores.powerbi.filas.filas_segundo_semestre import ProcessadorFilasSegundoSemestre
 from src.processadores.powerbi.autoservico.autoservico_primeiro_semestre import ProcessadorAutoservicoPrimeiroSemestre
 from src.processadores.powerbi.autoservico.autoservico_segundo_semestre import ProcessadorAutoservicoSegundoSemestre
+from src.processadores.powerbi.hibernação.hibernacao_primeiro_semestre import ProcessadorHibernacaoPrimeiroSemestre
+from src.processadores.powerbi.hibernação.hibernacao_segundo_semestre import ProcessadorHibernacaoSegundoSemestre
 
 # Importar gerenciador de planilhas centralizado
 from scripts.gerenciador_planilhas import GerenciadorPlanilhas
@@ -101,6 +103,7 @@ class AutomacaoLeroyMerlinGUI:
             'branco_suave': '#F5F5F5',      # Branco suave
             'texto_claro': '#E8E8E8',       # Texto claro
             'laranja': '#FF6B35',           # Laranja destaque
+            'roxo': '#9C27B0',              # Roxo para Hibernação
             'azul_info': '#2196F3',         # Azul info
             'amarelo_aviso': '#FFC107',     # Amarelo aviso
             'vermelho': '#F44336'           # Vermelho erro
@@ -235,6 +238,23 @@ class AutomacaoLeroyMerlinGUI:
         style.map('Laranja.TButton',
                   background=[('active', '#E55A2B'),
                              ('pressed', '#CC5020'),
+                             ('disabled', '#CCCCCC')],
+                  foreground=[('disabled', '#666666')])
+        
+        # Botão roxo com visual melhorado (MAIOR) - para Hibernação
+        style.configure(
+            'Roxo.TButton',
+            background=self.CORES['roxo'],
+            foreground=self.CORES['branco'],
+            font=('Segoe UI', 12, 'bold'),
+            padding=(25, 18),
+            relief='flat',
+            borderwidth=0,
+            focuscolor='none'
+        )
+        style.map('Roxo.TButton',
+                  background=[('active', '#7B1FA2'),  # Roxo mais escuro no hover
+                             ('pressed', '#6A1B9A'),  # Roxo ainda mais escuro ao clicar
                              ('disabled', '#CCCCCC')],
                   foreground=[('disabled', '#666666')])
         
@@ -741,6 +761,8 @@ class AutomacaoLeroyMerlinGUI:
         self.var_segundo_semestre = tk.BooleanVar(value=True)
         self.var_autoservico_primeiro = tk.BooleanVar(value=True)
         self.var_autoservico_segundo = tk.BooleanVar(value=True)
+        self.var_hibernacao_primeiro = tk.BooleanVar(value=True)
+        self.var_hibernacao_segundo = tk.BooleanVar(value=True)
         self.var_verbose = tk.BooleanVar(value=False)
         
         # Checkboxes - PROFISSIONAL
@@ -818,6 +840,42 @@ class AutomacaoLeroyMerlinGUI:
             cursor='hand2'
         )
         cb_auto_segundo.pack(anchor='w', pady=5)
+        
+        # Checkbox HIBERNAÇÃO PRIMEIRO SEMESTRE
+        cb_hibernacao_primeiro = tk.Checkbutton(
+            checkbox_frame,
+            text="💤 Processar HIBERNAÇÃO - PRIMEIRO SEMESTRE",
+            variable=self.var_hibernacao_primeiro,
+            font=('Segoe UI', 10, 'bold'),
+            bg=self.CORES['cinza_escuro'],
+            fg=self.CORES['branco'],
+            activebackground=self.CORES['roxo'],
+            activeforeground=self.CORES['branco'],
+            selectcolor=self.CORES['roxo'],
+            relief='flat',
+            highlightthickness=0,
+            bd=0,
+            cursor='hand2'
+        )
+        cb_hibernacao_primeiro.pack(anchor='w', pady=5)
+        
+        # Checkbox HIBERNAÇÃO SEGUNDO SEMESTRE
+        cb_hibernacao_segundo = tk.Checkbutton(
+            checkbox_frame,
+            text="💤 Processar HIBERNAÇÃO - SEGUNDO SEMESTRE",
+            variable=self.var_hibernacao_segundo,
+            font=('Segoe UI', 10, 'bold'),
+            bg=self.CORES['cinza_escuro'],
+            fg=self.CORES['branco'],
+            activebackground=self.CORES['roxo'],
+            activeforeground=self.CORES['branco'],
+            selectcolor=self.CORES['roxo'],
+            relief='flat',
+            highlightthickness=0,
+            bd=0,
+            cursor='hand2'
+        )
+        cb_hibernacao_segundo.pack(anchor='w', pady=5)
         
         # Separador
         sep1 = tk.Frame(checkbox_frame, bg=self.CORES['cinza_medio'], height=1)
@@ -911,6 +969,16 @@ class AutomacaoLeroyMerlinGUI:
         )
         label_planilhas.pack(pady=(8, 10))
         
+        # Label Filas Genesys
+        label_filas = tk.Label(
+            gestao_botoes_frame,
+            text="📊 Filas Genesys",
+            font=('Segoe UI', 10, 'bold'),
+            bg=self.CORES['cinza_escuro'],
+            fg=self.CORES['amarelo']
+        )
+        label_filas.pack(pady=(4, 8))
+        
         # Botão planilha PRIMEIRO SEMESTRE
         botao_planilha_primeiro = ttk.Button(
             gestao_botoes_frame,
@@ -924,8 +992,8 @@ class AutomacaoLeroyMerlinGUI:
         # Botão planilha SEGUNDO SEMESTRE
         botao_planilha_segundo = ttk.Button(
             gestao_botoes_frame,
-            text="� Planilha FILAS 2º SEM",
-            style='Info.TButton',
+            text="📊 Planilha FILAS 2º SEM",
+            style='VerdeClaro.TButton',
             command=lambda: self.abrir_planilha('segundo'),
             cursor='hand2'
         )
@@ -965,10 +1033,48 @@ class AutomacaoLeroyMerlinGUI:
         )
         botao_auto_segundo.pack(fill='x', pady=(4, 0))
         
+        # Separador Hibernação
+        sep_hibernacao = tk.Frame(gestao_botoes_frame, height=1, bg=self.CORES['cinza_medio'])
+        sep_hibernacao.pack(fill='x', pady=8)
+        
+        # Label Hibernação
+        label_hibernacao = tk.Label(
+            gestao_botoes_frame,
+            text="💤 Hibernação",
+            font=('Segoe UI', 10, 'bold'),
+            bg=self.CORES['cinza_escuro'],
+            fg=self.CORES['roxo']
+        )
+        label_hibernacao.pack(pady=(4, 8))
+        
+        # Botão planilha HIBERNAÇÃO PRIMEIRO SEMESTRE
+        botao_hibernacao_primeiro = ttk.Button(
+            gestao_botoes_frame,
+            text="💤 Planilha HIBERNAÇÃO 1º SEM",
+            style='Roxo.TButton',
+            command=lambda: self.abrir_planilha('hibernacao_primeiro'),
+            cursor='hand2'
+        )
+        botao_hibernacao_primeiro.pack(fill='x', pady=(0, 4))
+        
+        # Botão planilha HIBERNAÇÃO SEGUNDO SEMESTRE
+        botao_hibernacao_segundo = ttk.Button(
+            gestao_botoes_frame,
+            text="💤 Planilha HIBERNAÇÃO 2º SEM",
+            style='Roxo.TButton',
+            command=lambda: self.abrir_planilha('hibernacao_segundo'),
+            cursor='hand2'
+        )
+        botao_hibernacao_segundo.pack(fill='x', pady=(4, 0))
+        
         # Tooltips for quick access buttons
         try:
             ToolTip(botao_planilha_primeiro, "Abrir planilha POWER BI 1º SEMESTRE no navegador")
             ToolTip(botao_planilha_segundo, "Abrir planilha POWER BI 2º SEMESTRE no navegador")
+            ToolTip(botao_auto_primeiro, "Abrir planilha AUTOSERVIÇO 1º SEMESTRE no navegador")
+            ToolTip(botao_auto_segundo, "Abrir planilha AUTOSERVIÇO 2º SEMESTRE no navegador")
+            ToolTip(botao_hibernacao_primeiro, "Abrir planilha HIBERNAÇÃO 1º SEMESTRE no navegador")
+            ToolTip(botao_hibernacao_segundo, "Abrir planilha HIBERNAÇÃO 2º SEMESTRE no navegador")
             ToolTip(self.botao_renomear, "Executa renomeação inteligente dos arquivos na pasta data/")
         except Exception:
             pass
@@ -1001,7 +1107,7 @@ class AutomacaoLeroyMerlinGUI:
         # Botão PRIMEIRO SEMESTRE individual (DESTAQUE AMARELO)
         self.botao_primeiro = ttk.Button(
             botoes_individuais_frame,
-            text="📊 PROCESSAR POWER BI 1º SEM",
+            text="📊 PROCESSAR FILAS GENESYS 1º SEM",
             style='Verde.TButton',
             command=lambda: self.executar_individual('primeiro'),
             cursor='hand2'
@@ -1011,7 +1117,7 @@ class AutomacaoLeroyMerlinGUI:
         # Botão SEGUNDO SEMESTRE individual (DESTAQUE AMARELO)
         self.botao_segundo = ttk.Button(
             botoes_individuais_frame,
-            text="📊 PROCESSAR POWER BI 2º SEM", 
+            text="📊 PROCESSAR FILAS GENESYS 2º SEM", 
             style='Verde.TButton',
             command=lambda: self.executar_individual('segundo'),
             cursor='hand2'
@@ -1041,6 +1147,30 @@ class AutomacaoLeroyMerlinGUI:
             cursor='hand2'
         )
         self.botao_auto_segundo.pack(side='left', expand=True, fill='both', padx=(8, 0))
+        
+        # Frame para botões HIBERNAÇÃO individuais
+        botoes_hibernacao_frame = tk.Frame(botoes_inner, bg=self.CORES['cinza_escuro'])
+        botoes_hibernacao_frame.pack(fill='x', pady=(12, 0))
+        
+        # Botão HIBERNAÇÃO PRIMEIRO SEMESTRE individual
+        self.botao_hibernacao_primeiro = ttk.Button(
+            botoes_hibernacao_frame,
+            text="💤 PROCESSAR HIBERNAÇÃO 1º SEM",
+            style='Roxo.TButton',
+            command=lambda: self.executar_individual('hibernacao_primeiro'),
+            cursor='hand2'
+        )
+        self.botao_hibernacao_primeiro.pack(side='left', expand=True, fill='both', padx=(0, 8))
+        
+        # Botão HIBERNAÇÃO SEGUNDO SEMESTRE individual
+        self.botao_hibernacao_segundo = ttk.Button(
+            botoes_hibernacao_frame,
+            text="💤 PROCESSAR HIBERNAÇÃO 2º SEM",
+            style='Roxo.TButton',
+            command=lambda: self.executar_individual('hibernacao_segundo'),
+            cursor='hand2'
+        )
+        self.botao_hibernacao_segundo.pack(side='left', expand=True, fill='both', padx=(8, 0))
         
         # Separador visual
         sep_botoes = tk.Frame(botoes_inner, bg=self.CORES['cinza_medio'], height=1)
@@ -1252,7 +1382,7 @@ class AutomacaoLeroyMerlinGUI:
         self.janela_principal.geometry(f'{largura}x{altura}+{x}+{y}')
     
     def log_mensagem(self, mensagem, tag=None):
-        """Adiciona mensagem ao log com timestamp e cores"""
+        """Adiciona mensagem ao log com timestamp e cores (thread-safe)"""
         try:
             timestamp = datetime.now().strftime("%H:%M:%S")
             mensagem_completa = f"[{timestamp}] {mensagem}\n"
@@ -1262,12 +1392,21 @@ class AutomacaoLeroyMerlinGUI:
             
             # Garantir que o widget existe
             if hasattr(self, 'texto_log') and self.texto_log:
-                # Sempre manter habilitado para inserção
-                self.texto_log.configure(state='normal')
-                self.texto_log.insert('end', mensagem_completa, tag)
-                self.texto_log.see('end')  # Auto-scroll para o final
-                # Não desabilitar mais - deixar sempre editável
-                self.janela_principal.update()  # Atualização imediata
+                # Usar after() para garantir thread-safety
+                def _inserir_log():
+                    try:
+                        self.texto_log.configure(state='normal')
+                        self.texto_log.insert('end', mensagem_completa, tag)
+                        self.texto_log.see('end')  # Auto-scroll para o final
+                    except Exception as e:
+                        print(f"Erro ao inserir log: {e}")
+                
+                # Se chamado de thread diferente, usar after()
+                try:
+                    self.janela_principal.after(0, _inserir_log)
+                except:
+                    # Fallback: tentar inserção direta
+                    _inserir_log()
             else:
                 print("Widget texto_log não encontrado!")
         except Exception as e:
@@ -1295,6 +1434,72 @@ class AutomacaoLeroyMerlinGUI:
                 tamanho = os.path.getsize(os.path.join(data_dir, arquivo))
                 tamanho_mb = tamanho / (1024 * 1024)
                 self.log_mensagem(f"   📄 {arquivo} ({tamanho_mb:.2f} MB)", 'info')
+    
+    def buscar_arquivo_csv(self, nomes_possiveis, pasta='data'):
+        """
+        Busca arquivo CSV de forma inteligente
+        
+        Args:
+            nomes_possiveis: Lista de nomes possíveis para o arquivo
+            pasta: Pasta onde procurar (padrão: 'data')
+            
+        Returns:
+            Caminho completo do arquivo encontrado ou None
+        """
+        import re
+        
+        # Definir diretório base
+        if pasta.startswith('data/') or pasta.startswith('data\\'):
+            # Caminho relativo a partir de data/
+            pasta_busca = os.path.join(root_dir, pasta.replace('/', os.sep))
+        else:
+            pasta_busca = os.path.join(root_dir, pasta)
+        
+        # Criar pasta se não existir
+        if not os.path.exists(pasta_busca):
+            os.makedirs(pasta_busca, exist_ok=True)
+            self.log_mensagem(f"📁 Pasta criada: {pasta_busca}", 'info')
+        
+        # 1. Tentar nomes exatos
+        for nome in nomes_possiveis:
+            caminho = os.path.join(pasta_busca, nome)
+            if os.path.exists(caminho):
+                self.log_mensagem(f"✅ Arquivo encontrado: {nome}", 'sucesso')
+                return caminho
+        
+        # 2. Procurar por padrão data (número).csv
+        pattern = re.compile(r'^data\s*\(\s*\d+\s*\)\.csv$', re.IGNORECASE)
+        
+        try:
+            arquivos = os.listdir(pasta_busca)
+            for arquivo in arquivos:
+                if pattern.match(arquivo):
+                    caminho = os.path.join(pasta_busca, arquivo)
+                    self.log_mensagem(f"✅ Arquivo encontrado (padrão data): {arquivo}", 'sucesso')
+                    return caminho
+        except Exception as e:
+            self.log_mensagem(f"⚠️ Erro ao listar arquivos: {e}", 'aviso')
+        
+        # 3. Pegar o CSV mais recente na pasta
+        try:
+            arquivos_csv = [f for f in os.listdir(pasta_busca) if f.lower().endswith('.csv')]
+            
+            if arquivos_csv:
+                # Ordenar por data de modificação (mais recente primeiro)
+                arquivos_csv.sort(
+                    key=lambda x: os.path.getmtime(os.path.join(pasta_busca, x)),
+                    reverse=True
+                )
+                arquivo_mais_recente = arquivos_csv[0]
+                caminho = os.path.join(pasta_busca, arquivo_mais_recente)
+                self.log_mensagem(f"✅ Usando arquivo mais recente: {arquivo_mais_recente}", 'info')
+                return caminho
+        except Exception as e:
+            self.log_mensagem(f"⚠️ Erro ao buscar CSV mais recente: {e}", 'aviso')
+        
+        # Não encontrou
+        self.log_mensagem(f"❌ Nenhum arquivo CSV encontrado em {pasta_busca}", 'erro')
+        return None
     
     def abrir_pasta_dados(self):
         """Abre a pasta de dados no explorer"""
@@ -1343,6 +1548,14 @@ class AutomacaoLeroyMerlinGUI:
                 planilha_id = gerenciador.obter_id('autoservico_segundo_semestre')
                 url = f'https://docs.google.com/spreadsheets/d/{planilha_id}/edit'
                 self.log_mensagem(f"✅ URL obtida via configuração centralizada", 'info')
+            elif tipo == 'hibernacao_primeiro':
+                planilha_id = gerenciador.obter_id('hibernacao_primeiro_semestre')
+                url = f'https://docs.google.com/spreadsheets/d/{planilha_id}/edit'
+                self.log_mensagem(f"✅ URL obtida via configuração centralizada", 'info')
+            elif tipo == 'hibernacao_segundo':
+                planilha_id = gerenciador.obter_id('hibernacao_segundo_semestre')
+                url = f'https://docs.google.com/spreadsheets/d/{planilha_id}/edit'
+                self.log_mensagem(f"✅ URL obtida via configuração centralizada", 'info')
             else:
                 self.log_mensagem(f"❌ Tipo de planilha desconhecido: {tipo}", 'erro')
                 return
@@ -1360,7 +1573,9 @@ class AutomacaoLeroyMerlinGUI:
                 'primeiro': 'https://docs.google.com/spreadsheets/d/1VtNTqp907enX0M3gB05dmPckDRl7nnfgVEl3mNF8ILc/edit',      # Planilha PRIMEIRO SEMESTRE
                 'segundo': 'https://docs.google.com/spreadsheets/d/1r5eZWGVuBP4h68KfrA73lSvfEf37P-AuUCNHF40ttv8/edit',   # Planilha SEGUNDO SEMESTRE
                 'autoservico_primeiro': 'https://docs.google.com/spreadsheets/d/1kGExLBYIWf3bjSl3MWBea6PohOLFaAZoF16ojT0ktlw/edit',  # Autoserviço 1º Sem
-                'autoservico_segundo': 'https://docs.google.com/spreadsheets/d/1Py1W4sSnIbsgMCrr0h0PSTL0DpN-eLj0NoYGbcHLmUI/edit'   # Autoserviço 2º Sem
+                'autoservico_segundo': 'https://docs.google.com/spreadsheets/d/1Py1W4sSnIbsgMCrr0h0PSTL0DpN-eLj0NoYGbcHLmUI/edit',   # Autoserviço 2º Sem
+                'hibernacao_primeiro': 'https://docs.google.com/spreadsheets/d/1v2kpi1tIChOQezQgA8jjRTGeK2iS9vfcrWoSdhLoZKM/edit',  # Hibernação 1º Sem
+                'hibernacao_segundo': 'https://docs.google.com/spreadsheets/d/1G3Tf67VXk14n1IUIeaINQAjI7PFNhIpRqtVvlEkeBPY/edit'    # Hibernação 2º Sem
             }
             
             if tipo in urls_fallback:
@@ -1458,14 +1673,20 @@ class AutomacaoLeroyMerlinGUI:
             'primeiro': "📊 PRIMEIRO SEMESTRE",
             'segundo': "📊 SEGUNDO SEMESTRE",
             'autoservico_primeiro': "🤖 AUTOSERVIÇO 1º SEMESTRE",
-            'autoservico_segundo': "🤖 AUTOSERVIÇO 2º SEMESTRE"
+            'autoservico_segundo': "🤖 AUTOSERVIÇO 2º SEMESTRE",
+            'hibernacao_primeiro': "💤 HIBERNAÇÃO 1º SEMESTRE",
+            'hibernacao_segundo': "💤 HIBERNAÇÃO 2º SEMESTRE"
         }
         sistema_nome = sistemas_nomes.get(sistema, sistema)
+        
+        tipo_dados = 'Filas Genesys' if sistema in ['primeiro', 'segundo'] else \
+                     'Autoserviço' if sistema in ['autoservico_primeiro', 'autoservico_segundo'] else \
+                     'Hibernação'
         
         resposta = messagebox.askyesno(
             f"Confirmar Execução - {sistema_nome}",
             f"Executar automação para {sistema_nome}?\n\n"
-            f"Isso processará os dados de {'Filas Genesys' if sistema in ['primeiro', 'segundo'] else 'Autoserviço'}."
+            f"Isso processará os dados de {tipo_dados}."
         )
         
         if not resposta:
@@ -1476,19 +1697,24 @@ class AutomacaoLeroyMerlinGUI:
         checkbox_original_segundo = self.var_segundo_semestre.get()
         checkbox_original_auto_primeiro = self.var_autoservico_primeiro.get()
         checkbox_original_auto_segundo = self.var_autoservico_segundo.get()
+        checkbox_original_hibernacao_primeiro = self.var_hibernacao_primeiro.get()
+        checkbox_original_hibernacao_segundo = self.var_hibernacao_segundo.get()
         
         # Configurar para executar apenas o semestre selecionado
         self.var_primeiro_semestre.set(sistema == 'primeiro')
         self.var_segundo_semestre.set(sistema == 'segundo')
         self.var_autoservico_primeiro.set(sistema == 'autoservico_primeiro')
         self.var_autoservico_segundo.set(sistema == 'autoservico_segundo')
+        self.var_hibernacao_primeiro.set(sistema == 'hibernacao_primeiro')
+        self.var_hibernacao_segundo.set(sistema == 'hibernacao_segundo')
         
         try:
             # Iniciar execução em thread separada
             thread = threading.Thread(
                 target=self._executar_automacao_individual_thread, 
                 args=(sistema, checkbox_original_primeiro, checkbox_original_segundo,
-                      checkbox_original_auto_primeiro, checkbox_original_auto_segundo),
+                      checkbox_original_auto_primeiro, checkbox_original_auto_segundo,
+                      checkbox_original_hibernacao_primeiro, checkbox_original_hibernacao_segundo),
                 daemon=True
             )
             thread.start()
@@ -1498,10 +1724,13 @@ class AutomacaoLeroyMerlinGUI:
             self.var_segundo_semestre.set(checkbox_original_segundo)
             self.var_autoservico_primeiro.set(checkbox_original_auto_primeiro)
             self.var_autoservico_segundo.set(checkbox_original_auto_segundo)
+            self.var_hibernacao_primeiro.set(checkbox_original_hibernacao_primeiro)
+            self.var_hibernacao_segundo.set(checkbox_original_hibernacao_segundo)
             messagebox.showerror("Erro", f"Erro ao iniciar execução: {str(e)}")
     
     def _executar_automacao_individual_thread(self, sistema, original_primeiro, original_segundo,
-                                             original_auto_primeiro, original_auto_segundo):
+                                             original_auto_primeiro, original_auto_segundo,
+                                             original_hibernacao_primeiro, original_hibernacao_segundo):
         """Thread específica para execução individual"""
         try:
             # Usar o mesmo método de execução, mas com parâmetros específicos
@@ -1512,6 +1741,8 @@ class AutomacaoLeroyMerlinGUI:
             self.var_segundo_semestre.set(original_segundo)
             self.var_autoservico_primeiro.set(original_auto_primeiro)
             self.var_autoservico_segundo.set(original_auto_segundo)
+            self.var_hibernacao_primeiro.set(original_hibernacao_primeiro)
+            self.var_hibernacao_segundo.set(original_hibernacao_segundo)
     
     def executar_automacao(self):
         """Executa a automação em thread separada"""
@@ -1520,8 +1751,17 @@ class AutomacaoLeroyMerlinGUI:
             return
         
         # Verificar se pelo menos uma opção está selecionada
-        if not self.var_primeiro_semestre.get() and not self.var_segundo_semestre.get():
-            messagebox.showerror("Erro", "Selecione pelo menos um semestre (PRIMEIRO ou SEGUNDO)!")
+        tem_opcao_selecionada = (
+            self.var_primeiro_semestre.get() or 
+            self.var_segundo_semestre.get() or
+            self.var_autoservico_primeiro.get() or
+            self.var_autoservico_segundo.get() or
+            self.var_hibernacao_primeiro.get() or
+            self.var_hibernacao_segundo.get()
+        )
+        
+        if not tem_opcao_selecionada:
+            messagebox.showerror("Erro", "Selecione pelo menos uma opção para processar!")
             return
         
         # Iniciar execução em thread separada
@@ -1539,6 +1779,8 @@ class AutomacaoLeroyMerlinGUI:
             self.botao_segundo.configure(state='disabled')
             self.botao_auto_primeiro.configure(state='disabled')
             self.botao_auto_segundo.configure(state='disabled')
+            self.botao_hibernacao_primeiro.configure(state='disabled')
+            self.botao_hibernacao_segundo.configure(state='disabled')
             self.botao_renomear.configure(state='disabled')
             self.status_label.configure(text="🔄 Executando automação...", fg=self.CORES['laranja'])
             self.progresso.start()
@@ -1550,44 +1792,17 @@ class AutomacaoLeroyMerlinGUI:
             processar_segundo = self.var_segundo_semestre.get()
             processar_auto_primeiro = self.var_autoservico_primeiro.get()
             processar_auto_segundo = self.var_autoservico_segundo.get()
+            processar_hibernacao_primeiro = self.var_hibernacao_primeiro.get()
+            processar_hibernacao_segundo = self.var_hibernacao_segundo.get()
             
-            if not any([processar_primeiro, processar_segundo, processar_auto_primeiro, processar_auto_segundo]):
+            if not any([processar_primeiro, processar_segundo, processar_auto_primeiro, processar_auto_segundo,
+                       processar_hibernacao_primeiro, processar_hibernacao_segundo]):
                 self.log_mensagem("⚠️ Nenhum semestre/tipo selecionado!", 'erro')
                 raise Exception("Selecione pelo menos um semestre/tipo para processar")
             
-            # Caminho do arquivo CSV - procurar primeiro na raiz do projeto (root_dir),
-            # depois na pasta interfaces/data e por variantes de nome sem espaços extras.
-            candidatos_csv = [
-                os.path.join(root_dir, 'data', 'Filas Genesys - Todas as Filas .csv'),
-                os.path.join(root_dir, 'data', 'Filas Genesys - Todas as Filas.csv'),
-                os.path.join(current_dir, 'data', 'Filas Genesys - Todas as Filas .csv'),
-                os.path.join(current_dir, 'data', 'Filas Genesys - Todas as Filas.csv'),
-            ]
-
+            # Variável para arquivo de Filas (só será buscado se necessário)
             arquivo_csv = None
-            for c in candidatos_csv:
-                if os.path.exists(c):
-                    arquivo_csv = c
-                    break
-
-            # Se não encontrar, pedir para o usuário selecionar manualmente
-            if not arquivo_csv:
-                mb.showwarning(
-                    "Arquivo não encontrado",
-                    f"Não encontrei o CSV padrão em:\n{os.path.join(root_dir, 'data')}\nPor favor selecione o arquivo manualmente."
-                )
-                arquivo_csv = filedialog.askopenfilename(
-                    title="Selecione o CSV Filas Genesys",
-                    initialdir=root_dir,
-                    filetypes=[("CSV", "*.csv")]
-                )
-
-            if not arquivo_csv or not os.path.exists(arquivo_csv):
-                self.log_mensagem(f"❌ Arquivo não encontrado: {arquivo_csv}", 'erro')
-                raise FileNotFoundError(f"Arquivo não encontrado: {arquivo_csv}")
-
-            self.log_mensagem(f"📁 Arquivo: {os.path.basename(arquivo_csv)}", 'info')
-
+            
             # Caminho do arquivo de credenciais: preferir config/ na raiz do projeto
             arquivo_credenciais = os.path.join(root_dir, 'config', 'boletim.json')
             if not os.path.exists(arquivo_credenciais):
@@ -1600,6 +1815,41 @@ class AutomacaoLeroyMerlinGUI:
             
             resultados = []
             inicio_total = datetime.now()
+            
+            # BUSCAR ARQUIVO DE FILAS - só se for processar Filas
+            if processar_primeiro or processar_segundo:
+                self.log_mensagem("🔍 Procurando arquivo de Filas Genesys...", 'info')
+                
+                candidatos_csv = [
+                    os.path.join(root_dir, 'data', 'Filas Genesys - Todas as Filas .csv'),
+                    os.path.join(root_dir, 'data', 'Filas Genesys - Todas as Filas.csv'),
+                    os.path.join(current_dir, 'data', 'Filas Genesys - Todas as Filas .csv'),
+                    os.path.join(current_dir, 'data', 'Filas Genesys - Todas as Filas.csv'),
+                ]
+
+                for c in candidatos_csv:
+                    if os.path.exists(c):
+                        arquivo_csv = c
+                        break
+
+                # Se não encontrar, pedir para o usuário selecionar manualmente
+                if not arquivo_csv:
+                    mb.showwarning(
+                        "Arquivo não encontrado",
+                        f"Não encontrei o CSV de Filas em:\n{os.path.join(root_dir, 'data')}\n\n"
+                        f"Por favor selecione o arquivo manualmente."
+                    )
+                    arquivo_csv = filedialog.askopenfilename(
+                        title="Selecione o CSV Filas Genesys",
+                        initialdir=os.path.join(root_dir, 'data'),
+                        filetypes=[("CSV", "*.csv"), ("Todos os arquivos", "*.*")]
+                    )
+
+                if not arquivo_csv or not os.path.exists(arquivo_csv):
+                    self.log_mensagem(f"❌ Arquivo de Filas não encontrado", 'erro')
+                    raise FileNotFoundError(f"Arquivo de Filas não encontrado")
+
+                self.log_mensagem(f"✅ Arquivo de Filas: {os.path.basename(arquivo_csv)}", 'sucesso')
             
             # Processar PRIMEIRO SEMESTRE
             if processar_primeiro:
@@ -1725,6 +1975,88 @@ class AutomacaoLeroyMerlinGUI:
                         import traceback
                         self.log_mensagem(f"🔍 Detalhes: {traceback.format_exc()}", 'erro')
             
+            # Processar HIBERNAÇÃO PRIMEIRO SEMESTRE
+            if processar_hibernacao_primeiro:
+                self.log_mensagem("\n" + "="*60, 'destaque')
+                self.log_mensagem("💤 PROCESSANDO HIBERNAÇÃO - PRIMEIRO SEMESTRE", 'destaque')
+                self.log_mensagem("="*60, 'destaque')
+                
+                # Procurar arquivo Hibernação usando função inteligente na pasta data/hibernação/
+                self.log_mensagem("🔍 Procurando arquivo de Hibernação em data/hibernação/...", 'info')
+                
+                nomes_hibernacao = [
+                    'Hibernação Power BI.csv',
+                    'Hibernacao Power BI.csv',
+                    'Hibernação.csv',
+                    'Hibernacao.csv',
+                ]
+                
+                arquivo_hibernacao = self.buscar_arquivo_csv(nomes_hibernacao, pasta='data/hibernação')
+                
+                if not arquivo_hibernacao:
+                    self.log_mensagem(f"❌ Arquivo Hibernação não encontrado", 'erro')
+                    self.log_mensagem(f"💡 Dica: O arquivo pode estar em data/hibernação/ como 'data (número).csv'", 'info')
+                else:
+                    self.log_mensagem(f"✅ Arquivo encontrado: {os.path.basename(arquivo_hibernacao)}", 'sucesso')
+                    try:
+                        processador = ProcessadorHibernacaoPrimeiroSemestre(arquivo_credenciais)
+                        self.log_mensagem("✅ Processador HIBERNAÇÃO 1º SEM inicializado", 'sucesso')
+                        
+                        resultado = processador.processar_e_enviar(arquivo_hibernacao)
+                        
+                        if resultado.get('sucesso'):
+                            self.log_mensagem(f"✅ HIBERNAÇÃO 1º SEM processado com sucesso!", 'sucesso')
+                            self.log_mensagem(f"   📊 Linhas: {resultado.get('linhas_processadas', 0)}", 'info')
+                            resultados.append(resultado)
+                        else:
+                            self.log_mensagem(f"❌ Erro ao processar HIBERNAÇÃO 1º SEM", 'erro')
+                            
+                    except Exception as e:
+                        self.log_mensagem(f"❌ Erro HIBERNAÇÃO 1º SEM: {str(e)}", 'erro')
+                        import traceback
+                        self.log_mensagem(f"🔍 Detalhes: {traceback.format_exc()}", 'erro')
+            
+            # Processar HIBERNAÇÃO SEGUNDO SEMESTRE
+            if processar_hibernacao_segundo:
+                self.log_mensagem("\n" + "="*60, 'destaque')
+                self.log_mensagem("💤 PROCESSANDO HIBERNAÇÃO - SEGUNDO SEMESTRE", 'destaque')
+                self.log_mensagem("="*60, 'destaque')
+                
+                # Procurar arquivo Hibernação usando função inteligente na pasta data/hibernação/
+                self.log_mensagem("🔍 Procurando arquivo de Hibernação em data/hibernação/...", 'info')
+                
+                nomes_hibernacao = [
+                    'Hibernação Power BI.csv',
+                    'Hibernacao Power BI.csv',
+                    'Hibernação.csv',
+                    'Hibernacao.csv',
+                ]
+                
+                arquivo_hibernacao = self.buscar_arquivo_csv(nomes_hibernacao, pasta='data/hibernação')
+                
+                if not arquivo_hibernacao:
+                    self.log_mensagem(f"❌ Arquivo Hibernação não encontrado", 'erro')
+                    self.log_mensagem(f"💡 Dica: O arquivo pode estar em data/hibernação/ como 'data (número).csv'", 'info')
+                else:
+                    self.log_mensagem(f"✅ Arquivo encontrado: {os.path.basename(arquivo_hibernacao)}", 'sucesso')
+                    try:
+                        processador = ProcessadorHibernacaoSegundoSemestre(arquivo_credenciais)
+                        self.log_mensagem("✅ Processador HIBERNAÇÃO 2º SEM inicializado", 'sucesso')
+                        
+                        resultado = processador.processar_e_enviar(arquivo_hibernacao)
+                        
+                        if resultado.get('sucesso'):
+                            self.log_mensagem(f"✅ HIBERNAÇÃO 2º SEM processado com sucesso!", 'sucesso')
+                            self.log_mensagem(f"   📊 Linhas: {resultado.get('linhas_processadas', 0)}", 'info')
+                            resultados.append(resultado)
+                        else:
+                            self.log_mensagem(f"❌ Erro ao processar HIBERNAÇÃO 2º SEM", 'erro')
+                            
+                    except Exception as e:
+                        self.log_mensagem(f"❌ Erro HIBERNAÇÃO 2º SEM: {str(e)}", 'erro')
+                        import traceback
+                        self.log_mensagem(f"🔍 Detalhes: {traceback.format_exc()}", 'erro')
+            
             # Resumo final
             fim_total = datetime.now()
             tempo_total = (fim_total - inicio_total).total_seconds()
@@ -1774,6 +2106,8 @@ class AutomacaoLeroyMerlinGUI:
             self.botao_segundo.configure(state='normal')
             self.botao_auto_primeiro.configure(state='normal')
             self.botao_auto_segundo.configure(state='normal')
+            self.botao_hibernacao_primeiro.configure(state='normal')
+            self.botao_hibernacao_segundo.configure(state='normal')
             self.botao_renomear.configure(state='normal')
             self.progresso.stop()
             if not self.status_label.cget('text').startswith(('❌', '✅')):

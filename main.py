@@ -35,7 +35,7 @@ from datetime import datetime
 current_dir = os.path.dirname(os.path.abspath(__file__))
 core_dir = os.path.join(os.path.dirname(current_dir), 'core')
 sys.path.append(core_dir)
-
+ 
 from src.core.google_sheets_base import GoogleSheetsBase
 from scripts.gerenciador_planilhas import GerenciadorPlanilhas
 

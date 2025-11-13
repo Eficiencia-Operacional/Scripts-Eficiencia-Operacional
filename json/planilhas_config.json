@@ -79,6 +79,50 @@
       },
       "url": "https://docs.google.com/spreadsheets/d/1Py1W4sSnIbsgMCrr0h0PSTL0DpN-eLj0NoYGbcHLmUI/edit",
       "ultima_atualizacao": "2025-11-05"
+    },
+    "hibernacao_primeiro_semestre": {
+      "id": "1v2kpi1tIChOQezQgA8jjRTGeK2iS9vfcrWoSdhLoZKM",
+      "nome": "HIBERNAÇÃO - PRIMEIRO SEMESTRE",
+      "tipo": "power_bi",
+      "descricao": "Planilha Hibernação Power BI para dados do primeiro semestre (Jan-Jun)",
+      "abas": {
+        "BASE": "Dados principais"
+      },
+      "url": "https://docs.google.com/spreadsheets/d/1v2kpi1tIChOQezQgA8jjRTGeK2iS9vfcrWoSdhLoZKM/edit",
+      "ultima_atualizacao": "2025-11-12"
+    },
+    "hibernacao_segundo_semestre": {
+      "id": "1G3Tf67VXk14n1IUIeaINQAjI7PFNhIpRqtVvlEkeBPY",
+      "nome": "HIBERNAÇÃO - SEGUNDO SEMESTRE",
+      "tipo": "power_bi",
+      "descricao": "Planilha Hibernação Power BI para dados do segundo semestre (Jul-Dez)",
+      "abas": {
+        "BASE": "Dados principais"
+      },
+      "url": "https://docs.google.com/spreadsheets/d/1G3Tf67VXk14n1IUIeaINQAjI7PFNhIpRqtVvlEkeBPY/edit",
+      "ultima_atualizacao": "2025-11-12"
+    },
+    "filas_primeiro_semestre": {
+      "id": "1VtNTqp907enX0M3gB05dmPckDRl7nnfgVEl3mNF8ILc",
+      "nome": "FILAS GENESYS - PRIMEIRO SEMESTRE",
+      "tipo": "power_bi",
+      "descricao": "Planilha Filas Genesys Power BI para dados do primeiro semestre (Jan-Jun)",
+      "abas": {
+        "BASE": "Dados principais"
+      },
+      "url": "https://docs.google.com/spreadsheets/d/1VtNTqp907enX0M3gB05dmPckDRl7nnfgVEl3mNF8ILc/edit",
+      "ultima_atualizacao": "2025-11-13"
+    },
+    "filas_segundo_semestre": {
+      "id": "1r5eZWGVuBP4h68KfrA73lSvfEf37P-AuUCNHF40ttv8",
+      "nome": "FILAS GENESYS - SEGUNDO SEMESTRE",
+      "tipo": "power_bi",
+      "descricao": "Planilha Filas Genesys Power BI para dados do segundo semestre (Jul-Dez)",
+      "abas": {
+        "BASE": "Dados principais"
+      },
+      "url": "https://docs.google.com/spreadsheets/d/1r5eZWGVuBP4h68KfrA73lSvfEf37P-AuUCNHF40ttv8/edit",
+      "ultima_atualizacao": "2025-11-13"
     }
   },
   "historico_mudancas": [
