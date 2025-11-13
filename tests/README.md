@@ -1,15 +1,47 @@
 # 🧪 tests - Testes Automatizados
 
-Esta pasta contém todos os scripts de teste para validação do sistema RPA Leroy Merlin.
+Esta pasta contém todos os scripts de teste para validação do sistema RPA Leroy Merlin v3.2.0.
 
 ---
 
 ## 📋 Estrutura de Testes
 
+### **✅ Testes Principais (Recomendados)**
+
+#### **test_sistema.py** 🎯
+Teste geral do sistema - valida funcionamento básico.
+```bash
+python tests/test_sistema.py
+```
+
+#### **teste_todos_processadores.py** 🟡🟠🟣
+Valida os 6 processadores Power BI (Filas, Autoserviço, Hibernação).
+```bash
+python tests/teste_todos_processadores.py
+```
+**Valida:**
+- ✅ Imports de todos os 6 processadores
+- ✅ Instanciação correta
+- ✅ Métodos obrigatórios presentes
+- ✅ Segurança (nenhum usa .clear())
+
+#### **teste_botoes_hibernacao.py** 🟣
+Valida configuração dos botões de Hibernação na interface.
+```bash
+python tests/teste_botoes_hibernacao.py
+```
+
+#### **teste_checkboxes_hibernacao.py** 🟣
+Valida configuração visual dos checkboxes de Hibernação.
+```bash
+python tests/teste_checkboxes_hibernacao.py
+```
+
+---
+
 ### **Testes de Integração**
 Scripts que testam o sistema completo com dados reais.
 
-- `teste_sistema_completo.py` - Testa todo o fluxo de automação
 - `teste-genesys.py` - Testa processamento Genesys (VOZ, TEXTO, Gestão)
 - `teste-salesforce.py` - Testa processamento Salesforce (Criado, Resolvido, BKO)
 - `teste-produtividade.py` - Testa processamento de Produtividade
@@ -25,6 +57,7 @@ Scripts que testam funcionalidades específicas isoladamente.
 #### Renomeação de Arquivos
 - `teste_renomeador.py` - Testa renomeador inteligente
 - `teste_renomeacao_tempo.py` - Testa performance de renomeação
+- `teste_renomeador_hibernacao.py` - Testa renomeação de arquivos Hibernação
 
 #### Formatação e Limpeza de Dados
 - `teste_limpeza_datas.py` - Testa remoção de aspas/apóstrofos em datas
@@ -47,6 +80,49 @@ Scripts que testam funcionalidades específicas isoladamente.
 - `teste_kpis.py` - Testa cálculo e atualização de KPIs
 - `processar-todos-csvs.py` - Processa todos os CSVs de teste
 - `verificar_ids_completo.py` - Verifica IDs duplicados/novos
+
+#### Interfaces
+- `testar_interfaces.py` - Testa abertura e funcionamento das interfaces
+- `teste_autoservico.py` - Testa processadores de Autoserviço
+- `teste_hibernacao.py` - Testa processadores de Hibernação
+- `testar_aba_hibernacao.py` - Testa aba específica de Hibernação
+
+---
+
+## 🚀 Como Executar
+
+### Teste Rápido (Recomendado)
+```bash
+# Teste geral
+python tests/test_sistema.py
+
+# Validar 6 processadores Power BI
+python tests/teste_todos_processadores.py
+```
+
+### Teste Completo
+```bash
+# Executar todos os testes principais
+python tests/test_sistema.py
+python tests/teste_todos_processadores.py
+python tests/teste_botoes_hibernacao.py
+python tests/teste_checkboxes_hibernacao.py
+```
+
+---
+
+## ✅ Cobertura de Testes v3.2.0
+
+- ✅ **6 Processadores Power BI** (Filas, Autoserviço, Hibernação)
+- ✅ **Thread-Safety** (interfaces não travam)
+- ✅ **Imports e Instanciação**
+- ✅ **Métodos Obrigatórios**
+- ✅ **Segurança** (nenhum processador usa .clear())
+- ✅ **UI Components** (botões, checkboxes, cores)
+- ✅ **Renomeação Inteligente**
+- ✅ **Formatação de Dados**
+
+---
 
 ## 🚀 Como Executar os Testes
 

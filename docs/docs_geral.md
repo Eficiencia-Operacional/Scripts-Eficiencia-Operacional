@@ -2,11 +2,11 @@
 
 > **Sistema Profissional de Automação RPA** com dois subsistemas independentes:
 > - 🟢 **Pulso Boletim**: Processamento de Genesys, Salesforce e Produtividade
-> - 🟡 **Power BI Looker Studio**: Alimentação de dashboards com dados de Filas Genesys
+> - 🟡🟠🟣 **Power BI Looker Studio**: Alimentação de dashboards com 6 processadores (Filas, Autoserviço, Hibernação)
 
 [![Python Version](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/)
 [![Status](https://img.shields.io/badge/status-production-success.svg)](https://github.com/Eficiencia-Operacional/Scripts-Eficiencia-Operacional)
-[![Version](https://img.shields.io/badge/version-3.1.0-green.svg)](https://github.com/Eficiencia-Operacional/Scripts-Eficiencia-Operacional)
+[![Version](https://img.shields.io/badge/version-3.2.0-green.svg)](https://github.com/Eficiencia-Operacional/Scripts-Eficiencia-Operacional)
 
 ---
 
@@ -29,29 +29,40 @@
 ## 🏗️ Estrutura do Projeto
 
 ```
-Automacao-LM/
+Scripts-Eficiencia-Operacional/
 ├── 📁 config/                     # ⚙️ Configurações
 │   ├── boletim.json              # 🔑 Credenciais Google Service Account
-│   ├── kpis_historico.json       # � Histórico de KPIs (auto-gerado)
-│   └── config.md                 # � Documentação de configuração
+│   └── README.md                 # 📖 Documentação de configuração
 │
 ├── 📁 data/                       # 📂 Arquivos CSV para processamento
-│   ├── BASE_GENESYS_VOZ_HC.csv
-│   ├── BASE_SALESFORCE_CRIADO.csv
-│   └── data.md                   # 📖 Documentação de dados
+│   ├── hibernação/               # 🟣 CSVs de Hibernação
+│   └── README.md                 # 📖 Documentação de dados
 │
 ├── 📁 docs/                       # 📚 Documentação do projeto
-│   ├── documentação.md           # 📋 Esta documentação
-│   ├── Implementações.md         # 🔧 Histórico de implementações
-│   ├── Renomear.md               # 🔄 Guia de renomeação
-│   └── *.md                      # Outras documentações
+│   ├── interface_powerbi_completa.md  # 📘 Doc completa v3.2.0 (PRINCIPAL)
+│   ├── adicao_botoes_hibernacao.md    # 📗 Implementação UI Hibernação
+│   ├── correcao_thread_safety.md      # 📙 Correção threading crítica
+│   ├── relatorio_status_automacoes.md # � Status geral
+│   ├── docs_geral.md                  # �📋 Esta documentação
+│   ├── implementacao_autoservico.md   # 🔧 Histórico Autoserviço
+│   ├── gerenciador_planilhas.md       # � Gerenciador de planilhas
+│   └── *.md                           # Outras documentações
 │
-├── 📁 img/                        # �️ Imagens e logos
+├── 📁 interfaces/                 # 🎨 Interfaces gráficas
+│   ├── interface_pulso_boletim.py # 🟢 Interface Pulso Boletim
+│   └── interface_powerbi.py       # 🟡🟠🟣 Interface Power BI
 │
-├── 📁 scripts/                    # 🛠️ Scripts auxiliares
-│   ├── executar_renomeacao.py    # 🔄 Renomeador de CSVs
-│   ├── listar_abas_genesys.py    # 📋 Listar abas Genesys
-│   └── processar-todos-csvs.py   # 🚀 Processar múltiplos CSVs
+├── 📁 json/                       # 📊 Arquivos JSON de configuração
+│   ├── planilhas_config.json     # 📋 Configuração de 11 planilhas
+│   ├── kpis_historico.json       # 📈 Histórico de KPIs (auto-gerado)
+│   ├── historico_renomeacao.json # � Histórico de renomeações
+│   └── README.md                 # 📖 Documentação JSON
+│
+├── �📁 scripts/                    # 🛠️ Scripts auxiliares
+│   ├── gerenciador_planilhas.py  # � Gerenciador de planilhas
+│   ├── atualizar_planilhas.py    # 🔄 Atualizar configs
+│   ├── listar_planilhas.py       # 📋 Listar planilhas
+│   └── verificar_*.py            # ✅ Scripts de validação
 │
 ├── 📁 src/                        # 💻 Código fonte principal
 │   ├── main.py                   # 🎯 Ponto de entrada CLI
@@ -62,28 +73,26 @@ Automacao-LM/
 │       ├── 📁 genesys/           # 📊 Genesys (VOZ, TEXTO, Gestão) - Pulso Boletim
 │       ├── 📁 salesforce/        # 💼 Salesforce (CRIADO, RESOLVIDO, BKO) - Pulso Boletim
 │       ├── 📁 produtividade/     # 📈 Produtividade e Tempo - Pulso Boletim
-│       └── 📁 powerbi/           # 🟡 Power BI Looker Studio
-│           └── 📁 genesys/       # 🎯 Filas Genesys (Primeiro e Segundo Semestre)
+│       └── 📁 powerbi/           # 🟡🟠🟣 Power BI Looker Studio (6 processadores)
+│           ├── 📁 genesys/filas/ # 🟡 Filas Genesys (1º e 2º semestres)
+│           ├── 📁 autoservico/   # 🟠 Autoserviço (1º e 2º semestres)
+│           └── 📁 hibernação/    # 🟣 Hibernação (1º e 2º semestres)
 │
 ├── 📁 tests/                      # 🧪 Testes automatizados
-│   ├── teste_sistema_completo.py
-│   ├── teste-genesys.py
-│   ├── teste-salesforce.py
-│   └── tests.md                  # � Documentação de testes
+│   ├── test_sistema.py           # ✅ Teste geral do sistema
+│   ├── teste_todos_processadores.py  # ✅ Valida 6 processadores
+│   ├── teste_botoes_hibernacao.py    # ✅ Testa botões Hibernação
+│   └── README.md                 # 📖 Documentação de testes
 │
 ├── 📁 utils/                      # 🛠️ Utilitários
 │   ├── executar.bat              # ⚡ Executor Windows (CMD)
 │   ├── executar.ps1              # ⚡ Executor PowerShell
-│   ├── interface.bat             # 🎨 Abrir interface (CMD)
-│   ├── interface.ps1             # 🎨 Abrir interface (PowerShell)
-│   └── utils.md                  # 📖 Documentação de utilitários
+│   ├── interface.bat/ps1         # 🎨 Abrir interface Pulso
+│   ├── powerbi.bat/ps1           # 🟡 Abrir interface Power BI
+│   └── README.md                 # 📖 Documentação de utilitários
 │
-├── .editorconfig                  # 📝 Configuração do editor
-├── .gitattributes                 # 🔧 Atributos Git
-├── .gitignore                     # 🚫 Arquivos ignorados
-├── boletim.json                   # 🔑 Credenciais (cópia da config/)
-├── interface_visual.py            # 🎨 Interface Gráfica - Pulso Boletim (Verde)
-├── interface_powerbi.py           # 🟡 Interface Gráfica - Power BI (Amarelo)
+├── .gitignore                     # 🚫 Arquivos ignorados (protege boletim.json)
+├── boletim.json.example           # � Template de credenciais
 ├── main.py                        # 🚀 Script Principal CLI
 ├── renomeador_inteligente.py     # 🔄 Renomeador inteligente
 ├── README.md                      # 📖 Documentação principal
@@ -102,30 +111,35 @@ Automacao-LM/
 - ✅ **Salesforce**: Criado, Resolvido, Comentários BKO
 - ✅ **Produtividade**: Base Produtividade, Base Tempo
 - 🎨 **Cor**: Verde (#00A859)
-- 🖥️ **Interface**: `interface_visual.py`
+- 🖥️ **Interface**: `interfaces/interface_pulso_boletim.py`
 
-#### **🟡 Power BI Looker Studio - Alimentação de Dashboards**
-- ✅ **Filas Genesys**: Primeiro Semestre (Q1/Q2) e Segundo Semestre (Q3/Q4)
-- 🎨 **Cor**: Amarelo (#FFD700) com cabeçalho #FFA800
-- 🖥️ **Interface**: `interface_powerbi.py`
+#### **🟡🟠🟣 Power BI Looker Studio - 6 Processadores**
+- ✅ **Filas Genesys** 🟡: Primeiro Semestre (Q1/Q2) e Segundo Semestre (Q3/Q4)
+  - Cor: Amarelo (#FFD700)
+- ✅ **Autoserviço** 🟠: Primeiro Semestre e Segundo Semestre
+  - Cor: Laranja (#FF6B35)
+- ✅ **Hibernação** 🟣: Primeiro Semestre e Segundo Semestre
+  - Cor: Roxo (#9C27B0)
+- 🖥️ **Interface**: `interfaces/interface_powerbi.py`
 - 📊 **Destino**: Dashboards Looker Studio para análise BI
 
 #### **Interface Dual**
 - 🎨 **Interface Gráfica** (GUI): Dashboard profissional com KPIs dinâmicos
 - ⌨️ **Linha de Comando** (CLI): Execução via terminal com argumentos
+- 🔒 **Thread-Safe**: Processamento não trava interface (v3.2.0)
 
 #### **Detecção Inteligente**
 - 🔍 **Auto-detecção de encoding**: UTF-8, Latin-1, CP1252, etc.
-- 🔢 **Limpeza automática**: Removes apóstrofos, aspas, .0 desnecessário
+- 🔢 **Limpeza automática**: Remove apóstrofos, aspas, .0 desnecessário
 - 📅 **Formatação de datas**: Detecta e limpa colunas de data automaticamente
-- 🎨 **Coloração verde Leroy Merlin**: Primeira linha destacada, demais em verde claro
+- 🎨 **Coloração diferenciada**: Verde/Amarelo/Laranja/Roxo conforme sistema
 
 #### **Sistema Robusto**
-- 🔄 **Modo complementar**: Preserva dados existentes, não sobrescreve
+- 🔄 **Modo complementar**: Preserva dados existentes (append_rows)
 - 📊 **Fórmulas automáticas**: Aplica fórmulas apenas em linhas novas
 - 🔁 **Renomeação inteligente**: Padroniza nomes de arquivos CSV
 - 📝 **Relatórios detalhados**: Logs completos de cada processamento
-- 💾 **KPIs persistentes**: Histórico de execuções salvo em JSON
+- 💾 **KPIs persistentes**: Histórico de execuções salvo em `json/kpis_historico.json`
 
 ---
 
@@ -133,21 +147,24 @@ Automacao-LM/
 
 ### **Método 1: Interface Gráfica (Recomendado)** 🎨
 
-#### Via Atalho (.bat)
+#### Pulso Boletim 🟢
 ```bash
-# Duplo clique em:
+# Via atalho:
 utils/interface.bat
 # ou
-utils/interface.ps1
+python -m interfaces.interface_pulso_boletim
 ```
 
-#### Via Python
+#### Power BI 🟡🟠🟣
 ```bash
-python interface_visual.py
+# Via atalho:
+utils/powerbi.bat
+# ou
+python -m interfaces.interface_powerbi
 ```
 
 **Recursos da Interface:**
-- 🎨 Dashboard profissional com cores Leroy Merlin
+- 🎨 Dashboard profissional com cores distintivas
 - 📊 4 KPIs dinâmicos (Total Processado, Taxa Sucesso, Tempo Médio, Última Execução)
 - 🔘 Botões para execução seletiva (Salesforce, Genesys, Produtividade)
 - 📝 Log em tempo real da execução

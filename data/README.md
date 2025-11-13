@@ -4,7 +4,18 @@ Esta pasta contém todos os arquivos CSV utilizados pelos sistemas RPA para proc
 
 ---
 
-## 📁 Estrutura de Arquivos
+## 📁 Estrutura de Pastas
+
+```
+data/
+├── *.csv                    # Arquivos CSV gerais (Pulso Boletim e Power BI)
+└── hibernação/              # 🟣 Arquivos CSV de Hibernação (Power BI)
+    └── *.csv
+```
+
+---
+
+## 📁 Arquivos por Sistema
 
 ### **🟢 Pulso Boletim - Arquivos CSV**
 
@@ -48,6 +59,35 @@ Dados extraídos do Salesforce para análise de casos e tickets.
 Dados de produtividade e tempo da equipe.
 
 - `BASE_PRODUTIVIDADE.csv` - Métricas de produtividade
+
+---
+
+### **🟡🟠🟣 Power BI Looker Studio - Arquivos CSV**
+
+#### **🟡 Filas Genesys** (Amarelo)
+- `Filas Genesys - Todas as Filas .csv` - Dados de todas as filas Genesys
+- **Localização:** `data/`
+- **Processadores:** 
+  - Primeiro Semestre (Q1/Q2)
+  - Segundo Semestre (Q3/Q4)
+
+#### **🟠 Autoserviço** (Laranja)
+- Detectado automaticamente pelo renomeador
+- **Localização:** `data/`
+- **Processadores:**
+  - Primeiro Semestre (Q1/Q2)
+  - Segundo Semestre (Q3/Q4)
+
+#### **🟣 Hibernação** (Roxo)
+- Detectado automaticamente pelo renomeador
+- **Localização:** `data/hibernação/` ⚠️ **Pasta específica**
+- **Processadores:**
+  - Primeiro Semestre (Q1/Q2)
+  - Segundo Semestre (Q3/Q4)
+
+**⚠️ IMPORTANTE:** Arquivos de Hibernação devem estar na pasta `data/hibernação/`, não na raiz de `data/`.
+
+---
 - `BASE_TEMPO.csv` - Registro de tempo por atividade
 
 **Colunas Típicas:**

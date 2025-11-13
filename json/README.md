@@ -1,6 +1,96 @@
-# 📊 json - Arquivos de Histórico e Dados
+# 📊 json - Arquivos de Configuração e Histórico
 
-Esta pasta contém todos os arquivos JSON relacionados a histórico e dados do sistema RPA Leroy Merlin.
+Esta pasta contém todos os arquivos JSON relacionados a configuração e histórico do sistema RPA Leroy Merlin v3.2.0.
+
+---
+
+## 📁 Arquivos de Configuração
+
+### **planilhas_config.json** 📋
+Configuração centralizada de todas as 11 planilhas Google Sheets do sistema.
+
+**⚠️ ARQUIVO CRÍTICO - VERSIONADO NO GIT**
+
+```json
+{
+  "genesys_boletim": {
+    "id": "1e48VAZd2v5ZEQ4OK7yDu6KhrRi7mft5eVkh3qwZcdZE",
+    "nome": "BASE BOLETIM VOZ - Genesys",
+    "tipo": "pulso_boletim"
+  },
+  "salesforce_boletim": {
+    "id": "1luDIE2OSjunty4-l_pHkRKsP3AMCMOes80A4Xc607Qk",
+    "nome": "BASE BOLETIM - Salesforce",
+    "tipo": "pulso_boletim"
+  },
+  "produtividade_boletim": {
+    "id": "1TQmZb5Y2Ui7RxCYEJBcPQ3NYBxivKi8FhGb9ydxs0Zo",
+    "nome": "BASE PRODUTIVIDADE",
+    "tipo": "pulso_boletim"
+  },
+  "filas_primeiro_semestre": {
+    "id": "1VtNTqp907enX0M3gB05dmPckDRl7nnfgVEl3mNF8ILc",
+    "nome": "BASE FILAS GENESYS - PRIMEIRO SEMESTRE",
+    "tipo": "power_bi",
+    "categoria": "filas",
+    "cor": "#FFD700"
+  },
+  "filas_segundo_semestre": {
+    "id": "1r5eZWGVuBP4h68KfrA73lSvfEf37P-AuUCNHF40ttv8",
+    "nome": "BASE FILAS GENESYS - SEGUNDO SEMESTRE",
+    "tipo": "power_bi",
+    "categoria": "filas",
+    "cor": "#FFD700"
+  },
+  "autoservico_primeiro_semestre": {
+    "id": "1kGExLBYIWf3bjSl3MWBea6PohOLFaAZoF16ojT0ktlw",
+    "nome": "AUTOSERVIÇO - PRIMEIRO SEMESTRE",
+    "tipo": "power_bi",
+    "categoria": "autoservico",
+    "cor": "#FF6B35"
+  },
+  "autoservico_segundo_semestre": {
+    "id": "1Py1W4sSnIbsgMCrr0h0PSTL0DpN-eLj0NoYGbcHLmUI",
+    "nome": "AUTOSERVIÇO - SEGUNDO SEMESTRE",
+    "tipo": "power_bi",
+    "categoria": "autoservico",
+    "cor": "#FF6B35"
+  },
+  "hibernacao_primeiro_semestre": {
+    "id": "1v2kpi1tIChOQezQgA8jjRTGeK2iS9vfcrWoSdhLoZKM",
+    "nome": "HIBERNAÇÃO - PRIMEIRO SEMESTRE",
+    "tipo": "power_bi",
+    "categoria": "hibernacao",
+    "cor": "#9C27B0"
+  },
+  "hibernacao_segundo_semestre": {
+    "id": "1G3Tf67VXk14n1IUIeaINQAjI7PFNhIpRqtVvlEkeBPY",
+    "nome": "HIBERNAÇÃO - SEGUNDO SEMESTRE",
+    "tipo": "power_bi",
+    "categoria": "hibernacao",
+    "cor": "#9C27B0"
+  }
+}
+```
+
+**Campos:**
+- `id` - ID da planilha Google Sheets (da URL)
+- `nome` - Nome descritivo da planilha
+- `tipo` - `pulso_boletim` ou `power_bi`
+- `categoria` - Categoria do Power BI (filas/autoservico/hibernacao)
+- `cor` - Código de cor hexadecimal para UI
+
+**Como Gerenciar:**
+```bash
+# Listar todas as planilhas
+python scripts/gerenciador_planilhas.py --listar
+
+# Atualizar ID de uma planilha
+python scripts/gerenciador_planilhas.py --atualizar filas_primeiro_semestre --id NOVO_ID
+
+# Interface visual
+python scripts/interface_gerenciador_visual.py
+```
 
 ---
 

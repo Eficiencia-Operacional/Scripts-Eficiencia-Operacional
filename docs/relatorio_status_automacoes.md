@@ -2,7 +2,7 @@
 
 **Data:** 13 de novembro de 2025  
 **Sistema:** Scripts Eficiência Operacional - Leroy Merlin  
-**Versão:** 2.0 (Com padrão seguro `append_rows`)
+**Versão:** 3.2.0 (Com thread-safety e 6 processadores)
 
 ---
 
@@ -14,76 +14,78 @@
 - ✅ Todas as importações corretas
 - ✅ Todas as instanciações funcionando
 - ✅ Todos os métodos obrigatórios presentes
-- ✅ Configuração JSON completa
+- ✅ Configuração JSON completa (11 planilhas)
 - ✅ **CRÍTICO:** Nenhum processador usa `.clear()` (padrão seguro implementado)
 - ✅ **CRÍTICO:** Todos usam `append_rows()` (preservam dados existentes)
+- ✅ **NOVO:** Thread-safety implementado (interfaces não travam)
+- ✅ **NOVO:** UI completa com cores diferenciadas (Amarelo/Laranja/Roxo)
 
 ---
 
 ## 📋 PROCESSADORES IMPLEMENTADOS
 
-### 1️⃣ FILAS GENESYS - PRIMEIRO SEMESTRE
+### 1️⃣ FILAS GENESYS - PRIMEIRO SEMESTRE 🟡
 - **Classe:** `ProcessadorFilasPrimeiroSemestre`
-- **Arquivo:** `src/processadores/powerbi/filas/filas_primeiro_semestre.py`
+- **Arquivo:** `src/processadores/powerbi/genesys/filas/filas_primeiro_semestre.py`
 - **Planilha ID:** `1VtNTqp907enX0M3gB05dmPckDRl7nnfgVEl3mNF8ILc`
 - **Planilha:** BASE FILAS GENESYS - PRIMEIRO SEMESTRE
 - **Aba:** BASE
 - **Cor:** AMARELO (#FFD700)
-- **Pasta CSV:** `data/` (padrão - Filas Genesys)
+- **Pasta CSV:** `data/` (Filas Genesys - Todas as Filas .csv)
 - **Status:** ✅ FUNCIONANDO
 - **Padrão:** ✅ SEGURO (append_rows)
 
-### 2️⃣ FILAS GENESYS - SEGUNDO SEMESTRE
+### 2️⃣ FILAS GENESYS - SEGUNDO SEMESTRE 🟡
 - **Classe:** `ProcessadorFilasSegundoSemestre`
-- **Arquivo:** `src/processadores/powerbi/filas/filas_segundo_semestre.py`
+- **Arquivo:** `src/processadores/powerbi/genesys/filas/filas_segundo_semestre.py`
 - **Planilha ID:** `1r5eZWGVuBP4h68KfrA73lSvfEf37P-AuUCNHF40ttv8`
 - **Planilha:** BASE FILAS GENESYS - SEGUNDO SEMESTRE
 - **Aba:** BASE
 - **Cor:** AMARELO (#FFD700)
-- **Pasta CSV:** `data/` (padrão - Filas Genesys)
+- **Pasta CSV:** `data/` (Filas Genesys - Todas as Filas .csv)
 - **Status:** ✅ FUNCIONANDO
 - **Padrão:** ✅ SEGURO (append_rows)
 
-### 3️⃣ AUTOSERVIÇO - PRIMEIRO SEMESTRE
+### 3️⃣ AUTOSERVIÇO - PRIMEIRO SEMESTRE 🟠
 - **Classe:** `ProcessadorAutoservicoPrimeiroSemestre`
 - **Arquivo:** `src/processadores/powerbi/autoservico/autoservico_primeiro_semestre.py`
 - **Planilha ID:** `1kGExLBYIWf3bjSl3MWBea6PohOLFaAZoF16ojT0ktlw`
 - **Planilha:** AUTOSERVIÇO - PRIMEIRO SEMESTRE
 - **Aba:** URA + LIA
-- **Cor:** AMARELO (#FFD700)
-- **Pasta CSV:** `data/` (padrão - Autoserviço Power BI)
+- **Cor:** LARANJA (#FF6B35)
+- **Pasta CSV:** `data/` (detectado automaticamente)
 - **Status:** ✅ FUNCIONANDO
 - **Padrão:** ✅ SEGURO (append_rows)
 
-### 4️⃣ AUTOSERVIÇO - SEGUNDO SEMESTRE
+### 4️⃣ AUTOSERVIÇO - SEGUNDO SEMESTRE 🟠
 - **Classe:** `ProcessadorAutoservicoSegundoSemestre`
 - **Arquivo:** `src/processadores/powerbi/autoservico/autoservico_segundo_semestre.py`
 - **Planilha ID:** `1Py1W4sSnIbsgMCrr0h0PSTL0DpN-eLj0NoYGbcHLmUI`
 - **Planilha:** AUTOSERVIÇO - SEGUNDO SEMESTRE
 - **Aba:** URA + LIA
-- **Cor:** AMARELO (#FFD700)
-- **Pasta CSV:** `data/` (padrão - Autoserviço Power BI)
+- **Cor:** LARANJA (#FF6B35)
+- **Pasta CSV:** `data/` (detectado automaticamente)
 - **Status:** ✅ FUNCIONANDO
 - **Padrão:** ✅ SEGURO (append_rows)
 
-### 5️⃣ HIBERNAÇÃO - PRIMEIRO SEMESTRE
+### 5️⃣ HIBERNAÇÃO - PRIMEIRO SEMESTRE 🟣
 - **Classe:** `ProcessadorHibernacaoPrimeiroSemestre`
 - **Arquivo:** `src/processadores/powerbi/hibernação/hibernacao_primeiro_semestre.py`
 - **Planilha ID:** `1v2kpi1tIChOQezQgA8jjRTGeK2iS9vfcrWoSdhLoZKM`
-- **Planilha:** BASE HIBERNAÇÃO POWER BI - PRIMEIRO SEMESTRE
+- **Planilha:** HIBERNAÇÃO - PRIMEIRO SEMESTRE
 - **Aba:** BASE
-- **Cor:** AMARELO (#FFD700)
+- **Cor:** ROXO (#9C27B0)
 - **Pasta CSV:** `data/hibernação/` (pasta específica)
 - **Status:** ✅ FUNCIONANDO
 - **Padrão:** ✅ SEGURO (append_rows)
 
-### 6️⃣ HIBERNAÇÃO - SEGUNDO SEMESTRE
+### 6️⃣ HIBERNAÇÃO - SEGUNDO SEMESTRE 🟣
 - **Classe:** `ProcessadorHibernacaoSegundoSemestre`
 - **Arquivo:** `src/processadores/powerbi/hibernação/hibernacao_segundo_semestre.py`
 - **Planilha ID:** `1G3Tf67VXk14n1IUIeaINQAjI7PFNhIpRqtVvlEkeBPY`
-- **Planilha:** BASE HIBERNAÇÃO POWER BI - SEGUNDO SEMESTRE
+- **Planilha:** HIBERNAÇÃO - SEGUNDO SEMESTRE
 - **Aba:** BASE
-- **Cor:** AMARELO (#FFD700)
+- **Cor:** ROXO (#9C27B0)
 - **Pasta CSV:** `data/hibernação/` (pasta específica)
 - **Status:** ✅ FUNCIONANDO
 - **Padrão:** ✅ SEGURO (append_rows)
@@ -96,8 +98,10 @@
 - **Arquivo:** `interfaces/interface_powerbi.py`
 - **Status:** ✅ FUNCIONANDO
 - **Importações:** ✅ Todas corretas (6/6 processadores)
-- **Botões:** ✅ Todos configurados
-- **Checkboxes:** ✅ Todos funcionando
+- **Botões:** ✅ Todos configurados (12 botões totais - 6 processing + 6 links)
+- **Checkboxes:** ✅ Todos funcionando (6 checkboxes)
+- **Thread-Safety:** ✅ Implementado (.after() pattern)
+- **Cores:** ✅ Diferenciadas (Amarelo/Laranja/Roxo)
 - **Links:** ✅ Todos apontando para planilhas corretas
 
 ### Funcionalidades da Interface

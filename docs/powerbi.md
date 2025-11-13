@@ -1,18 +1,19 @@
-# 🟡 Power BI Looker Studio - Documentação Completa
+# 🟡🟠🟣 Power BI Looker Studio - Documentação Completa v3.2.0
 
-> Automação dedicada para alimentação de dashboards Looker Studio com dados de Filas Genesys.
+> Automação dedicada para alimentação de dashboards Looker Studio com **6 processadores** de dados: Filas Genesys, Autoserviço e Hibernação.
 
 ---
 
 ## 📋 Índice
 
 - [Visão Geral](#-visão-geral)
+- [Os 6 Processadores](#-os-6-processadores)
 - [Diferenças vs Pulso Boletim](#-diferenças-vs-pulso-boletim)
 - [Como Usar](#-como-usar)
 - [Estrutura de Arquivos](#-estrutura-de-arquivos)
 - [Planilhas de Destino](#-planilhas-de-destino)
 - [Formatação e Cores](#-formatação-e-cores)
-- [Processamento](#-processamento)
+- [Thread-Safety](#-thread-safety)
 - [Troubleshooting](#-troubleshooting)
 
 ---
@@ -21,28 +22,73 @@
 
 O **Power BI Looker Studio** é um sistema de automação independente que:
 
-- ✅ Processa arquivos CSV de **Filas Genesys**
-- ✅ Envia dados para **duas planilhas** (Primeiro e Segundo Semestre)
-- ✅ Usa **cor amarela** (#FFD700) para diferenciação visual
+- ✅ Processa arquivos CSV de **3 categorias**: Filas Genesys, Autoserviço e Hibernação
+- ✅ Envia dados para **6 planilhas** (2 semestres por categoria)
+- ✅ Usa **código de cores** (#FFD700 amarelo, #FF6B35 laranja, #9C27B0 roxo)
 - ✅ Alimenta **dashboards Looker Studio** para análise BI
 - ✅ Interface gráfica dedicada com KPIs em tempo real
 - ✅ Renomeação automática de arquivos
+- ✅ **Thread-safe**: Não trava durante "Processar Tudo" (v3.2.0)
+
+---
+
+## 🎨 Os 6 Processadores
+
+### 🟡 **FILAS GENESYS** (Amarelo #FFD700)
+**Primeiro Semestre (Q1/Q2):**
+- Planilha: [BASE FILAS GENESYS - PRIMEIRO SEMESTRE](https://docs.google.com/spreadsheets/d/1VtNTqp907enX0M3gB05dmPckDRl7nnfgVEl3mNF8ILc)
+- Aba: `BASE`
+- Processador: `ProcessadorFilasPrimeiroSemestre`
+- Arquivo: `data/Filas Genesys - Todas as Filas .csv`
+
+**Segundo Semestre (Q3/Q4):**
+- Planilha: [BASE FILAS GENESYS - SEGUNDO SEMESTRE](https://docs.google.com/spreadsheets/d/1r5eZWGVuBP4h68KfrA73lSvfEf37P-AuUCNHF40ttv8)
+- Aba: `BASE`
+- Processador: `ProcessadorFilasSegundoSemestre`
+- Arquivo: `data/Filas Genesys - Todas as Filas .csv`
+
+### 🟠 **AUTOSERVIÇO** (Laranja #FF6B35)
+**Primeiro Semestre (Q1/Q2):**
+- Planilha: [AUTOSERVIÇO - PRIMEIRO SEMESTRE](https://docs.google.com/spreadsheets/d/1kGExLBYIWf3bjSl3MWBea6PohOLFaAZoF16ojT0ktlw)
+- Aba: `URA + LIA`
+- Processador: `ProcessadorAutoservicoPrimeiroSemestre`
+- Arquivo: `data/` (detectado automaticamente)
+
+**Segundo Semestre (Q3/Q4):**
+- Planilha: [AUTOSERVIÇO - SEGUNDO SEMESTRE](https://docs.google.com/spreadsheets/d/1Py1W4sSnIbsgMCrr0h0PSTL0DpN-eLj0NoYGbcHLmUI)
+- Aba: `URA + LIA`
+- Processador: `ProcessadorAutoservicoSegundoSemestre`
+- Arquivo: `data/` (detectado automaticamente)
+
+### 🟣 **HIBERNAÇÃO** (Roxo #9C27B0)
+**Primeiro Semestre (Q1/Q2):**
+- Planilha: [HIBERNAÇÃO - PRIMEIRO SEMESTRE](https://docs.google.com/spreadsheets/d/1v2kpi1tIChOQezQgA8jjRTGeK2iS9vfcrWoSdhLoZKM)
+- Aba: `BASE`
+- Processador: `ProcessadorHibernacaoPrimeiroSemestre`
+- Arquivo: `data/hibernação/` (pasta específica)
+
+**Segundo Semestre (Q3/Q4):**
+- Planilha: [HIBERNAÇÃO - SEGUNDO SEMESTRE](https://docs.google.com/spreadsheets/d/1G3Tf67VXk14n1IUIeaINQAjI7PFNhIpRqtVvlEkeBPY)
+- Aba: `BASE`
+- Processador: `ProcessadorHibernacaoSegundoSemestre`
+- Arquivo: `data/hibernação/` (pasta específica)
 
 ---
 
 ## 🔄 Diferenças vs Pulso Boletim
 
-| Característica | Pulso Boletim 🟢 | Power BI 🟡 |
-|----------------|------------------|-------------|
-| **Cor Principal** | Verde (#00A859) | Amarelo (#FFD700) |
-| **Cor Cabeçalho** | Verde escuro | Amarelo escuro (#FFA800) |
-| **Interface** | `interface_visual.py` | `interface_powerbi.py` |
-| **Sistemas** | 3 (Genesys VOZ/TEXTO/GESTÃO, Salesforce, Produtividade) | 1 (Filas Genesys) |
-| **Planilhas** | 2 (Genesys, Salesforce) | 2 (Primeiro Semestre, Segundo Semestre) |
-| **Arquivo de Entrada** | Múltiplos CSVs padronizados | `Filas Genesys - Todas as Filas .csv` |
+| Característica | Pulso Boletim 🟢 | Power BI 🟡🟠🟣 |
+|----------------|------------------|-----------------|
+| **Cor Principal** | Verde (#00A859) | Amarelo/Laranja/Roxo |
+| **Interface** | `interface_pulso_boletim.py` | `interface_powerbi.py` |
+| **Categorias** | 3 (Genesys, Salesforce, Produtividade) | 3 (Filas, Autoserviço, Hibernação) |
+| **Planilhas** | 3 (Genesys, Salesforce, Produtividade) | 6 (2 semestres x 3 categorias) |
+| **Processadores** | 3 principais | 6 (todos com código de cor) |
 | **Finalidade** | Relatórios internos de operação | Dashboards Looker Studio para BI |
 | **Frequência** | Diária | Sob demanda |
-| **KPIs** | `config/kpis_historico.json` | `config/kpis_powerbi_historico.json` |
+| **Thread-Safe** | ✅ Sim (v3.2.0) | ✅ Sim (v3.2.0) |
+| **Processar Tudo** | ✅ Sim | ✅ Sim (marca múltiplos + batch) |
+| **KPIs** | `json/kpis_historico.json` | `json/kpis_historico.json` |
 
 **Resumo:** São sistemas **completamente independentes** que compartilham apenas a infraestrutura base (Google Sheets API, renomeador inteligente).
 

@@ -1,6 +1,6 @@
 # 🛠️ utils - Utilitários e Scripts Auxiliares
 
-Esta pasta contém scripts utilitários e executores auxiliares para facilitar o uso do sistema RPA Leroy Merlin.
+Esta pasta contém scripts utilitários e executores auxiliares para facilitar o uso do sistema RPA Leroy Merlin v3.2.0.
 
 ---
 
@@ -56,6 +56,11 @@ Executor para abrir a interface gráfica do Pulso Boletim (verde).
 interface.bat
 ```
 
+**Executa:**
+```bash
+python -m interfaces.interface_pulso_boletim
+```
+
 ---
 
 ##### **executar.ps1**
@@ -80,10 +85,10 @@ Versão PowerShell para interface gráfica do Pulso Boletim.
 
 ---
 
-#### **🟡 Power BI Looker Studio**
+#### **🟡🟠🟣 Power BI Looker Studio**
 
 ##### **powerbi.bat**
-Executor para abrir a interface gráfica do Power BI (amarelo).
+Executor para abrir a interface gráfica do Power BI (com 6 processadores: Filas/Autoserviço/Hibernação).
 
 **Como usar:**
 ```bash
@@ -94,8 +99,14 @@ powerbi.bat
 
 **Executa:**
 ```bash
-python interface_powerbi.py
+python -m interfaces.interface_powerbi
 ```
+
+**Funcionalidades:**
+- 🟡 Processar Filas Genesys (1º e 2º semestres)
+- 🟠 Processar Autoserviço (1º e 2º semestres)
+- 🟣 Processar Hibernação (1º e 2º semestres)
+- ✅ Processar Tudo (marca múltiplos + batch processing)
 
 ##### **powerbi.ps1**
 Versão PowerShell para interface gráfica do Power BI.
